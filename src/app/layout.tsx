@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, Inter, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/ui/ThemeContext";
 import { ThemeModal } from "@/components/ui/ThemeModal";
 import { AuthModalProvider } from "@/components/auth/AuthModalContext";
@@ -25,6 +26,10 @@ const monoFont = IBM_Plex_Mono({
   variable: "--font-mono",
   display: "swap",
 });
+
+const dinCond = localFont({ src: "./fonts/DINPro-Cond.otf", variable: "--font-din-cond", display: "swap" });
+const dinBold = localFont({ src: "./fonts/DINPro-CondBold.otf", variable: "--font-din-bold", display: "swap" });
+const dinMedium = localFont({ src: "./fonts/DINPro-CondMedium.otf", variable: "--font-din-medium", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
@@ -77,7 +82,7 @@ export default function RootLayout({
     <ThemeProvider>
       <html
         lang="en"
-        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} h-full antialiased`}
+        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${dinCond.variable} ${dinBold.variable} ${dinMedium.variable} h-full antialiased`}
         suppressHydrationWarning
       >
         <head>

@@ -1,3 +1,5 @@
+import { renderCardImage } from '@/components/card/fut/capture';
+
 export function isUserAuthenticated(): boolean {
   if (typeof window === 'undefined') return false;
   try {
@@ -17,18 +19,20 @@ export async function exportCardToPNG(cardElement: HTMLElement, username: string
   // Dynamic client-side import of html-to-image
   const { toPng } = await import('html-to-image');
 
-  // High resolution export (pixelRatio 3x)
-  const dataUrl = await toPng(cardElement, {
-    quality: 0.98,
-    pixelRatio: 3,
-    cacheBust: true,
-    filter: (node) => {
-      if (node instanceof HTMLElement && node.dataset?.exportExclude === 'true') {
-        return false;
-      }
-      return true;
-    },
-  });
+  // High resolution export with signature reveal
+  const dataUrl = await renderCardImage(cardElement, (target) =>
+    toPng(target, {
+      quality: 0.98,
+      pixelRatio: 3,
+      cacheBust: true,
+      filter: (node) => {
+        if (node instanceof HTMLElement && node.dataset?.exportExclude === 'true') {
+          return false;
+        }
+        return true;
+      },
+    })
+  );
 
   // Create temporary link and download
   const link = document.createElement('a');
@@ -48,18 +52,20 @@ export async function exportCardToPDF(cardElement: HTMLElement, username: string
   const { toPng } = await import('html-to-image');
   const { default: jsPDF } = await import('jspdf');
 
-  // Generate PNG data URL first
-  const dataUrl = await toPng(cardElement, {
-    quality: 0.98,
-    pixelRatio: 3,
-    cacheBust: true,
-    filter: (node) => {
-      if (node instanceof HTMLElement && node.dataset?.exportExclude === 'true') {
-        return false;
-      }
-      return true;
-    },
-  });
+  // Generate PNG data URL first with signature reveal
+  const dataUrl = await renderCardImage(cardElement, (target) =>
+    toPng(target, {
+      quality: 0.98,
+      pixelRatio: 3,
+      cacheBust: true,
+      filter: (node) => {
+        if (node instanceof HTMLElement && node.dataset?.exportExclude === 'true') {
+          return false;
+        }
+        return true;
+      },
+    })
+  );
 
   // Initialize jsPDF document (A4 portrait)
   const pdf = new jsPDF({
@@ -109,3 +115,4 @@ export async function exportCardToPDF(cardElement: HTMLElement, username: string
 
   pdf.save(`devtrack_card_${username.toLowerCase()}.pdf`);
 }
+

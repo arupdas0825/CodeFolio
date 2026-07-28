@@ -514,3 +514,15 @@ a[href*="spline.design"],
   background-size: 200% 100%;
   animation: logoShimmer 3.5s ease-in-out infinite;
 }
+
+/* Card FUT signature & container styles */
+.dt-signature {
+  display: none;
+}
+.dt-capturing .dt-signature {
+  display: block;
+}
+.dt-card-frame {
+  container-type: inline-size;
+}
+

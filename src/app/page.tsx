@@ -433,7 +433,7 @@ export default function LandingPage() {
       {/* Developer Card Preview Modal */}
       <AnimatePresence>
         {isCardModalOpen && cardData && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -449,7 +449,7 @@ export default function LandingPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ duration: 0.25 }}
-              className="relative z-10 w-full max-w-md rounded-2xl border border-white/15 bg-slate-900 p-3 sm:p-4 shadow-2xl space-y-3 max-h-[95vh] overflow-hidden"
+              className="relative z-10 w-full max-w-md rounded-2xl border border-white/15 bg-slate-900 p-3 sm:p-4 shadow-2xl space-y-3 max-h-[95vh] overflow-y-auto"
             >
               {/* Developer Card Display */}
               <div className="flex justify-center">

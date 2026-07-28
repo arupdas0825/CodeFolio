@@ -305,7 +305,7 @@ export default function DeveloperBattleModal({
             >
               {/* Left: The Collectible Card */}
               <div className="flex-1 flex justify-center w-full max-w-[400px]">
-                <DeveloperCard data={getDeveloperCardInfo(primaryData)} />
+                <DeveloperCard data={getDeveloperCardInfo(primaryData)} variant="compact" />
               </div>
 
               {/* Right: Action Controls & Battle Launcher */}
@@ -538,14 +538,14 @@ export default function DeveloperBattleModal({
                   <span className="text-xs font-bold uppercase tracking-wider text-accent mb-3 block">
                     CHALLENGER (YOU)
                   </span>
-                  <DeveloperCard data={getDeveloperCardInfo(primaryData)} />
+                  <DeveloperCard data={getDeveloperCardInfo(primaryData)} variant="compact" />
                 </div>
 
                 <div className="w-full flex flex-col items-center">
                   <span className="text-xs font-bold uppercase tracking-wider text-purple-400 mb-3 block">
                     OPPONENT
                   </span>
-                  <DeveloperCard data={getDeveloperCardInfo(opponentData)} />
+                  <DeveloperCard data={getDeveloperCardInfo(opponentData)} variant="compact" />
                 </div>
               </div>
 
