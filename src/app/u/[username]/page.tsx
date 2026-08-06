@@ -43,6 +43,7 @@ import { GitHubUserService } from '@/services/github/github-user.service';
 import { GitHubContributionService } from '@/services/github/github-contribution.service';
 import { GitHubRepository, ContributionStats } from '@/types';
 import ContributionHeatmap from '@/components/dashboard/ContributionHeatmap';
+import { GitHubAnalyticsDashboard } from '@/components/profile/GitHubAnalyticsDashboard';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area, CartesianGrid } from 'recharts';
 
 interface PageProps {
@@ -227,12 +228,30 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
     },
     {
       id: '100_contribs',
-      title: 'First 100 Contributions',
+      title: '100 Contributions',
       desc: 'Achieved 100+ contributions in the contribution calendar.',
       unlocked: totalContribCount >= 100,
       progress: Math.min(100, Math.round((totalContribCount / 100) * 100)),
       icon: Flame,
       color: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
+    },
+    {
+      id: '500_contribs',
+      title: '500 Contributions',
+      desc: 'Achieved 500+ contributions — a serious commitment to shipping code.',
+      unlocked: totalContribCount >= 500,
+      progress: Math.min(100, Math.round((totalContribCount / 500) * 100)),
+      icon: Flame,
+      color: 'text-orange-400 border-orange-500/30 bg-orange-500/10',
+    },
+    {
+      id: '1000_contribs',
+      title: '1000 Contributions',
+      desc: 'Achieved 1,000+ contributions — a prolific open source contributor.',
+      unlocked: totalContribCount >= 1000,
+      progress: Math.min(100, Math.round((totalContribCount / 1000) * 100)),
+      icon: Flame,
+      color: 'text-red-400 border-red-500/30 bg-red-500/10',
     },
     {
       id: 'open_source',
@@ -263,12 +282,21 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
     },
     {
       id: 'consistent_coder',
-      title: 'Consistent Coder',
+      title: 'Consistent Developer',
       desc: 'Maintained an active contribution streak of 14+ days.',
       unlocked: (contributions?.longestStreak || 0) >= 14,
       progress: Math.min(100, Math.round(((contributions?.longestStreak || 0) / 14) * 100)),
       icon: TrendingUp,
       color: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    },
+    {
+      id: 'repo_creator',
+      title: 'Repository Creator',
+      desc: 'Created 5+ original (non-fork) repositories on GitHub.',
+      unlocked: repos.filter(r => !r.fork).length >= 5,
+      progress: Math.min(100, Math.round((repos.filter(r => !r.fork).length / 5) * 100)),
+      icon: FolderGit2,
+      color: 'text-violet-400 border-violet-500/30 bg-violet-500/10',
     },
     {
       id: 'rising_developer',
@@ -380,6 +408,16 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
                 <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   {profileData.name}
                 </h1>
+                {profileData.tier && (
+                  <span className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-mono font-bold text-indigo-400">
+                    {profileData.tier} Tier
+                  </span>
+                )}
+                {profileData.grade && (
+                  <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-2.5 py-0.5 text-[11px] font-mono font-bold text-purple-400">
+                    Grade {profileData.grade}
+                  </span>
+                )}
                 <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-mono font-bold text-emerald-400">
                   ✓ Verified GitHub Identity
                 </span>
@@ -470,6 +508,28 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
               <span>Share Profile</span>
             </button>
           </div>
+        </div>
+
+        {/* HERO QUICK STATS ROW */}
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {[
+            { label: 'Followers', value: profileData.followers, icon: Users, color: 'text-indigo-400' },
+            { label: 'Following', value: profileData.following, icon: Users, color: 'text-purple-400' },
+            { label: 'Public Repos', value: profileData.publicRepos, icon: FolderGit2, color: 'text-cyan-400' },
+            { label: 'Total Stars', value: profileData.totalStars, icon: Star, color: 'text-amber-400' },
+            { label: 'Total Forks', value: profileData.totalForks || 0, icon: GitFork, color: 'text-emerald-400' },
+          ].map((stat) => {
+            const StatIcon = stat.icon;
+            return (
+              <div key={stat.label} className="rounded-2xl border border-white/10 bg-slate-900/60 p-3 backdrop-blur-xl font-mono">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <StatIcon className={`h-3.5 w-3.5 ${stat.color}`} />
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">{stat.label}</span>
+                </div>
+                <span className="text-lg font-extrabold text-white block">{(stat.value ?? 0).toLocaleString()}</span>
+              </div>
+            );
+          })}
         </div>
 
         {/* PROFILE TAB NAVIGATION BAR (5 Tabs) */}
@@ -905,101 +965,15 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
             </div>
           )}
 
-          {/* TAB 5: GITHUB ANALYTICS */}
+          {/* TAB 5: GITHUB ANALYTICS — COMPREHENSIVE DASHBOARD */}
           {activeTab === 'analytics' && (
-            <div className="space-y-8">
-              {/* Telemetry Summary Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 font-mono">
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Total Contributions</span>
-                  <span className="text-xl font-extrabold text-white mt-1 block">{totalContribCount}</span>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 font-mono">
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Current Streak</span>
-                  <span className="text-xl font-extrabold text-emerald-400 mt-1 block">
-                    {contributions?.currentStreak !== null && contributions?.currentStreak !== undefined
-                      ? `${contributions.currentStreak}d`
-                      : 'Not Available from GitHub'}
-                  </span>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 font-mono">
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Longest Streak</span>
-                  <span className="text-xl font-extrabold text-amber-300 mt-1 block">
-                    {contributions?.longestStreak ? `${contributions.longestStreak}d` : '0d'}
-                  </span>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 font-mono">
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Total Stars</span>
-                  <span className="text-xl font-extrabold text-yellow-300 mt-1 block">{profileData.totalStars}</span>
-                </div>
-              </div>
-
-              {/* 365-Day Contribution Heatmap Grid */}
-              <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-white font-mono flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-emerald-400" />
-                    <span>365-Day GitHub Contribution Calendar</span>
-                  </h3>
-                </div>
-                <ContributionHeatmap dailyContributions={contributions?.dailyContributions || {}} />
-              </div>
-
-              {/* Language Breakdown & Recharts Monthly Activity */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Language Distribution */}
-                <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-white font-mono">
-                    Language Distribution
-                  </h3>
-                  <div className="space-y-3">
-                    {languageStats.length > 0 ? (
-                      languageStats.map((lang) => (
-                        <div key={lang.name} className="space-y-1">
-                          <div className="flex justify-between text-xs font-mono text-slate-300">
-                            <span className="flex items-center gap-1.5">
-                              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: lang.color }} />
-                              {lang.name}
-                            </span>
-                            <span className="font-bold">{lang.percent}%</span>
-                          </div>
-                          <div className="h-2 w-full rounded-full bg-slate-950 overflow-hidden border border-white/5">
-                            <div
-                              className="h-full rounded-full"
-                              style={{ width: `${lang.percent}%`, backgroundColor: lang.color }}
-                            />
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-xs text-slate-500 italic">No language metrics indexed.</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Monthly Activity Recharts */}
-                <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-white font-mono">
-                    Monthly Activity Trend
-                  </h3>
-                  <div className="h-48 w-full text-xs font-mono">
-                    {monthlyTrendData.length > 0 ? (
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={monthlyTrendData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#30363D" vertical={false} />
-                          <XAxis dataKey="month" stroke="#8B949E" />
-                          <YAxis stroke="#8B949E" />
-                          <Tooltip contentStyle={{ backgroundColor: '#0D1117', borderColor: '#30363D', borderRadius: '12px' }} />
-                          <Area type="monotone" dataKey="contributions" stroke="#818CF8" fill="#6366F1" fillOpacity={0.25} />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    ) : (
-                      <p className="text-xs text-slate-500 italic py-10 text-center">No trend data available.</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <GitHubAnalyticsDashboard
+              username={username}
+              profileData={profileData}
+              contributions={contributions}
+              repos={repos}
+              userEvents={userEvents}
+            />
           )}
         </div>
       </main>

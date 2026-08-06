@@ -295,6 +295,7 @@ export default function LandingPage() {
   };
 
   const handleContinueWithGitHub = async () => {
+    if (isLoggingIn) return;
     setIsLoggingIn(true);
     try {
       const user = await signInWithGitHub();
@@ -302,6 +303,10 @@ export default function LandingPage() {
         handleLoginSuccess();
       }
     } catch (err: any) {
+      if (err?.code === 'auth/cancelled-popup-request' || err?.code === 'auth/popup-closed-by-user') {
+        console.log('GitHub Auth popup was closed or cancelled by the user.');
+        return;
+      }
       console.error('GitHub Auth error:', err);
       setIsAuthOpen(true);
     } finally {

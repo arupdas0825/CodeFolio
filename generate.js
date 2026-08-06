@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-const sourceImage = 'C:\\Users\\Lenovo\\.gemini\\antigravity\\brain\\7912dd49-29d6-415c-b618-b0966d8b9e02\\.user_uploaded\\media__1786030791153.png';
+const sourceImage = 'C:\\Users\\Lenovo\\.gemini\\antigravity\\brain\\7912dd49-29d6-415c-b618-b0966d8b9e02\\.user_uploaded\\media__1786034407632.png';
 const publicDir = path.join(__dirname, 'public');
 
 const sizes = {

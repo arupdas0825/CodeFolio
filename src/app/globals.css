@@ -526,3 +526,119 @@ a[href*="spline.design"],
   container-type: inline-size;
 }
 
+/* ════════════════════════════════════════════════════════════
+   CODEFOLIO BRAND WORDMARK SYSTEM
+   Premium startup-grade typography & micro-interactions
+   ════════════════════════════════════════════════════════════ */
+
+:root {
+  --brand-gradient-from: #3b82f6; /* Vivid Blue */
+  --brand-gradient-via: #6366f1; /* Deep Indigo */
+  --brand-gradient-to: #a855f7;  /* Bright Purple */
+  --brand-glow-color: rgba(99, 102, 241, 0.45);
+  --brand-shimmer-color: rgba(255, 255, 255, 0.4);
+}
+
+html.light {
+  --brand-gradient-from: #2563eb; /* Deep Royal Blue */
+  --brand-gradient-via: #4f46e5; /* Electric Indigo */
+  --brand-gradient-to: #7c3aed;  /* Rich Purple */
+  --brand-glow-color: rgba(79, 70, 229, 0.35);
+  --brand-shimmer-color: rgba(79, 70, 229, 0.25);
+}
+
+/* Wordmark base */
+.codefolio-wordmark {
+  font-family: var(--font-brand), 'Space Grotesk', 'Plus Jakarta Sans', 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  background: linear-gradient(
+    135deg,
+    var(--brand-gradient-from) 0%,
+    var(--brand-gradient-via) 45%,
+    var(--brand-gradient-to) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  white-space: nowrap;
+  will-change: transform, filter;
+  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1),
+              filter 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Gentle glow & scale (1 -> 1.03) on hover */
+.codefolio-wordmark:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 14px var(--brand-glow-color));
+}
+
+/* Soft gradient shimmer passing every 8-10 seconds – GPU accelerated */
+.codefolio-wordmark::after {
+  content: 'Codefolio';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 30%,
+    var(--brand-shimmer-color) 50%,
+    transparent 70%,
+    transparent 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: wordmarkShimmer 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  will-change: background-position;
+}
+
+@keyframes wordmarkShimmer {
+  0%, 82% {
+    background-position: -250% 0;
+  }
+  100% {
+    background-position: 250% 0;
+  }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .codefolio-wordmark::after {
+    animation: none;
+  }
+  .codefolio-wordmark:hover {
+    transform: none;
+  }
+}
+
+/* Responsive wordmark sizing */
+.codefolio-wordmark--desktop {
+  font-size: 1.3rem; /* 20.8px */
+  letter-spacing: -0.025em;
+}
+
+@media (max-width: 1024px) {
+  .codefolio-wordmark--desktop {
+    font-size: 1.18rem; /* 18.8px */
+    letter-spacing: -0.02em;
+  }
+}
+
+.codefolio-wordmark--mobile {
+  font-size: 1.125rem; /* 18px */
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 640px) {
+  .codefolio-wordmark--mobile {
+    font-size: 1.05rem; /* 16.8px */
+    letter-spacing: -0.015em;
+  }
+}

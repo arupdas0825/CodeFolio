@@ -34,7 +34,7 @@ export const MobileTopBar: React.FC<MobileTopBarProps> = ({
         {/* Left: Brand Logo & Title */}
         <Link href="/feed" className="flex items-center gap-2 group active:scale-95 transition-transform">
           <CodefolioLogo className="w-8 h-8 text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.4)]" />
-          <span className="font-mono text-lg font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          <span className="codefolio-wordmark codefolio-wordmark--mobile">
             Codefolio
           </span>
         </Link>

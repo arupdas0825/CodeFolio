@@ -50,39 +50,52 @@ if (isFirebaseEnabled) {
   }
 }
 
-// 1. Auth Handlers
+let authInFlightPromise: Promise<CodefolioUser> | null = null;
+
 export async function signInWithGitHub(): Promise<CodefolioUser> {
+  if (authInFlightPromise) {
+    return authInFlightPromise;
+  }
+
   if (isFirebaseEnabled && auth) {
     const provider = new GithubAuthProvider();
     provider.addScope("read:user");
     provider.addScope("repo");
     
-    const result = await signInWithPopup(auth, provider);
-    const credential = GithubAuthProvider.credentialFromResult(result);
-    const token = credential?.accessToken || undefined;
-    const user = result.user;
-    
-    // Extract github username from profile
-    const username = (user as any).reloadUserInfo?.screenName || user.displayName?.toLowerCase().replace(/\s/g, "") || "developer";
+    authInFlightPromise = (async () => {
+      try {
+        const result = await signInWithPopup(auth!, provider);
+        const credential = GithubAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken || undefined;
+        const user = result.user;
+        
+        // Extract github username from profile
+        const username = (user as any).reloadUserInfo?.screenName || user.displayName?.toLowerCase().replace(/\s/g, "") || "developer";
 
-    const dtUser: CodefolioUser = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      username: username.toLowerCase(),
-      token,
-    };
+        const dtUser: CodefolioUser = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          username: username.toLowerCase(),
+          token,
+        };
 
-    // Save user profile state
-    if (typeof window !== "undefined") {
-      localStorage.setItem("codefolio_current_user", JSON.stringify(dtUser));
-      if (token) {
-        localStorage.setItem("codefolio_github_token", token);
+        // Save user profile state
+        if (typeof window !== "undefined") {
+          localStorage.setItem("codefolio_current_user", JSON.stringify(dtUser));
+          if (token) {
+            localStorage.setItem("codefolio_github_token", token);
+          }
+        }
+
+        return dtUser;
+      } finally {
+        authInFlightPromise = null;
       }
-    }
+    })();
 
-    return dtUser;
+    return authInFlightPromise;
   } else {
     // Under strict "No mock data" requirement, throw error if configuration is missing
     throw new Error("Firebase configuration is missing or disabled. Cannot log in.");

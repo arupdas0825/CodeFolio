@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans, Inter, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Sans, Inter, IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/ui/ThemeContext";
 import { ThemeModal } from "@/components/ui/ThemeModal";
@@ -24,6 +24,13 @@ const monoFont = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-mono",
+  display: "swap",
+});
+
+const brandFont = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-brand",
   display: "swap",
 });
 
@@ -82,7 +89,7 @@ export default function RootLayout({
     <ThemeProvider>
       <html
         lang="en"
-        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${dinCond.variable} ${dinBold.variable} ${dinMedium.variable} h-full antialiased`}
+        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${brandFont.variable} ${dinCond.variable} ${dinBold.variable} ${dinMedium.variable} h-full antialiased`}
         suppressHydrationWarning
       >
         <head>

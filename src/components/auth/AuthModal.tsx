@@ -38,6 +38,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const displayTitle = title || actionTitle || 'Continue with Codefolio';
 
   const handleGitHubAuth = async () => {
+    if (loading) return;
     setLoading(true);
     setError(null);
     try {
@@ -45,6 +46,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       if (onSuccess) onSuccess(user);
       onClose();
     } catch (err: any) {
+      const code = err?.code || '';
+      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
+        console.log("GitHub authentication popup closed or cancelled by user.");
+        setLoading(false);
+        return;
+      }
+
       console.warn("GitHub Sign In notice:", err?.message);
       // Fallback local session for demo/preview authorization
       const demoUser = {

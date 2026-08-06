@@ -250,7 +250,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="group flex items-center gap-2.5 focus-visible:outline-none rounded-xl"
             >
               <CodefolioLogo size={32} animated={false} />
-              <span className="text-lg font-black tracking-tight text-white flex items-center gap-1.5 font-mono">
+              <span className="codefolio-wordmark codefolio-wordmark--desktop">
                 Codefolio
               </span>
             </Link>
