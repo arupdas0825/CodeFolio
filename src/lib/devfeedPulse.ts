@@ -1,6 +1,6 @@
 /**
  * devfeedPulse.ts
- * Curated DevTrack Pulse items — editable without touching the component.
+ * Curated Codefolio Pulse items — editable without touching the component.
  */
 
 export interface PulseItem {
@@ -9,7 +9,7 @@ export interface PulseItem {
   count?: number;
 }
 
-export const DEVTRACK_PULSE: PulseItem[] = [
+export const CODEFOLIO_PULSE: PulseItem[] = [
   { label: "AI & Machine Learning", tag: "ai", count: 2841 },
   { label: "Open Source Releases", tag: "opensource", count: 1523 },
   { label: "TypeScript Best Practices", tag: "typescript", count: 987 },

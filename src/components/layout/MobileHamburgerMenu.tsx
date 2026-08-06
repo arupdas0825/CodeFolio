@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DevTrackLogo } from '@/components/ui/DevTrackLogo';
+import { CodefolioLogo } from '@/components/ui/CodefolioLogo';
 import { TierAvatar } from '@/components/ui/TierAvatar';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import {
@@ -63,9 +63,9 @@ export const MobileHamburgerMenu: React.FC<MobileHamburgerMenuProps> = ({
             <div>
               <div className="flex items-center justify-between p-4 border-b border-slate-800/80">
                 <div className="flex items-center gap-2.5">
-                  <DevTrackLogo className="w-7 h-7 text-cyan-400" />
+                  <CodefolioLogo className="w-7 h-7 text-cyan-400" />
                   <span className="font-mono font-bold text-base bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
-                    DevTrack Menu
+                    Codefolio Menu
                   </span>
                 </div>
                 <button
@@ -228,7 +228,7 @@ export const MobileHamburgerMenu: React.FC<MobileHamburgerMenuProps> = ({
                 </button>
               ) : (
                 <div className="text-center text-[11px] text-slate-500 font-mono">
-                  DevTrack v2.0 • Native Mobile PWA
+                  Codefolio v2.0 • Native Mobile PWA
                 </div>
               )}
             </div>

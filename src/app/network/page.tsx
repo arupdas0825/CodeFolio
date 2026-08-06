@@ -134,7 +134,7 @@ export default function ConnectionsPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('devtrack_current_user');
+      const stored = localStorage.getItem('codefolio_current_user');
       if (stored) {
         try {
           setCurrentUser(JSON.parse(stored));
@@ -176,7 +176,7 @@ export default function ConnectionsPage() {
           <div className="relative z-10 space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-1 text-xs font-semibold text-cyan-300">
               <Users className="h-3.5 w-3.5" />
-              <span>DevTrack Developer Network</span>
+              <span>Codefolio Developer Network</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
               Manage Your Professional Connections

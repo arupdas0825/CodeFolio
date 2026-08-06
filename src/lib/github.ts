@@ -30,7 +30,7 @@ export async function fetchGitHubDashboardData(
   username: string,
   token?: string
 ): Promise<UserDashboardData> {
-  if (username.toLowerCase() === "demo" || username.toLowerCase() === "devtrack-demo" || !username) {
+  if (username.toLowerCase() === "demo" || username.toLowerCase() === "codefolio-demo" || !username) {
     return getDemoDashboardData();
   }
 
@@ -65,7 +65,7 @@ export function getDemoDashboardData(): UserDashboardData {
     company: "Vercel / OpenSource contributor",
     blog: "https://alexrivera.dev",
     location: "San Francisco, CA",
-    email: "alex@devtrack.io",
+    email: "alex@codefolio.io",
     bio: "Building developer platforms and serverless functions. Contributor to Next.js, Framer Motion, and TailwindCSS. Coffee enthusiast.",
     public_repos: 42,
     public_gists: 12,

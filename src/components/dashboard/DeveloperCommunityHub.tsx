@@ -113,7 +113,7 @@ export default function DeveloperCommunityHub({
       authorId: myUserId,
       authorName: data.profile.name || data.profile.login,
       authorAvatar: data.profile.avatar_url || "U",
-      authorTitle: "DevTrack Engineer (You)",
+      authorTitle: "Codefolio Engineer (You)",
       content: newPostContent,
       type: postType,
       codeSnippet: showCodeDrawer && codeSnippet.trim() ? codeSnippet : undefined,
@@ -929,7 +929,7 @@ export default function DeveloperCommunityHub({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-5 rounded-xl border border-border bg-[#161B22] space-y-3 animate-fadeIn">
                   <h4 className="text-xs font-bold text-[#F0F6FC] font-space-grotesk">Stanford Computer Science Club</h4>
-                  <p className="text-xs text-text-secondary">Official student engineering club portal on DevTrack.</p>
+                  <p className="text-xs text-text-secondary">Official student engineering club portal on Codefolio.</p>
                   <button className="w-full py-1.5 bg-[#21262D] border border-border text-[10px] text-text-secondary font-bold rounded-lg opacity-60 flex items-center justify-center gap-1 cursor-not-allowed">
                     <Lock size={10} /> Stanford Email Verified Only
                   </button>

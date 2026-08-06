@@ -1,7 +1,7 @@
-# DevTrack — The Professional Developer Identity Platform
+# Codefolio — The Professional Developer Identity Platform
 
 <p align="center">
-  <img src="public/devtrack-logo.png" alt="DevTrack Logo" width="120" />
+  <img src="public/codefolio-logo.png" alt="Codefolio Logo" width="120" />
 </p>
 
 <p align="center">
@@ -54,9 +54,9 @@
 
 ## 🚀 Overview
 
-**DevTrack** is an engineering platform that synthesizes a developer's software footprint into a verified digital identity. By parsing real-time GitHub commit velocity, pull request reviews, repo clean ratios, and open-source contributions, DevTrack computes a **Developer Score (0-1000)** and generates an interactive, tier-badged **Developer Card**.
+**Codefolio** is an engineering platform that synthesizes a developer's software footprint into a verified digital identity. By parsing real-time GitHub commit velocity, pull request reviews, repo clean ratios, and open-source contributions, Codefolio computes a **Developer Score (0-1000)** and generates an interactive, tier-badged **Developer Card**.
 
-DevTrack includes a mobile-first PWA experience, WebGL liquid metal shader interactions, a LinkedIn-inspired developer networking hub, and AI-driven resume and career trajectory analyzers.
+Codefolio includes a mobile-first PWA experience, WebGL liquid metal shader interactions, a LinkedIn-inspired developer networking hub, and AI-driven resume and career trajectory analyzers.
 
 ---
 
@@ -64,7 +64,7 @@ DevTrack includes a mobile-first PWA experience, WebGL liquid metal shader inter
 
 Traditional resumes fail to capture real engineering capability. Text resumes miss commit consistency, architectural clean ratios, open source maintenance, and code review rigor. 
 
-**DevTrack solves this by:**
+**Codefolio solves this by:**
 1. Verifying developer identity through GitHub data pipelines.
 2. Computing objective, multi-factor Developer Scores (0–1000).
 3. Providing a high-utility developer network to showcase projects, find co-founders, and match with high-pay tech roles.
@@ -118,7 +118,7 @@ graph TD
   Navbar --> Profile[Developer Profile /u/:username]
 
   Profile --> GitHubAPI[GitHub REST & GraphQL API]
-  Profile --> ScoreEngine[DevTrack Score Engine]
+  Profile --> ScoreEngine[Codefolio Score Engine]
   Profile --> DevCard[Developer Card Component]
 
   ScoreEngine --> LocalStorage[LocalStorage / Auth Context]
@@ -234,7 +234,7 @@ A real-time developer timeline for:
 
 ## 📱 Mobile & PWA Experience
 
-DevTrack is designed with a **mobile-first PWA architecture**:
+Codefolio is designed with a **mobile-first PWA architecture**:
 - **Single Sticky Top Bar**: Contains logo, search trigger, notifications, messages, avatar, and menu toggle.
 - **5-Tab Bottom Navigation**:
   1. 🏠 **Home** (`/feed`)
@@ -248,7 +248,7 @@ DevTrack is designed with a **mobile-first PWA architecture**:
 
 ## ☀️ Dual-Theme System
 
-DevTrack features two official theme modes:
+Codefolio features two official theme modes:
 - **🌙 Dark Theme**: Glassmorphism with deep slate backdrops, neon cyan/purple accents.
 - **☀️ Pure White Theme**: Crisp white layout inspired by Notion, Raycast Light, and Linear.
 
@@ -296,4 +296,4 @@ Contributions are welcome! Please follow these steps:
 
 Distributed under the **MIT License**. See `LICENSE` for details.
 
-Developed with ❤️ for the global developer community by **[DevTrack Team](https://github.com/arupdas0825/Dev-Track)**.
+Developed with ❤️ for the global developer community by **[Codefolio Team](https://github.com/arupdas0825/Dev-Track)**.

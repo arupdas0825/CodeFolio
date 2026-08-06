@@ -2,8 +2,8 @@ import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth, signInWithPopup, GithubAuthProvider, signOut, onAuthStateChanged, User, Auth } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, writeBatch, increment as firestoreIncrement, Firestore } from "firebase/firestore";
 import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
-import { UserDashboardData, GitHubRepository, GitHubProfile, ContributionStats, DeveloperScore, UserProfileDoc, UserAnalyticsDoc, DevTrackUser } from "../types";
-export type { DevTrackUser };
+import { UserDashboardData, GitHubRepository, GitHubProfile, ContributionStats, DeveloperScore, UserProfileDoc, UserAnalyticsDoc, CodefolioUser } from "../types";
+export type { CodefolioUser };
 import { GitHubUserService } from "../services/github/github-user.service";
 import { GitHubRepositoryService } from "../services/github/github-repository.service";
 import { GitHubAnalyticsService } from "../services/github/github-analytics.service";
@@ -51,7 +51,7 @@ if (isFirebaseEnabled) {
 }
 
 // 1. Auth Handlers
-export async function signInWithGitHub(): Promise<DevTrackUser> {
+export async function signInWithGitHub(): Promise<CodefolioUser> {
   if (isFirebaseEnabled && auth) {
     const provider = new GithubAuthProvider();
     provider.addScope("read:user");
@@ -65,7 +65,7 @@ export async function signInWithGitHub(): Promise<DevTrackUser> {
     // Extract github username from profile
     const username = (user as any).reloadUserInfo?.screenName || user.displayName?.toLowerCase().replace(/\s/g, "") || "developer";
 
-    const dtUser: DevTrackUser = {
+    const dtUser: CodefolioUser = {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
@@ -76,9 +76,9 @@ export async function signInWithGitHub(): Promise<DevTrackUser> {
 
     // Save user profile state
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_current_user", JSON.stringify(dtUser));
+      localStorage.setItem("codefolio_current_user", JSON.stringify(dtUser));
       if (token) {
-        localStorage.setItem("devtrack_github_token", token);
+        localStorage.setItem("codefolio_github_token", token);
       }
     }
 
@@ -95,18 +95,18 @@ export async function logOutUser(): Promise<void> {
   }
   
   if (typeof window !== "undefined") {
-    localStorage.removeItem("devtrack_current_user");
-    localStorage.removeItem("devtrack_github_token");
+    localStorage.removeItem("codefolio_current_user");
+    localStorage.removeItem("codefolio_github_token");
   }
 }
 
-export function subscribeToAuthChanges(callback: (user: DevTrackUser | null) => void): () => void {
+export function subscribeToAuthChanges(callback: (user: CodefolioUser | null) => void): () => void {
   if (isFirebaseEnabled && auth) {
     return onAuthStateChanged(auth, async (user: User | null) => {
       if (user) {
         // Retrieve saved screenName or local storage session token
         let token: string | undefined = undefined;
-        const storedUserStr = localStorage.getItem("devtrack_current_user");
+        const storedUserStr = localStorage.getItem("codefolio_current_user");
         if (storedUserStr) {
           try {
             const parsed = JSON.parse(storedUserStr);
@@ -117,12 +117,12 @@ export function subscribeToAuthChanges(callback: (user: DevTrackUser | null) => 
         }
         
         if (!token && typeof window !== "undefined") {
-          token = localStorage.getItem("devtrack_github_token") || undefined;
+          token = localStorage.getItem("codefolio_github_token") || undefined;
         }
         
         const username = (user as any).reloadUserInfo?.screenName || user.displayName?.toLowerCase().replace(/\s/g, "") || "developer";
         
-        const dtUser: DevTrackUser = {
+        const dtUser: CodefolioUser = {
           uid: user.uid,
           email: user.email,
           displayName: user.displayName,
@@ -131,11 +131,11 @@ export function subscribeToAuthChanges(callback: (user: DevTrackUser | null) => 
           token,
         };
         
-        localStorage.setItem("devtrack_current_user", JSON.stringify(dtUser));
+        localStorage.setItem("codefolio_current_user", JSON.stringify(dtUser));
         callback(dtUser);
       } else {
-        localStorage.removeItem("devtrack_current_user");
-        localStorage.removeItem("devtrack_github_token");
+        localStorage.removeItem("codefolio_current_user");
+        localStorage.removeItem("codefolio_github_token");
         callback(null);
       }
     });
@@ -240,7 +240,7 @@ export async function syncUserAndReposInFirestore(
 
   // Also update local storage cache for fast rendering
   if (typeof window !== "undefined") {
-    localStorage.setItem(`devtrack_profile_${username.toLowerCase()}`, JSON.stringify({
+    localStorage.setItem(`codefolio_profile_${username.toLowerCase()}`, JSON.stringify({
       username: username.toLowerCase(),
       data: dashboardData,
       updatedAt: now,
@@ -371,7 +371,7 @@ export async function getUserFromFirestore(username: string, targetUid?: string)
 export async function saveDeveloperMetrics(username: string, data: any): Promise<void> {
   // Sync wrapper, if currentUser exists we sync using the proper schema
   if (typeof window !== "undefined") {
-    localStorage.setItem(`devtrack_profile_${username.toLowerCase()}`, JSON.stringify({
+    localStorage.setItem(`codefolio_profile_${username.toLowerCase()}`, JSON.stringify({
       username: username.toLowerCase(),
       data,
       updatedAt: new Date().toISOString(),
@@ -385,7 +385,7 @@ export async function getSavedDeveloperMetrics(username: string): Promise<any | 
     return firestoreUser;
   }
   if (typeof window !== "undefined") {
-    const stored = localStorage.getItem(`devtrack_profile_${username.toLowerCase()}`);
+    const stored = localStorage.getItem(`codefolio_profile_${username.toLowerCase()}`);
     if (stored) {
       try {
         return JSON.parse(stored).data;
@@ -418,7 +418,7 @@ export async function incrementProfileView(profileUid: string, viewerUid: string
   if (typeof window === "undefined") return;
   if (viewerUid === profileUid) return; // Don't count own views
 
-  const sessionKey = `devtrack_pv_${profileUid}`;
+  const sessionKey = `codefolio_pv_${profileUid}`;
   if (sessionStorage.getItem(sessionKey)) return; // Already counted this session
   sessionStorage.setItem(sessionKey, "1");
 

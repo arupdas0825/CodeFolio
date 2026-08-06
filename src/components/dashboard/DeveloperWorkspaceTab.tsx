@@ -83,14 +83,14 @@ export default function DeveloperWorkspaceTab({
   // Load goals
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedGoals = localStorage.getItem("devtrack_workspace_goals");
+      const savedGoals = localStorage.getItem("codefolio_workspace_goals");
       if (savedGoals) {
         try {
           setGoals(JSON.parse(savedGoals));
         } catch (e) {}
       } else {
         setGoals([
-          { text: "Fix DevTrack dashboard layout overlap", completed: true, updatedAt: Date.now() },
+          { text: "Fix Codefolio dashboard layout overlap", completed: true, updatedAt: Date.now() },
           { text: "Implement Developer Workspace premium tab", completed: false, updatedAt: Date.now() },
           { text: "Add drag-and-drop pinning for repositories", completed: false, updatedAt: Date.now() }
         ]);
@@ -101,7 +101,7 @@ export default function DeveloperWorkspaceTab({
   // Save goals
   const saveGoals = (updatedGoals: Goal[]) => {
     setGoals(updatedGoals);
-    localStorage.setItem("devtrack_workspace_goals", JSON.stringify(updatedGoals));
+    localStorage.setItem("codefolio_workspace_goals", JSON.stringify(updatedGoals));
   };
 
   const handleAddGoal = (text: string) => {
@@ -131,14 +131,14 @@ export default function DeveloperWorkspaceTab({
   // Load timer state
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedTime = localStorage.getItem("devtrack_workspace_timer_time");
+      const savedTime = localStorage.getItem("codefolio_workspace_timer_time");
       if (savedTime) setTimerTime(parseInt(savedTime, 10));
     }
   }, []);
 
   // Save timer time periodically
   useEffect(() => {
-    localStorage.setItem("devtrack_workspace_timer_time", timerTime.toString());
+    localStorage.setItem("codefolio_workspace_timer_time", timerTime.toString());
   }, [timerTime]);
 
   useEffect(() => {
@@ -157,7 +157,7 @@ export default function DeveloperWorkspaceTab({
   const handleResetTimer = () => {
     setTimerRunning(false);
     setTimerTime(0);
-    localStorage.setItem("devtrack_workspace_timer_time", "0");
+    localStorage.setItem("codefolio_workspace_timer_time", "0");
   };
 
   const formatTimer = (totalSeconds: number) => {
@@ -181,7 +181,7 @@ export default function DeveloperWorkspaceTab({
   // Load notes
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedNotes = localStorage.getItem("devtrack_workspace_notes");
+      const savedNotes = localStorage.getItem("codefolio_workspace_notes");
       if (savedNotes) {
         try {
           const parsed = JSON.parse(savedNotes);
@@ -209,7 +209,7 @@ export default function DeveloperWorkspaceTab({
         ];
         setNotes(defaultNotes);
         setSelectedNoteId("1");
-        localStorage.setItem("devtrack_workspace_notes", JSON.stringify(defaultNotes));
+        localStorage.setItem("codefolio_workspace_notes", JSON.stringify(defaultNotes));
       }
     }
   }, []);
@@ -229,7 +229,7 @@ export default function DeveloperWorkspaceTab({
     // Debounced Auto-Save
     if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
     autoSaveTimeout.current = setTimeout(() => {
-      localStorage.setItem("devtrack_workspace_notes", JSON.stringify(updated));
+      localStorage.setItem("codefolio_workspace_notes", JSON.stringify(updated));
       setSaveStatus("saved");
     }, 800);
   };
@@ -247,7 +247,7 @@ export default function DeveloperWorkspaceTab({
 
     if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
     autoSaveTimeout.current = setTimeout(() => {
-      localStorage.setItem("devtrack_workspace_notes", JSON.stringify(updated));
+      localStorage.setItem("codefolio_workspace_notes", JSON.stringify(updated));
       setSaveStatus("saved");
     }, 800);
   };
@@ -263,7 +263,7 @@ export default function DeveloperWorkspaceTab({
     const updated = [newNote, ...notes];
     setNotes(updated);
     setSelectedNoteId(newNote.id);
-    localStorage.setItem("devtrack_workspace_notes", JSON.stringify(updated));
+    localStorage.setItem("codefolio_workspace_notes", JSON.stringify(updated));
     setSaveStatus("saved");
   };
 
@@ -286,7 +286,7 @@ export default function DeveloperWorkspaceTab({
       return b.updatedAt - a.updatedAt;
     });
     setNotes(updated);
-    localStorage.setItem("devtrack_workspace_notes", JSON.stringify(updated));
+    localStorage.setItem("codefolio_workspace_notes", JSON.stringify(updated));
   };
 
   const handleDeleteNote = (noteId: string) => {
@@ -296,7 +296,7 @@ export default function DeveloperWorkspaceTab({
     if (selectedNoteId === noteId) {
       setSelectedNoteId(updated[0].id);
     }
-    localStorage.setItem("devtrack_workspace_notes", JSON.stringify(updated));
+    localStorage.setItem("codefolio_workspace_notes", JSON.stringify(updated));
   };
 
   // Insert utilities inside note
@@ -429,7 +429,7 @@ export default function DeveloperWorkspaceTab({
   // Load pinned repos from storage or default to top 4
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedPinned = localStorage.getItem("devtrack_workspace_pinned_repos");
+      const savedPinned = localStorage.getItem("codefolio_workspace_pinned_repos");
       if (savedPinned) {
         try {
           setPinnedRepos(JSON.parse(savedPinned));
@@ -445,7 +445,7 @@ export default function DeveloperWorkspaceTab({
 
   const savePinnedRepos = (updated: string[]) => {
     setPinnedRepos(updated);
-    localStorage.setItem("devtrack_workspace_pinned_repos", JSON.stringify(updated));
+    localStorage.setItem("codefolio_workspace_pinned_repos", JSON.stringify(updated));
   };
 
   // HTML5 Drag Event Handlers
@@ -507,7 +507,7 @@ export default function DeveloperWorkspaceTab({
     setGeneratingReport(true);
     setTimeout(() => {
       // Mock txt report generation & download
-      const reportText = `DEVTRACK ANALYTICS REPORT\n=========================\nDeveloper: ${profile.name || profile.login}\nGitHub Profile: ${profile.html_url}\nGrade: ${data.score?.grade || "A"}\nOverall Score: ${data.score?.overall || 85}/100\nActive Repository: ${activeRepoName}\nGenerated: ${new Date().toLocaleString()}\n`;
+      const reportText = `CODEFOLIO ANALYTICS REPORT\n=========================\nDeveloper: ${profile.name || profile.login}\nGitHub Profile: ${profile.html_url}\nGrade: ${data.score?.grade || "A"}\nOverall Score: ${data.score?.overall || 85}/100\nActive Repository: ${activeRepoName}\nGenerated: ${new Date().toLocaleString()}\n`;
       const blob = new Blob([reportText], { type: "text/plain" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);

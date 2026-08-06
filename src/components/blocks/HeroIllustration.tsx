@@ -47,7 +47,7 @@ export const HeroIllustration: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
-                DevTrack AI Engine <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                Codefolio AI Engine <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
               </h4>
               <p className="text-[11px] text-slate-400">Analyzing GitHub Repositories</p>
             </div>

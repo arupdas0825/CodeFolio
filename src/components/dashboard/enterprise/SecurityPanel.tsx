@@ -46,8 +46,8 @@ export default function SecurityPanel() {
   const [twoFaEnforced, setTwoFaEnforced] = useState(true);
 
   // SAML Configuration fields
-  const [samlEndpoint, setSamlEndpoint] = useState("https://identity.okta.com/app/devtrack");
-  const [samlEntityId, setSamlEntityId] = useState("devtrack-enterprise-acme");
+  const [samlEndpoint, setSamlEndpoint] = useState("https://identity.okta.com/app/codefolio");
+  const [samlEntityId, setSamlEntityId] = useState("codefolio-enterprise-acme");
 
   const handleAddIpRange = (e: React.FormEvent) => {
     e.preventDefault();

@@ -14,12 +14,12 @@ import {
   Flame,
   ExternalLink,
 } from "lucide-react";
-import { DevTrackUser, UserProfileDoc } from "@/types/user";
+import { CodefolioUser, UserProfileDoc } from "@/types/user";
 
 interface MobileProfileSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  currentUser: DevTrackUser | null;
+  currentUser: CodefolioUser | null;
   profileDoc: UserProfileDoc | null;
   onLogout?: () => void;
   /** Ref to the "Me" button so focus can be restored on close */

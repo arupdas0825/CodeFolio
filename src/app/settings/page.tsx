@@ -27,7 +27,7 @@ export default function SettingsPage() {
   const [accentTheme, setAccentTheme] = useState<string>('indigo');
 
   useEffect(() => {
-    const stored = localStorage.getItem('devtrack_current_user');
+    const stored = localStorage.getItem('codefolio_current_user');
     if (stored) {
       try {
         setCurrentUser(JSON.parse(stored));
@@ -57,7 +57,7 @@ export default function SettingsPage() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentUser, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `devtrack_profile_${currentUser.username}.json`);
+    downloadAnchor.setAttribute("download", `codefolio_profile_${currentUser.username}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();

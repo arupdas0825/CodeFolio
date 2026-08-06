@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { DevTrackUser } from "@/lib/firebase";
+import { CodefolioUser } from "@/lib/firebase";
 import AuthModal from "./AuthModal";
 
 interface AuthModalContextType {
@@ -10,7 +10,7 @@ interface AuthModalContextType {
   openAuthModal: (options?: {
     title?: string;
     message?: string;
-    onSuccess?: (user: DevTrackUser) => void;
+    onSuccess?: (user: CodefolioUser) => void;
   }) => void;
   closeAuthModal: () => void;
 }
@@ -21,7 +21,7 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState<string | undefined>(undefined);
   const [message, setMessage] = useState<string | undefined>(undefined);
-  const [successCallback, setSuccessCallback] = useState<((user: DevTrackUser) => void) | undefined>(undefined);
+  const [successCallback, setSuccessCallback] = useState<((user: CodefolioUser) => void) | undefined>(undefined);
 
   const pathname = usePathname();
 
@@ -30,8 +30,8 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== "undefined") {
       localStorage.removeItem("authModal");
       sessionStorage.removeItem("authModal");
-      localStorage.removeItem("devtrack_auth_modal");
-      sessionStorage.removeItem("devtrack_auth_modal");
+      localStorage.removeItem("codefolio_auth_modal");
+      sessionStorage.removeItem("codefolio_auth_modal");
     }
     // Safety reset
     setIsOpen(false);
@@ -45,7 +45,7 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   const openAuthModal = (options?: {
     title?: string;
     message?: string;
-    onSuccess?: (user: DevTrackUser) => void;
+    onSuccess?: (user: CodefolioUser) => void;
   }) => {
     setTitle(options?.title);
     setMessage(options?.message);
@@ -58,7 +58,7 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
     setIsOpen(false);
   };
 
-  const handleSuccess = (user: DevTrackUser) => {
+  const handleSuccess = (user: CodefolioUser) => {
     if (successCallback) {
       successCallback(user);
     }

@@ -19,7 +19,7 @@ export default function OfflinePage() {
             You&apos;re currently offline
           </h1>
           <p className="text-sm text-text-secondary leading-relaxed font-sans">
-            We couldn&apos;t connect to DevTrack. Please check your internet connection and try reloading the page.
+            We couldn&apos;t connect to Codefolio. Please check your internet connection and try reloading the page.
           </p>
         </div>
 

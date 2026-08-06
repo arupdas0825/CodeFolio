@@ -148,7 +148,7 @@ export default function CodingCalendarTab({ data }: CodingCalendarTabProps) {
   // Starred charts helper (localStorage mock registry)
   const isChartStarred = (chartId: string) => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("devtrack_starred_charts");
+      const saved = localStorage.getItem("codefolio_starred_charts");
       if (saved) {
         try {
           return JSON.parse(saved).includes(chartId);
@@ -160,7 +160,7 @@ export default function CodingCalendarTab({ data }: CodingCalendarTabProps) {
 
   const toggleStarChart = (chartId: string) => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("devtrack_starred_charts");
+      const saved = localStorage.getItem("codefolio_starred_charts");
       let list: string[] = [];
       if (saved) {
         try {
@@ -168,7 +168,7 @@ export default function CodingCalendarTab({ data }: CodingCalendarTabProps) {
         } catch (e) {}
       }
       const updated = list.includes(chartId) ? list.filter(id => id !== chartId) : [...list, chartId];
-      localStorage.setItem("devtrack_starred_charts", JSON.stringify(updated));
+      localStorage.setItem("codefolio_starred_charts", JSON.stringify(updated));
       // Force trigger state sync (or simple UI alert)
       window.dispatchEvent(new Event("starred_charts_updated"));
     }

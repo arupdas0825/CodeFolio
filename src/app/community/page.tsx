@@ -62,7 +62,7 @@ export default function CommunityPage() {
             <span>Developer Ecosystem</span>
           </div>
           <h1 className="text-3xl font-extrabold text-white sm:text-4xl">
-            DevTrack Communities & Guilds
+            Codefolio Communities & Guilds
           </h1>
           <p className="mt-2 text-xs text-slate-400 max-w-xl">
             Connect with domain experts, participate in technical discussions, and join specialized engineering guilds.

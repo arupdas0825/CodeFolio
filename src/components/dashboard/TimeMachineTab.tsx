@@ -380,7 +380,7 @@ export default function TimeMachineTab({ data }: TimeMachineTabProps) {
 
   const handleExportMarkdown = () => {
     const md = `# Developer Time Machine — @${profile.login} GitHub Journey
-Generated on DevTrack v3
+Generated on Codefolio v3
 
 ## Account Stats
 - Account Age: ${calculateAccountAge(profile.created_at)}

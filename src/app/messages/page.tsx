@@ -8,7 +8,7 @@ export default function MessagesPage() {
   const [activeChat, setActiveChat] = useState('sarah_ai');
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState([
-    { sender: 'sarah_ai', text: 'Hey! Saw your project launch on DevTrack 2.0. Loved the vector store architecture!' },
+    { sender: 'sarah_ai', text: 'Hey! Saw your project launch on Codefolio 2.0. Loved the vector store architecture!' },
     { sender: 'me', text: 'Thanks Sarah! Appreciate the feedback. We compiled the similarity index to WebAssembly for instant client-side execution.' },
     { sender: 'sarah_ai', text: 'That is super clean. Would love to collaborate on the LLM memory integration.' }
   ]);

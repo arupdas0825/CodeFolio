@@ -34,7 +34,7 @@ export default function BillingPanel() {
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
-    if (couponCode.toLowerCase() === "devtrack20") {
+    if (couponCode.toLowerCase() === "codefolio20") {
       setCouponApplied(true);
       setCouponError(false);
     } else {
@@ -176,7 +176,7 @@ export default function BillingPanel() {
             <form onSubmit={handleApplyCoupon} className="flex gap-2">
               <input
                 type="text"
-                placeholder="e.g. DEVTRACK20"
+                placeholder="e.g. CODEFOLIO20"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
                 className="bg-[#0D1117] border border-[#30363D] rounded-lg px-3 py-2 text-xs text-[#F0F6FC] focus:outline-none flex-1"
@@ -186,7 +186,7 @@ export default function BillingPanel() {
               </button>
             </form>
             {couponApplied && <span className="text-[#3FB950] text-[10px] block mt-1">✓ Promo applied: 20% discount configured.</span>}
-            {couponError && <span className="text-[#F85149] text-[10px] block mt-1">✗ Invalid coupon code. Try DEVTRACK20.</span>}
+            {couponError && <span className="text-[#F85149] text-[10px] block mt-1">✗ Invalid coupon code. Try CODEFOLIO20.</span>}
           </div>
 
           <div className="space-y-1.5 flex-1">

@@ -17,7 +17,7 @@ export default function Footer() {
     <footer className="relative w-full border-t border-border/60 bg-background py-12 md:py-20 overflow-hidden font-mono mt-auto">
       {/* Large subtle background brand typography */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[12vw] font-extrabold text-surface/20 select-none pointer-events-none tracking-widest font-display uppercase print:hidden">
-        DEVTRACK
+        CODEFOLIO
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
@@ -124,7 +124,7 @@ export default function Footer() {
         {/* Footer Meta Details Row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-[9px] text-text-secondary font-mono">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
-            <span>© {currentYear} DevTrack. All rights reserved.</span>
+            <span>© {currentYear} Codefolio. All rights reserved.</span>
             <span>•</span>
             <span>Version: <strong className="text-text-primary">v3.5.0-beta</strong></span>
             <span>•</span>

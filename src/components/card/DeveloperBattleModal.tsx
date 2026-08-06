@@ -160,20 +160,20 @@ export default function DeveloperBattleModal({
       ctx.fillRect(0, 0, 600, 400);
       ctx.fillStyle = "#6366F1";
       ctx.font = "bold 24px sans-serif";
-      ctx.fillText("DevTrack 2.0 Identity Card", 40, 50);
+      ctx.fillText("Codefolio 2.0 Identity Card", 40, 50);
       ctx.fillStyle = "#FFFFFF";
       ctx.font = "bold 20px sans-serif";
       ctx.fillText(`Developer: @${username}`, 40, 100);
       ctx.fillStyle = "#94A3B8";
       ctx.font = "14px sans-serif";
-      ctx.fillText("Verified DevTrack Score & Profile Card", 40, 130);
+      ctx.fillText("Verified Codefolio Score & Profile Card", 40, 130);
 
       canvas.toBlob((blob) => {
         if (!blob) return;
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `devtrack_card_${username}.png`;
+        a.download = `codefolio_card_${username}.png`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -186,9 +186,9 @@ export default function DeveloperBattleModal({
     const shareUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/u/${username}`;
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(shareUrl);
-      alert(`DevTrack profile URL copied to clipboard: ${shareUrl}`);
+      alert(`Codefolio profile URL copied to clipboard: ${shareUrl}`);
     } else {
-      alert(`DevTrack profile URL: ${shareUrl}`);
+      alert(`Codefolio profile URL: ${shareUrl}`);
     }
   };
 
@@ -273,7 +273,7 @@ export default function DeveloperBattleModal({
               </div>
 
               <span className="text-[11px] font-bold tracking-widest text-accent uppercase font-space-grotesk mb-2">
-                DEVTRACK AI SYSTEM SCAN
+                CODEFOLIO AI SYSTEM SCAN
               </span>
               <h3 className="text-lg sm:text-xl font-bold font-space-grotesk text-white mb-6 min-h-[3.5rem] flex items-center justify-center">
                 {LOADING_STEPS[loadingStepIndex]}
@@ -520,7 +520,7 @@ export default function DeveloperBattleModal({
               <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-950/60 via-[#161B22] to-indigo-950/60 border border-purple-500/40 shadow-2xl text-center">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold mb-2">
                   <Trophy size={14} className="text-amber-400" />
-                  <span>OFFICIAL DEVTRACK BATTLE RESULT</span>
+                  <span>OFFICIAL CODEFOLIO BATTLE RESULT</span>
                 </div>
                 <p className="text-sm sm:text-base font-semibold font-space-grotesk text-white max-w-3xl mx-auto leading-relaxed">
                   {getBattleVerdict()}

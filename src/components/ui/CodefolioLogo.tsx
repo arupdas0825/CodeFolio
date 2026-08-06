@@ -2,13 +2,13 @@
 
 import React from 'react';
 
-export interface DevTrackLogoProps {
+export interface CodefolioLogoProps {
   className?: string;
   size?: number;
   animated?: boolean;
 }
 
-export const DevTrackLogo: React.FC<DevTrackLogoProps> = ({ 
+export const CodefolioLogo: React.FC<CodefolioLogoProps> = ({ 
   className = '', 
   size = 38,
   animated = true
@@ -26,11 +26,11 @@ export const DevTrackLogo: React.FC<DevTrackLogoProps> = ({
         className={`relative z-10 flex items-center justify-center ${animated ? 'animate-logo-float' : ''}`}
       >
         <img
-          src="/devtrack-logo.png"
-          alt="DevTrack Official Brand Logo"
+          src="/codefolio-logo.png"
+          alt="Codefolio Official Brand Logo"
           width={size}
           height={size}
-          className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-300 antialiased"
+          className="w-full h-full object-contain transform group-hover:scale-[1.03] transition-transform duration-500 ease-out antialiased"
         />
       </div>
     </div>

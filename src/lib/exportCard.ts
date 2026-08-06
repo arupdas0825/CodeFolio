@@ -3,8 +3,8 @@ import { renderCardImage } from '@/components/card/fut/capture';
 export function isUserAuthenticated(): boolean {
   if (typeof window === 'undefined') return false;
   try {
-    const user = localStorage.getItem('devtrack_current_user');
-    const token = localStorage.getItem('devtrack_github_token');
+    const user = localStorage.getItem('codefolio_current_user');
+    const token = localStorage.getItem('codefolio_github_token');
     return !!(user || token);
   } catch (e) {
     return false;
@@ -36,7 +36,7 @@ export async function exportCardToPNG(cardElement: HTMLElement, username: string
 
   // Create temporary link and download
   const link = document.createElement('a');
-  link.download = `devtrack_card_${username.toLowerCase()}.png`;
+  link.download = `codefolio_card_${username.toLowerCase()}.png`;
   link.href = dataUrl;
   document.body.appendChild(link);
   link.click();
@@ -85,7 +85,7 @@ export async function exportCardToPDF(cardElement: HTMLElement, username: string
   pdf.setTextColor(255, 255, 255);
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(18);
-  pdf.text('DevTrack Verified Developer Identity', pageWidth / 2, 22, { align: 'center' });
+  pdf.text('Codefolio Verified Developer Identity', pageWidth / 2, 22, { align: 'center' });
 
   pdf.setTextColor(129, 140, 248); // Indigo 400
   pdf.setFontSize(10);
@@ -107,12 +107,12 @@ export async function exportCardToPDF(cardElement: HTMLElement, username: string
   pdf.setFontSize(8);
   pdf.setFont('helvetica', 'normal');
   pdf.text(
-    'Verified via Live GitHub Telemetry • DevTrack Developer Platform',
+    'Verified via Live GitHub Telemetry • Codefolio Developer Platform',
     pageWidth / 2,
     yPos + cardHeight + 15,
     { align: 'center' }
   );
 
-  pdf.save(`devtrack_card_${username.toLowerCase()}.pdf`);
+  pdf.save(`codefolio_card_${username.toLowerCase()}.pdf`);
 }
 

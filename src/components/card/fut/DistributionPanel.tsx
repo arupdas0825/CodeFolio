@@ -6,7 +6,7 @@ import type { DeveloperCardData, DeveloperTier } from '../DeveloperCard';
 
 // Small "where you stand" histogram, ported from gitfut's DistributionPanel.
 // Ported 1:1 in spirit — sqrt-scaled bar heights, dashed marker line, "Top X%"
-// copy — but plotted against DIST_MIN..100 (DevTrack's numericScore range) and
+// copy — but plotted against DIST_MIN..100 (Codefolio's numericScore range) and
 // the illustrative synthetic dataset in ./distribution-data instead of a real
 // sampled population.
 const W = 328;
@@ -46,7 +46,7 @@ export default function DistributionPanel({ data }: { data: DeveloperCardData })
         viewBox={`0 0 ${W} ${H + 16}`}
         className="w-full"
         role="img"
-        aria-label={`Score ${overall} versus an illustrative DevTrack score distribution`}
+        aria-label={`Score ${overall} versus an illustrative Codefolio score distribution`}
       >
         {DIST_COUNTS.map((c, i) =>
           c === 0 ? null : (
@@ -100,7 +100,7 @@ export default function DistributionPanel({ data }: { data: DeveloperCardData })
         <span className="font-mono text-[11px] font-bold tracking-[.14em]" style={{ color: accent }}>
           {all.label.toUpperCase()}
         </span>
-        <span className="ml-1.5">of DevTrack (est.)</span>
+        <span className="ml-1.5">of Codefolio (est.)</span>
         <span aria-hidden className="mx-2 inline-block h-2.5 w-px bg-white/15 align-[-1px]" />
         <span className="font-mono text-[11px] font-bold tracking-[.14em]" style={{ color: accent }}>
           {act.label.toUpperCase()}

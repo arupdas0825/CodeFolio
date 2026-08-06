@@ -107,7 +107,7 @@ export default function ShareModal({
     // Draw Header Text (Brand)
     ctx.fillStyle = "#8B949E";
     ctx.font = "bold 13px Courier New";
-    ctx.fillText("DEVTRACK // Public Portfolio Card", 40, 50);
+    ctx.fillText("CODEFOLIO // Public Portfolio Card", 40, 50);
 
     // Draw User Name
     ctx.fillStyle = "#F0F6FC";
@@ -173,12 +173,12 @@ export default function ShareModal({
     ctx.textBaseline = "bottom";
     ctx.fillStyle = "#8B949E";
     ctx.font = "11px Courier New";
-    ctx.fillText("Verify telemetry at: devtrack.dev", 40, 370);
+    ctx.fillText("Verify telemetry at: codefolio.dev", 40, 370);
 
     // Trigger PNG Download
     const dataUrl = canvas.toDataURL("image/png");
     const link = document.createElement("a");
-    link.download = `devtrack-profile-${username}.png`;
+    link.download = `codefolio-profile-${username}.png`;
     link.href = dataUrl;
     link.click();
   };
@@ -251,7 +251,7 @@ export default function ShareModal({
             <span className="text-[9px] font-bold text-text-secondary uppercase block">Social Platforms</span>
             <div className="grid grid-cols-3 gap-2">
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out my DevTrack developer profile & analytics report: ${publicUrl}`)}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out my Codefolio developer profile & analytics report: ${publicUrl}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-[#30363D] hover:bg-[#0D1117] text-text-primary transition-all font-bold"

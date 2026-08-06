@@ -1,4 +1,4 @@
-export interface DevTrackUser {
+export interface CodefolioUser {
   uid: string;
   email: string | null;
   displayName: string | null;

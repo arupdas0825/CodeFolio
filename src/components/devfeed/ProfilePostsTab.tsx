@@ -5,7 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import { FileText, Loader2 } from "lucide-react";
 import { getPostsByUsername } from "@/services/devfeedService";
 import { DevFeedPost } from "@/types/devfeed";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 import { SkeletonFeed } from "@/components/ui/SkeletonLoader";
 import EmptyState from "@/components/ui/EmptyState";
 import PostCard from "./PostCard";
@@ -13,7 +13,7 @@ import { useToast } from "./useToast";
 
 interface ProfilePostsTabProps {
   username: string;
-  currentUser: DevTrackUser | null;
+  currentUser: CodefolioUser | null;
 }
 
 export default function ProfilePostsTab({

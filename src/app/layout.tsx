@@ -33,8 +33,8 @@ const dinMedium = localFont({ src: "./fonts/DINPro-CondMedium.otf", variable: "-
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
-  title: "DevTrack — The Professional Developer Identity Platform",
-  description: "Build your professional developer identity. DevTrack transforms raw GitHub commits, pull requests, and repositories into verified profile cards, real-time developer scores, and a social developer network.",
+  title: "Codefolio — The Professional Developer Identity Platform",
+  description: "Build your professional developer identity. Codefolio transforms raw GitHub commits, pull requests, and repositories into verified profile cards, real-time developer scores, and a social developer network.",
   keywords: ["developer identity", "developer network", "GitHub profile card", "developer score", "open source portfolio", "developer ecosystem"],
   icons: {
     icon: [
@@ -50,24 +50,24 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "DevTrack",
+    title: "Codefolio",
   },
   openGraph: {
-    title: "DevTrack — The Professional Developer Identity Platform",
+    title: "Codefolio — The Professional Developer Identity Platform",
     description: "Build your professional developer identity. Transform GitHub activity into verified profile cards and developer scores.",
     images: [
       {
-        url: "/og-image.png?v=1",
+        url: "/codefolio-logo.png?v=1",
         width: 1200,
         height: 1200,
-        alt: "DevTrack Logo",
+        alt: "Codefolio Logo",
       },
     ],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0B0E11",
+  themeColor: "#0f172a",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

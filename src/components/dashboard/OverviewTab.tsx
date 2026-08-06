@@ -62,7 +62,7 @@ export default function OverviewTab({ data }: OverviewTabProps) {
   // Load layout and collapsed state from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedCollapsed = localStorage.getItem("devtrack_collapsed_widgets");
+      const savedCollapsed = localStorage.getItem("codefolio_collapsed_widgets");
       if (savedCollapsed) {
         try {
           setCollapsedWidgets(JSON.parse(savedCollapsed));
@@ -70,7 +70,7 @@ export default function OverviewTab({ data }: OverviewTabProps) {
       }
 
       const loadStarred = () => {
-        const savedStarred = localStorage.getItem("devtrack_starred_charts");
+        const savedStarred = localStorage.getItem("codefolio_starred_charts");
         if (savedStarred) {
           try {
             setStarredCharts(JSON.parse(savedStarred));
@@ -100,7 +100,7 @@ export default function OverviewTab({ data }: OverviewTabProps) {
     const updated = { ...collapsedWidgets, [id]: !collapsedWidgets[id] };
     setCollapsedWidgets(updated);
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_collapsed_widgets", JSON.stringify(updated));
+      localStorage.setItem("codefolio_collapsed_widgets", JSON.stringify(updated));
     }
   };
 

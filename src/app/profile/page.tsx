@@ -9,7 +9,7 @@ export default function ProfileRedirectPage() {
   useEffect(() => {
     let username = 'shadcn';
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('devtrack_current_user');
+      const stored = localStorage.getItem('codefolio_current_user');
       if (stored) {
         try {
           const parsed = JSON.parse(stored);

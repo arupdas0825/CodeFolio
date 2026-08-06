@@ -41,7 +41,7 @@ export default function RepositoriesTab({ data, githubToken }: RepositoriesTabPr
   // Load pinned state on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("devtrack_pinned_repos");
+      const saved = localStorage.getItem("codefolio_pinned_repos");
       if (saved) {
         try {
           setPinnedRepoIds(JSON.parse(saved));
@@ -85,7 +85,7 @@ export default function RepositoriesTab({ data, githubToken }: RepositoriesTabPr
     
     setPinnedRepoIds(updated);
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_pinned_repos", JSON.stringify(updated));
+      localStorage.setItem("codefolio_pinned_repos", JSON.stringify(updated));
     }
   };
 

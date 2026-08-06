@@ -50,7 +50,7 @@ export default function SingleProjectPage({ params }: PageProps) {
 
           <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
-              DevTrack 2.0 Identity Engine
+              Codefolio 2.0 Identity Engine
             </h1>
             <p className="mt-3 text-sm text-slate-300 leading-relaxed max-w-3xl">
               Next-generation Developer Identity Platform that transforms GitHub commits, pull requests, and repositories into verified profile cards, real-time developer scores, and AI resume insights.
@@ -69,7 +69,7 @@ export default function SingleProjectPage({ params }: PageProps) {
               <span>GitHub Repository</span>
             </a>
             <a
-              href="https://devtrack.io"
+              href="https://codefolio.io"
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/60 px-5 py-2.5 text-xs font-semibold text-slate-200 hover:border-indigo-500/40 transition-all"

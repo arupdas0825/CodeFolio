@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Heart } from "lucide-react";
 import { toggleLike, isLiked } from "@/services/devfeedService";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 import { useToast } from "./useToast";
 
 interface LikeButtonProps {
   postId: string;
   initialCount: number;
-  currentUser: DevTrackUser | null;
+  currentUser: CodefolioUser | null;
 }
 
 export default function LikeButton({

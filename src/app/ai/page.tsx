@@ -32,7 +32,7 @@ export default function AISuitePage() {
         'Verified open source repository contributions'
       ],
       suggestions: [
-        'Add link to your DevTrack 2.0 verified Developer Card',
+        'Add link to your Codefolio 2.0 verified Developer Card',
         'Elaborate on SIMD optimization experience in vector databases'
       ]
     });
@@ -58,7 +58,7 @@ export default function AISuitePage() {
           <div className="relative z-10 space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1 text-xs font-semibold text-purple-300">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>DevTrack AI Intelligence Layer</span>
+              <span>Codefolio AI Intelligence Layer</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
               AI-Powered Developer Insights & Analytics

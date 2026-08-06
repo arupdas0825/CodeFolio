@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { DevTrackUser, UserProfileDoc } from "@/types/user";
+import { CodefolioUser, UserProfileDoc } from "@/types/user";
 import { DevFeedPost, DevFeedComment } from "@/types/devfeed";
 import { SuggestedDeveloper } from "@/services/devfeedService";
 import PostComposer from "./PostComposer";
@@ -38,13 +38,13 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 interface FeedHomeProps {
-  currentUser: DevTrackUser | null;
+  currentUser: CodefolioUser | null;
   onLogout?: () => void;
 }
 
 // ─── Saved panel ──────────────────────────────────────────────────────────────
 
-function SavedPanel({ currentUser }: { currentUser: DevTrackUser }) {
+function SavedPanel({ currentUser }: { currentUser: CodefolioUser }) {
   const [posts, setPosts] = useState<DevFeedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -89,7 +89,7 @@ function NetworkPanel({
   currentUser,
   suggestions,
 }: {
-  currentUser: DevTrackUser;
+  currentUser: CodefolioUser;
   suggestions: SuggestedDeveloper[];
 }) {
   const [following, setFollowing] = useState<SuggestedDeveloper[]>([]);
@@ -283,7 +283,7 @@ export default function FeedHome({ currentUser, onLogout }: FeedHomeProps) {
           </h2>
           <p className="text-xs text-text-secondary max-w-xs leading-relaxed">
             Share milestones, code snippets, and discoveries. Follow other
-            developers across DevTrack to see their updates here.
+            developers across Codefolio to see their updates here.
           </p>
         </div>
         <button

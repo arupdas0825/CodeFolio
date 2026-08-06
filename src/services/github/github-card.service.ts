@@ -43,7 +43,7 @@ export class GitHubCardService {
       throw new Error('Please enter a valid GitHub username.');
     }
 
-    const resolvedToken: string | undefined = token || (typeof window !== 'undefined' ? (localStorage.getItem('devtrack_github_token') ?? undefined) : undefined);
+    const resolvedToken: string | undefined = token || (typeof window !== 'undefined' ? (localStorage.getItem('codefolio_github_token') ?? undefined) : undefined);
 
     // 1. Fetch User Profile
     const profileRes = await fetch(`https://api.github.com/users/${cleanUser}`, {

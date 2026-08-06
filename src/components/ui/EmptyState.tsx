@@ -28,8 +28,8 @@ export default function EmptyState({
           icon
         ) : (
           <img
-            src="/devtrack-logo.png"
-            alt="DevTrack Brand Logo"
+            src="/codefolio-logo.png"
+            alt="Codefolio Brand Logo"
             className="h-10 w-10 object-contain animate-logo-breathe"
           />
         )}

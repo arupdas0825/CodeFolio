@@ -5,14 +5,14 @@ import { AnimatePresence } from "framer-motion";
 import { Rss, Loader2 } from "lucide-react";
 import { getFeedForUser, getEveryoneFeed } from "@/services/devfeedService";
 import { DevFeedPost } from "@/types/devfeed";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 import { SkeletonFeed } from "@/components/ui/SkeletonLoader";
 import EmptyState from "@/components/ui/EmptyState";
 import PostCard from "./PostCard";
 import { useToast } from "./useToast";
 
 interface FeedListProps {
-  currentUser: DevTrackUser;
+  currentUser: CodefolioUser;
   /** Prepend a newly created post without re-fetching */
   newPost?: DevFeedPost | null;
   /** Whether to show everyone's posts or only following */
@@ -97,7 +97,7 @@ export default function FeedList({ currentUser, newPost, mode = "everyone" }: Fe
         title={mode === "following" ? "No posts from following yet" : "No posts yet"}
         description={
           mode === "following"
-            ? "Follow more developers or check the Everyone tab to discover activity across DevTrack."
+            ? "Follow more developers or check the Everyone tab to discover activity across Codefolio."
             : "Be the first to share a milestone, code snippet, or discovery with the community!"
         }
       />

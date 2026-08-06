@@ -182,7 +182,7 @@ export const useSidebarStore = create<SidebarState>()(
         set({ isWorkspaceMenuOpen: open }),
     }),
     {
-      name: "devtrack_sidebar_store",
+      name: "codefolio_sidebar_store",
       partialize: (state) => ({
         isSidebarCollapsed: state.isSidebarCollapsed,
         activeTab: state.activeTab,

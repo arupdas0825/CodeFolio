@@ -32,7 +32,7 @@ import {
   DevFeedFollow,
   CreatePostInput,
 } from "@/types/devfeed";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 
 const isFirebaseEnabled =
   typeof window !== "undefined" &&
@@ -96,7 +96,7 @@ function docToComment(snap: QueryDocumentSnapshot<DocumentData>): DevFeedComment
  * Creates a new post authored by the given user.
  */
 export async function createPost(
-  author: DevTrackUser,
+  author: CodefolioUser,
   input: CreatePostInput
 ): Promise<DevFeedPost> {
   assertFirebase();
@@ -318,7 +318,7 @@ export async function isLiked(postId: string, userId: string): Promise<boolean> 
  */
 export async function addComment(
   postId: string,
-  author: DevTrackUser,
+  author: CodefolioUser,
   content: string
 ): Promise<DevFeedComment> {
   assertFirebase();

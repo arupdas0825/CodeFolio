@@ -359,7 +359,7 @@ export default function DeveloperCareerHub({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("devtrack_saved_resumes");
+      const stored = localStorage.getItem("codefolio_saved_resumes");
       if (stored) {
         setSavedVersions(JSON.parse(stored));
       } else {
@@ -373,7 +373,7 @@ export default function DeveloperCareerHub({
           }
         ];
         setSavedVersions(defaults);
-        localStorage.setItem("devtrack_saved_resumes", JSON.stringify(defaults));
+        localStorage.setItem("codefolio_saved_resumes", JSON.stringify(defaults));
       }
     }
   }, [profile.login]);
@@ -391,7 +391,7 @@ export default function DeveloperCareerHub({
     };
     const updated = [newVer, ...savedVersions];
     setSavedVersions(updated);
-    localStorage.setItem("devtrack_saved_resumes", JSON.stringify(updated));
+    localStorage.setItem("codefolio_saved_resumes", JSON.stringify(updated));
     alert("Version saved! You can access it in the 'Resume Versions' tab.");
   };
 
@@ -400,7 +400,7 @@ export default function DeveloperCareerHub({
     if (!confirm("Are you sure you want to delete this version?")) return;
     const updated = savedVersions.filter(v => v.id !== id);
     setSavedVersions(updated);
-    localStorage.setItem("devtrack_saved_resumes", JSON.stringify(updated));
+    localStorage.setItem("codefolio_saved_resumes", JSON.stringify(updated));
   };
 
   // --- 12. Application Tracker states ---
@@ -418,7 +418,7 @@ export default function DeveloperCareerHub({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("devtrack_job_applications");
+      const stored = localStorage.getItem("codefolio_job_applications");
       if (stored) {
         setApplications(JSON.parse(stored));
       } else {
@@ -445,7 +445,7 @@ export default function DeveloperCareerHub({
           }
         ];
         setApplications(defaults);
-        localStorage.setItem("devtrack_job_applications", JSON.stringify(defaults));
+        localStorage.setItem("codefolio_job_applications", JSON.stringify(defaults));
       }
     }
   }, []);
@@ -461,7 +461,7 @@ export default function DeveloperCareerHub({
     };
     const updated = [app, ...applications];
     setApplications(updated);
-    localStorage.setItem("devtrack_job_applications", JSON.stringify(updated));
+    localStorage.setItem("codefolio_job_applications", JSON.stringify(updated));
     setNewApp({
       company: "",
       role: "",
@@ -478,13 +478,13 @@ export default function DeveloperCareerHub({
     if (!confirm("Are you sure you want to delete this job application?")) return;
     const updated = applications.filter(a => a.id !== id);
     setApplications(updated);
-    localStorage.setItem("devtrack_job_applications", JSON.stringify(updated));
+    localStorage.setItem("codefolio_job_applications", JSON.stringify(updated));
   };
 
   const handleStatusChange = (id: string, newStatus: any) => {
     const updated = applications.map(a => (a.id === id ? { ...a, status: newStatus } : a));
     setApplications(updated);
-    localStorage.setItem("devtrack_job_applications", JSON.stringify(updated));
+    localStorage.setItem("codefolio_job_applications", JSON.stringify(updated));
   };
 
   // --- 13. AI Career Assistant Chat states ---

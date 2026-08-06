@@ -10,10 +10,10 @@ import {
   GitBranch,
   Flame,
 } from "lucide-react";
-import { DevTrackUser, UserProfileDoc } from "@/types/user";
+import { CodefolioUser, UserProfileDoc } from "@/types/user";
 
 interface LeftProfileSidebarProps {
-  currentUser: DevTrackUser | null;
+  currentUser: CodefolioUser | null;
   profileDoc: UserProfileDoc | null;
   loading?: boolean;
 }

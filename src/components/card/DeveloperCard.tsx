@@ -9,11 +9,11 @@ import DistributionPanel from './fut/DistributionPanel';
 import CardActionsPanel from './fut/CardActionsPanel';
 import { resolveTierTheme } from './fut/finishTheme';
 
-// DevTrack's "Generate your developer card" feature — visual system ported
+// Codefolio's "Generate your developer card" feature — visual system ported
 // from gitfut (github.com/<gitfut>), a FUT/FIFA-Ultimate-Team-style card
-// generator with a much more polished, professional card frame than DevTrack's
+// generator with a much more polished, professional card frame than Codefolio's
 // old badge-and-stat-grid layout. The FIFA stats (PAC/SHO/PAS/DRI/DEF/PHY) were
-// intentionally NOT carried over — DevTrack keeps its own metrics (Repos,
+// intentionally NOT carried over — Codefolio keeps its own metrics (Repos,
 // Stars, Grade, Streak, etc.); only gitfut's card frame, fonts, avatar
 // masking, tilt/hover, country flag, language logo, and PNG/PDF/share export
 // pipeline were ported "as is". See src/components/card/fut/ for the ported

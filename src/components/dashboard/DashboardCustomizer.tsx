@@ -33,7 +33,7 @@ export default function DashboardCustomizer({ onLayoutChange }: DashboardCustomi
   // Load saved layout on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("devtrack_widget_layout");
+      const saved = localStorage.getItem("codefolio_widget_layout");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -52,7 +52,7 @@ export default function DashboardCustomizer({ onLayoutChange }: DashboardCustomi
     setWidgets(newWidgets);
     onLayoutChange(newWidgets);
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_widget_layout", JSON.stringify(newWidgets));
+      localStorage.setItem("codefolio_widget_layout", JSON.stringify(newWidgets));
     }
   };
 

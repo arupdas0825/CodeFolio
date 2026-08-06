@@ -7,8 +7,8 @@ import { resolveTierTheme } from './finishTheme';
 import type { DeveloperCardData, DeveloperTier } from '../DeveloperCard';
 
 // Action row styled after gitfut's CardActions.tsx (split Download button +
-// brand share icons), simplified to what DevTrack needs (PNG/PDF export + link
-// share) and wired through DevTrack's existing sign-in gate (onRequireAuth).
+// brand share icons), simplified to what Codefolio needs (PNG/PDF export + link
+// share) and wired through Codefolio's existing sign-in gate (onRequireAuth).
 export default function CardActionsPanel({
   data,
   cardRef,
@@ -77,9 +77,9 @@ export default function CardActionsPanel({
     setError(null);
     try {
       const url = typeof window !== 'undefined' ? window.location.href : '';
-      const shareText = `Check out my DevTrack developer card, @${data.username}`;
+      const shareText = `Check out my Codefolio developer card, @${data.username}`;
       if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share({ title: 'DevTrack developer card', text: shareText, url }).catch(() => {});
+        await navigator.share({ title: 'Codefolio developer card', text: shareText, url }).catch(() => {});
       } else if (navigator.clipboard) {
         await navigator.clipboard.writeText(url);
       }

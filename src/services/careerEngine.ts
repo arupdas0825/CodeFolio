@@ -1,4 +1,4 @@
-// DevTrack Career Suite Engine Client Service
+// Codefolio Career Suite Engine Client Service
 // Integrates with HireSight-AI backend running on FastAPI (http://localhost:5000)
 
 const BASE_URL = process.env.NEXT_PUBLIC_HIRESIGHT_API_URL || "http://localhost:5000/api";
@@ -27,18 +27,18 @@ export const CareerEngine = {
   // Helper for cache lookups
   getCache<T>(key: string): T | null {
     if (typeof window === "undefined") return null;
-    const item = localStorage.getItem(`devtrack_cache_${key}`);
+    const item = localStorage.getItem(`codefolio_cache_${key}`);
     return item ? JSON.parse(item) as T : null;
   },
 
   setCache(key: string, data: any): void {
     if (typeof window === "undefined") return;
-    localStorage.setItem(`devtrack_cache_${key}`, JSON.stringify(data));
+    localStorage.setItem(`codefolio_cache_${key}`, JSON.stringify(data));
   },
 
   clearCache(key: string): void {
     if (typeof window === "undefined") return;
-    localStorage.removeItem(`devtrack_cache_${key}`);
+    localStorage.removeItem(`codefolio_cache_${key}`);
   },
 
   // 1. Resume Builder

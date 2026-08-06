@@ -91,13 +91,13 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
   // Load current user and stored custom About text
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('devtrack_current_user');
+      const stored = localStorage.getItem('codefolio_current_user');
       if (stored) {
         try {
           setCurrentUser(JSON.parse(stored));
         } catch (e) {}
       }
-      const savedAbout = localStorage.getItem(`devtrack_about_${username.toLowerCase()}`);
+      const savedAbout = localStorage.getItem(`codefolio_about_${username.toLowerCase()}`);
       if (savedAbout) {
         setCustomAbout(savedAbout);
         setAboutInput(savedAbout);
@@ -117,7 +117,7 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
     let isCancelled = false;
     setLoading(true);
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('devtrack_github_token') ?? undefined : undefined;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('codefolio_github_token') ?? undefined : undefined;
 
     Promise.all([
       GitHubCardService.fetchRealDeveloperCardData(username, token),
@@ -137,7 +137,7 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
         setIsFollowing(followingStatus);
 
         // If no custom about stored, prefill with GitHub bio
-        const savedAbout = typeof window !== 'undefined' ? localStorage.getItem(`devtrack_about_${username.toLowerCase()}`) : null;
+        const savedAbout = typeof window !== 'undefined' ? localStorage.getItem(`codefolio_about_${username.toLowerCase()}`) : null;
         if (!savedAbout && cardData.bio) {
           setCustomAbout(cardData.bio);
           setAboutInput(cardData.bio);
@@ -160,14 +160,14 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
     const trimmed = aboutInput.slice(0, 1000);
     setCustomAbout(trimmed);
     if (typeof window !== 'undefined') {
-      localStorage.setItem(`devtrack_about_${username.toLowerCase()}`, trimmed);
+      localStorage.setItem(`codefolio_about_${username.toLowerCase()}`, trimmed);
     }
     setIsEditingAbout(false);
   };
 
   // Handle live GitHub follow/unfollow functionality (Other User Profiles)
   const handleFollowToggle = async () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('devtrack_github_token') : null;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('codefolio_github_token') : null;
 
     if (!token) {
       setAuthActionTitle(`Sign in with GitHub to follow @${username}`);
@@ -214,8 +214,8 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
     ? Object.values(contributions.dailyContributions).reduce((sum, val) => sum + val, 0)
     : (contributions?.totalCommits || 0) + (contributions?.totalPRs || 0) + (contributions?.totalIssues || 0);
 
-  // DevTrack Achievements
-  const devTrackAchievements = [
+  // Codefolio Achievements
+  const codefolioAchievements = [
     {
       id: 'first_repo',
       title: 'First Repository',
@@ -803,7 +803,7 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
               </h3>
 
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-md mx-auto">
-                DevTrack is currently prioritizing the core Profile module as the foundation of developer identity. Social posts and developer updates will launch in an upcoming release.
+                Codefolio is currently prioritizing the core Profile module as the foundation of developer identity. Social posts and developer updates will launch in an upcoming release.
               </p>
 
               <div className="pt-2">
@@ -844,15 +844,15 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
                 </div>
               </div>
 
-              {/* DevTrack Auto-Awarded Achievements */}
+              {/* Codefolio Auto-Awarded Achievements */}
               <div className="space-y-4 pt-4 border-t border-white/10">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-white font-mono flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-indigo-400" />
-                  <span>DevTrack Verified Achievements</span>
+                  <span>Codefolio Verified Achievements</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {devTrackAchievements.map((ach) => {
+                  {codefolioAchievements.map((ach) => {
                     const IconComp = ach.icon;
                     return (
                       <div

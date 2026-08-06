@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DevTrackLogo } from '@/components/ui/DevTrackLogo';
+import { CodefolioLogo } from '@/components/ui/CodefolioLogo';
 import { logOutUser } from '@/lib/firebase';
 import { GithubIcon } from '@/components/ui/GithubIcon';
 import { TierAvatar } from '@/components/ui/TierAvatar';
@@ -77,7 +77,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (propUser) {
       setUser(propUser);
     } else if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('devtrack_current_user');
+      const stored = localStorage.getItem('codefolio_current_user');
       if (stored) {
         try {
           setUser(JSON.parse(stored));
@@ -113,7 +113,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     const timer = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('devtrack_github_token') ?? undefined : undefined;
+        const token = typeof window !== 'undefined' ? localStorage.getItem('codefolio_github_token') ?? undefined : undefined;
         const headers: Record<string, string> = { Accept: 'application/vnd.github.v3+json' };
         if (token) headers['Authorization'] = `token ${token}`;
 
@@ -249,9 +249,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               href="/feed" 
               className="group flex items-center gap-2.5 focus-visible:outline-none rounded-xl"
             >
-              <DevTrackLogo size={32} animated={false} />
+              <CodefolioLogo size={32} animated={false} />
               <span className="text-lg font-black tracking-tight text-white flex items-center gap-1.5 font-mono">
-                DevTrack
+                Codefolio
               </span>
             </Link>
 

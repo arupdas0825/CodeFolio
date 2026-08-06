@@ -5,7 +5,7 @@ import { resolveTierTheme } from './finishTheme';
 
 // Styled after gitfut's right-column "Scouting Metrics" panel (ScoutReport.tsx):
 // a labeled bar + score per signal. gitfut's numbers are the scoring engine's
-// per-stat percentile; DevTrack doesn't run that engine, so each bar here is a
+// per-stat percentile; Codefolio doesn't run that engine, so each bar here is a
 // simple illustrative 0-99 signal derived from the same log-scale shape
 // github-card.service.ts already uses for the overall numericScore — clearly a
 // "how strong is this signal" indicator, not a literal population percentile.

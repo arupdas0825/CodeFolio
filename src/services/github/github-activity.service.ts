@@ -63,7 +63,7 @@ export class GitHubActivityService {
   }
 
   static async fetchUserEvents(username: string, token?: string): Promise<LiveEvent[]> {
-    if (!username || username === "demo" || username === "devtrack-demo") {
+    if (!username || username === "demo" || username === "codefolio-demo") {
       return this.generateMockEvents();
     }
 

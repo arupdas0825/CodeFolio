@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 import { DevFeedPost } from "@/types/devfeed";
 import PostComposer from "./PostComposer";
 import FeedList from "./FeedList";
 
 interface DevFeedTabProps {
-  currentUser: DevTrackUser;
+  currentUser: CodefolioUser;
 }
 
 /**

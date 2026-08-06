@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Send, Loader2 } from "lucide-react";
 import { getComments, addComment } from "@/services/devfeedService";
 import { DevFeedComment } from "@/types/devfeed";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 import { useToast } from "./useToast";
 
 function formatRelativeTime(iso: string): string {
@@ -21,7 +21,7 @@ function formatRelativeTime(iso: string): string {
 
 interface CommentSectionProps {
   postId: string;
-  currentUser: DevTrackUser | null;
+  currentUser: CodefolioUser | null;
 }
 
 export default function CommentSection({ postId, currentUser }: CommentSectionProps) {

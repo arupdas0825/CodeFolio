@@ -11,7 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { createPost } from "@/services/devfeedService";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 import { DevFeedPost, PostType, CreatePostInput } from "@/types/devfeed";
 import { useToast } from "./useToast";
 
@@ -29,7 +29,7 @@ const CODE_LANGUAGES = [
 ];
 
 interface PostComposerProps {
-  currentUser: DevTrackUser;
+  currentUser: CodefolioUser;
   onPostCreated: (post: DevFeedPost) => void;
 }
 

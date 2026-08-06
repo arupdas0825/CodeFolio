@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { GlassEffect } from "@/components/ui/liquid-glass";
 import { Download, Share, X, Smartphone } from "lucide-react";
 import { subscribeToAuthChanges } from "@/lib/firebase";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -16,7 +16,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallPrompt() {
-  const [user, setUser] = useState<DevTrackUser | null>(null);
+  const [user, setUser] = useState<CodefolioUser | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -37,7 +37,7 @@ export default function InstallPrompt() {
     }
 
     // Check if already dismissed or already installed
-    const isDismissed = localStorage.getItem("devtrack_install_dismissed") === "true";
+    const isDismissed = localStorage.getItem("codefolio_install_dismissed") === "true";
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as any).standalone === true;
@@ -71,7 +71,7 @@ export default function InstallPrompt() {
   }, [user]);
 
   const handleDismiss = () => {
-    localStorage.setItem("devtrack_install_dismissed", "true");
+    localStorage.setItem("codefolio_install_dismissed", "true");
     setIsVisible(false);
   };
 
@@ -83,7 +83,7 @@ export default function InstallPrompt() {
     } catch (err) {
       console.error("Install prompt error:", err);
     } finally {
-      localStorage.setItem("devtrack_install_dismissed", "true");
+      localStorage.setItem("codefolio_install_dismissed", "true");
       setIsVisible(false);
       setDeferredPrompt(null);
     }
@@ -103,7 +103,7 @@ export default function InstallPrompt() {
             </div>
             <div>
               <h4 className="text-sm font-bold font-space-grotesk text-text-primary leading-tight">
-                Install DevTrack
+                Install Codefolio
               </h4>
               <p className="text-[11px] font-mono text-accent">Native App & Offline Mode</p>
             </div>
@@ -120,7 +120,7 @@ export default function InstallPrompt() {
         {isIOS ? (
           <div className="text-xs text-text-secondary font-sans space-y-2 pt-1">
             <p className="leading-relaxed">
-              Install DevTrack to your home screen for quick access and full-screen experience:
+              Install Codefolio to your home screen for quick access and full-screen experience:
             </p>
             <div className="flex items-center gap-2 py-1.5 px-3 rounded-lg bg-background/60 border border-border/50 text-[11px] text-text-primary font-mono">
               <span>1. Tap</span>
@@ -135,7 +135,7 @@ export default function InstallPrompt() {
         ) : (
           <div className="space-y-3 pt-1">
             <p className="text-xs text-text-secondary leading-relaxed font-sans">
-              Install DevTrack on your device for lightning-fast access, native performance, and offline capabilities.
+              Install Codefolio on your device for lightning-fast access, native performance, and offline capabilities.
             </p>
             <div className="flex items-center gap-2 pt-1">
               <button

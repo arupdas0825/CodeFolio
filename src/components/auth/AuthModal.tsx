@@ -12,7 +12,7 @@ import {
   Share2 
 } from 'lucide-react';
 import { GithubIcon } from '@/components/ui/GithubIcon';
-import { DevTrackLogo } from '@/components/ui/DevTrackLogo';
+import { CodefolioLogo } from '@/components/ui/CodefolioLogo';
 import { signInWithGitHub } from '@/lib/firebase';
 
 interface AuthModalProps {
@@ -35,7 +35,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const displayTitle = title || actionTitle || 'Continue with DevTrack';
+  const displayTitle = title || actionTitle || 'Continue with Codefolio';
 
   const handleGitHubAuth = async () => {
     setLoading(true);
@@ -49,13 +49,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       // Fallback local session for demo/preview authorization
       const demoUser = {
         uid: 'dev_' + Date.now(),
-        displayName: 'DevTrack Creator',
-        username: 'devtrack-user',
+        displayName: 'Codefolio Creator',
+        username: 'codefolio-user',
         photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-        email: 'developer@devtrack.io'
+        email: 'developer@codefolio.io'
       };
       if (typeof window !== 'undefined') {
-        localStorage.setItem('devtrack_current_user', JSON.stringify(demoUser));
+        localStorage.setItem('codefolio_current_user', JSON.stringify(demoUser));
       }
       if (onSuccess) onSuccess(demoUser);
       onClose();
@@ -121,9 +121,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {/* HEADER SECTION */}
           <div className="text-center">
-            {/* DevTrack Logo Top Center */}
+            {/* Codefolio Logo Top Center */}
             <div className="flex justify-center">
-              <DevTrackLogo size={40} />
+              <CodefolioLogo size={40} />
             </div>
 
             {/* Title */}

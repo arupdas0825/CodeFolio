@@ -63,7 +63,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onRequireAuth }) => {
   const archetype = post.author?.archetype || 'Core Engineer';
 
   const handleLike = () => {
-    const user = typeof window !== 'undefined' ? localStorage.getItem('devtrack_current_user') : null;
+    const user = typeof window !== 'undefined' ? localStorage.getItem('codefolio_current_user') : null;
     if (!user && onRequireAuth) {
       onRequireAuth();
       return;
@@ -78,7 +78,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onRequireAuth }) => {
   };
 
   const handleBookmark = () => {
-    const user = typeof window !== 'undefined' ? localStorage.getItem('devtrack_current_user') : null;
+    const user = typeof window !== 'undefined' ? localStorage.getItem('codefolio_current_user') : null;
     if (!user && onRequireAuth) {
       onRequireAuth();
       return;
@@ -88,7 +88,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onRequireAuth }) => {
 
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
-    const user = typeof window !== 'undefined' ? localStorage.getItem('devtrack_current_user') : null;
+    const user = typeof window !== 'undefined' ? localStorage.getItem('codefolio_current_user') : null;
     if (!user && onRequireAuth) {
       onRequireAuth();
       return;

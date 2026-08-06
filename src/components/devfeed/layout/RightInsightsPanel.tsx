@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Hash, UserPlus, Loader2 } from "lucide-react";
-import { DEVTRACK_PULSE } from "@/lib/devfeedPulse";
+import { CODEFOLIO_PULSE } from "@/lib/devfeedPulse";
 import { SuggestedDeveloper } from "@/services/devfeedService";
 import { toggleFollow, isFollowing } from "@/services/devfeedService";
-import { DevTrackUser } from "@/types/user";
+import { CodefolioUser } from "@/types/user";
 
 interface RightInsightsPanelProps {
-  currentUser: DevTrackUser | null;
+  currentUser: CodefolioUser | null;
   suggestions: SuggestedDeveloper[];
   onFollowChange?: (uid: string, nowFollowing: boolean) => void;
 }
@@ -20,7 +20,7 @@ function SuggestionCard({
   onFollowChange,
 }: {
   dev: SuggestedDeveloper;
-  currentUser: DevTrackUser | null;
+  currentUser: CodefolioUser | null;
   onFollowChange?: (uid: string, nowFollowing: boolean) => void;
 }) {
   const [following, setFollowing] = useState(false);
@@ -96,15 +96,15 @@ export default function RightInsightsPanel({
 }: RightInsightsPanelProps) {
   return (
     <div className="space-y-4">
-      {/* DevTrack Pulse */}
+      {/* Codefolio Pulse */}
       <div className="rounded-xl border border-border bg-surface overflow-hidden">
         <div className="px-4 pt-3 pb-2 border-b border-border/50">
           <h2 className="text-[11px] font-bold text-text-secondary uppercase tracking-wider">
-            DevTrack Pulse
+            Codefolio Pulse
           </h2>
         </div>
         <div className="divide-y divide-border/30">
-          {DEVTRACK_PULSE.map((item, i) => (
+          {CODEFOLIO_PULSE.map((item, i) => (
             <div
               key={item.tag}
               className="flex items-center justify-between px-4 py-2 hover:bg-surface-secondary/50 transition-colors"

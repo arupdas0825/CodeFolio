@@ -10,7 +10,7 @@ export default function NotificationsPage() {
     {
       id: 'n1',
       type: 'star',
-      title: 'New Stargazer on DevTrack 2.0',
+      title: 'New Stargazer on Codefolio 2.0',
       description: '@shadcn starred your repository dev-track.',
       time: '10m ago',
       icon: Star,
@@ -38,7 +38,7 @@ export default function NotificationsPage() {
       id: 'n4',
       type: 'commit',
       title: 'Verified Telemetry Activity',
-      description: 'DevTrack processed 14 new GitHub contributions for your profile card.',
+      description: 'Codefolio processed 14 new GitHub contributions for your profile card.',
       time: '1d ago',
       icon: CheckCircle2,
       color: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
@@ -57,7 +57,7 @@ export default function NotificationsPage() {
             </div>
             <div>
               <h1 className="text-xl font-extrabold text-white">Notifications</h1>
-              <p className="text-xs text-slate-400">Live GitHub events & DevTrack identity updates</p>
+              <p className="text-xs text-slate-400">Live GitHub events & Codefolio identity updates</p>
             </div>
           </div>
 

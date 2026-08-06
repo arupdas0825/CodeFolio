@@ -38,7 +38,7 @@ export class GitHubRepositoryService {
   }
 
   static async fetchPinnedRepositories(username: string, token?: string): Promise<GitHubRepository[]> {
-    const resolvedToken = token || (typeof window !== "undefined" ? localStorage.getItem("devtrack_github_token") ?? undefined : undefined);
+    const resolvedToken = token || (typeof window !== "undefined" ? localStorage.getItem("codefolio_github_token") ?? undefined : undefined);
 
     if (resolvedToken) {
       try {

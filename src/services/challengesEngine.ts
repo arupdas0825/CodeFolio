@@ -111,7 +111,7 @@ export const ChallengesEngine = {
       };
     }
 
-    const cached = localStorage.getItem(`devtrack_gamification_${username}`);
+    const cached = localStorage.getItem(`codefolio_gamification_${username}`);
     if (cached) {
       try {
         const state = JSON.parse(cached) as DeveloperState;
@@ -162,14 +162,14 @@ export const ChallengesEngine = {
       selectedTheme: "Midnight Dark"
     };
 
-    localStorage.setItem(`devtrack_gamification_${username}`, JSON.stringify(defaultState));
+    localStorage.setItem(`codefolio_gamification_${username}`, JSON.stringify(defaultState));
     return defaultState;
   },
 
   // Save developer state
   saveState(username: string, state: DeveloperState): void {
     if (typeof window === "undefined") return;
-    localStorage.setItem(`devtrack_gamification_${username}`, JSON.stringify(state));
+    localStorage.setItem(`codefolio_gamification_${username}`, JSON.stringify(state));
   },
 
   // Awards XP to player, checks for level up

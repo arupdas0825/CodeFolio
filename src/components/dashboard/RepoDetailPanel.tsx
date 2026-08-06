@@ -79,7 +79,7 @@ export default function RepoDetailPanel({
         
         // 1. Mock README
         const mockReadme = `# ${repository.name}
-${repository.description || "A clean developer intelligence module built with DevTrack."}
+${repository.description || "A clean developer intelligence module built with Codefolio."}
 
 ## Tech Stack
 - Primary: **${lang}**
@@ -95,7 +95,7 @@ npm run dev
 ## Configuration
 Create a \`.env.local\` file in the root directory:
 \`\`\`env
-NEXT_PUBLIC_API_URL=https://api.devtrack.io
+NEXT_PUBLIC_API_URL=https://api.codefolio.io
 \`\`\`
 
 ## License

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { DevTrackUser, subscribeToAuthChanges, logOutUser, syncUserAndReposInFirestore } from "@/lib/firebase";
+import { CodefolioUser, subscribeToAuthChanges, logOutUser, syncUserAndReposInFirestore } from "@/lib/firebase";
 import { UserDashboardData } from "@/types";
 import Navbar from "../layout/Navbar";
 import DashboardHeader from "./DashboardHeader";
@@ -203,7 +203,7 @@ type TabId =
 function DashboardContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<DevTrackUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<CodefolioUser | null>(null);
   const [syncedData, setSyncedData] = useState<UserDashboardData | null>(null);
   const [githubToken, setGithubToken] = useState("");
 
@@ -353,10 +353,10 @@ function DashboardContent() {
   // Load stored token & sidebar preferences
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("devtrack_github_token") || "";
+      const storedToken = localStorage.getItem("codefolio_github_token") || "";
       setGithubToken(storedToken);
 
-      const storedWidth = localStorage.getItem("devtrack_sidebar_width");
+      const storedWidth = localStorage.getItem("codefolio_sidebar_width");
       if (storedWidth) {
         setSidebarWidth(Number(storedWidth));
       }
@@ -379,7 +379,7 @@ function DashboardContent() {
       if (newWidth >= 160 && newWidth <= 340) {
         setSidebarWidth(newWidth);
         if (typeof window !== "undefined") {
-          localStorage.setItem("devtrack_sidebar_width", String(newWidth));
+          localStorage.setItem("codefolio_sidebar_width", String(newWidth));
         }
       }
     };
@@ -421,7 +421,7 @@ function DashboardContent() {
   // Background Sync logic
   useEffect(() => {
     let isMounted = true;
-    if (!targetUser || targetUser.toLowerCase() === "demo" || targetUser.toLowerCase() === "devtrack-demo") return;
+    if (!targetUser || targetUser.toLowerCase() === "demo" || targetUser.toLowerCase() === "codefolio-demo") return;
     
     if (currentUser && currentUser.username.toLowerCase() === targetUser.toLowerCase()) {
       const runSync = async () => {
@@ -493,7 +493,7 @@ function DashboardContent() {
     setGithubToken(newToken);
   };
 
-  const handleLoginSuccess = (user: DevTrackUser) => {
+  const handleLoginSuccess = (user: CodefolioUser) => {
     setCurrentUser(user);
     router.push(`/dashboard?user=${user.username}`);
   };
@@ -1493,7 +1493,7 @@ function DashboardContent() {
                   <div key={i} className={`flex-shrink-0 w-60 border rounded-2xl p-4 flex flex-col justify-between h-36 shadow-lg ${ins.color}`}>
                     <span className="text-[9.5px] font-bold text-white uppercase tracking-wider font-space-grotesk">{ins.title}</span>
                     <p className="text-[11px] text-text-secondary font-sans leading-relaxed mt-2.5">{ins.text}</p>
-                    <span className="text-[8px] text-text-secondary font-mono mt-1.5">DevTrack Career Engine</span>
+                    <span className="text-[8px] text-text-secondary font-mono mt-1.5">Codefolio Career Engine</span>
                   </div>
                 ))}
               </div>
@@ -1525,7 +1525,7 @@ function DashboardContent() {
 
             {/* Expandable Milestones / Activity */}
             <div className="bg-[#111827]/80 border border-white/5 rounded-2xl p-4 shadow-2xl space-y-3">
-              <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest font-mono block">DevTrack Milestones</span>
+              <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest font-mono block">Codefolio Milestones</span>
               <DeveloperMilestones data={dashboardData} />
             </div>
           </div>
@@ -1718,9 +1718,9 @@ function DashboardContent() {
 
       case "community":
         const posts = [
-          { id: "1", author: "arupdas0825", avatar: profile.avatar_url, time: "2h ago", content: "Just indexed my main codebase on DevTrack. Scored a consistent A grade and verified my system design skills. Ready to connect with hiring recruiters!", likes: 14, replies: 3 },
+          { id: "1", author: "arupdas0825", avatar: profile.avatar_url, time: "2h ago", content: "Just indexed my main codebase on Codefolio. Scored a consistent A grade and verified my system design skills. Ready to connect with hiring recruiters!", likes: 14, replies: 3 },
           { id: "2", author: "linus_t", avatar: "/vercel.svg", time: "5h ago", content: "Building a new compiler engine in Rust. Committing daily on GitHub. Consistency heatmap is glowing green! 🦀🖥️ #rust #compiler", likes: 112, replies: 28 },
-          { id: "3", author: "taylor_ot", avatar: "/next.svg", time: "1d ago", content: "Excited to preview DevTrack Upgrade 13. The new AI Career intelligence platform dashboard looks absolutely next-gen. Great job team!", likes: 54, replies: 8 }
+          { id: "3", author: "taylor_ot", avatar: "/next.svg", time: "1d ago", content: "Excited to preview Codefolio Upgrade 13. The new AI Career intelligence platform dashboard looks absolutely next-gen. Great job team!", likes: 54, replies: 8 }
         ];
 
         return (

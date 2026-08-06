@@ -113,7 +113,7 @@ const deploymentStatuses = [
 ];
 
 const ossRepos = [
-  { name: "devtrack-core", stars: 4821, forks: 312, prs: 47, bar: 92 },
+  { name: "codefolio-core", stars: 4821, forks: 312, prs: 47, bar: 92 },
   { name: "dt-analytics-sdk", stars: 2134, forks: 189, prs: 31, bar: 74 },
   { name: "dt-cli", stars: 1876, forks: 94, prs: 22, bar: 61 },
   { name: "dt-ui-components", stars: 983, forks: 67, prs: 18, bar: 43 },
@@ -143,7 +143,7 @@ const activityFeed = [
     label: "API Key",
     color: "#8957E5",
     icon: Key,
-    message: "New API key generated for devtrack-core integration",
+    message: "New API key generated for codefolio-core integration",
     time: "7m ago",
   },
   {
@@ -188,7 +188,7 @@ const activityFeed = [
     label: "Integration",
     color: "#2F81F7",
     icon: Globe,
-    message: "Slack webhook connected to #devtrack-alerts channel",
+    message: "Slack webhook connected to #codefolio-alerts channel",
     time: "1h ago",
   },
   {

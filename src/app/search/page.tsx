@@ -16,7 +16,7 @@ export default function UniversalSearchPage() {
   ];
 
   const projects = [
-    { title: 'DevTrack 2.0', lang: 'TypeScript', stars: '4.8k' },
+    { title: 'Codefolio 2.0', lang: 'TypeScript', stars: '4.8k' },
     { title: 'simd-vector-db', lang: 'Rust', stars: '3.1k' },
   ];
 

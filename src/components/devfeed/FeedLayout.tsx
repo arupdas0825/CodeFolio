@@ -26,7 +26,7 @@ const INITIAL_POSTS: FeedPost[] = [
       archetype: 'UI Engineering Lead'
     },
     type: 'project_launch',
-    content: '🚀 Excited to announce DevTrack Identity Platform! Built from scratch with Next.js App Router, Tailwind, Framer Motion, and AI profile scoring.',
+    content: '🚀 Excited to announce Codefolio Identity Platform! Built from scratch with Next.js App Router, Tailwind, Framer Motion, and AI profile scoring.',
     repoUrl: 'https://github.com/shadcn/ui',
     likesCount: 142,
     commentsCount: 18,
@@ -80,7 +80,7 @@ export const FeedLayout: React.FC = () => {
   const [isComposerOpen, setIsComposerOpen] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('devtrack_current_user');
+    const stored = localStorage.getItem('codefolio_current_user');
     if (stored) {
       try {
         setUser(JSON.parse(stored));

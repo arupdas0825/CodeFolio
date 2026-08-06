@@ -1,10 +1,10 @@
-// Illustrative "where you stand" distribution for the DevTrack numericScore
+// Illustrative "where you stand" distribution for the Codefolio numericScore
 // (0-100). gitfut's DistributionPanel samples a real dataset of scored GitHub
-// accounts (data/distribution-data.json); DevTrack doesn't have that population
+// accounts (data/distribution-data.json); Codefolio doesn't have that population
 // telemetry, so this module generates a plausible, clearly-approximate curve
 // instead: most accounts cluster in the 15-45 range (a handful of repos, a
 // modest star/follower count), with a long thin tail toward 90+. Swap this for
-// a real sampled dataset later if DevTrack starts tracking one.
+// a real sampled dataset later if Codefolio starts tracking one.
 
 export const DIST_MIN = 0;
 export const DIST_MAX = 100;

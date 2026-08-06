@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { subscribeToAuthChanges, logOutUser, DevTrackUser, getUserFromFirestore } from "@/lib/firebase";
+import { subscribeToAuthChanges, logOutUser, CodefolioUser, getUserFromFirestore } from "@/lib/firebase";
 import { fetchGitHubDashboardData } from "@/lib/github";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -113,7 +113,7 @@ export default function RepositoryDetailPage() {
   const ownerParam = searchParams.get("owner") || "";
 
   // Auth & Token states
-  const [currentUser, setCurrentUser] = useState<DevTrackUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<CodefolioUser | null>(null);
   const [githubToken, setGithubToken] = useState("");
   const [owner, setOwner] = useState(ownerParam);
 
@@ -154,7 +154,7 @@ export default function RepositoryDetailPage() {
   // AI Chat Drawer States
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<{ sender: "user" | "assistant"; text: string }[]>([
-    { sender: "assistant", text: "Hello! I am your DevTrack Senior AI Developer assistant. Select any file or trigger a security scan to start reviews!" }
+    { sender: "assistant", text: "Hello! I am your Codefolio Senior AI Developer assistant. Select any file or trigger a security scan to start reviews!" }
   ]);
   const [chatInput, setChatInput] = useState("");
   const [chatTyping, setChatTyping] = useState(false);
@@ -176,7 +176,7 @@ export default function RepositoryDetailPage() {
     });
 
     if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("devtrack_github_token") || "";
+      const storedToken = localStorage.getItem("codefolio_github_token") || "";
       setGithubToken(storedToken);
     }
 
@@ -213,7 +213,7 @@ export default function RepositoryDetailPage() {
     setCurrentUser(user);
     if (user.githubToken) {
       setGithubToken(user.githubToken);
-      localStorage.setItem("devtrack_github_token", user.githubToken);
+      localStorage.setItem("codefolio_github_token", user.githubToken);
     }
     setOwner(user.username);
   };
@@ -222,7 +222,7 @@ export default function RepositoryDetailPage() {
     await logOutUser();
     setCurrentUser(null);
     setGithubToken("");
-    localStorage.removeItem("devtrack_github_token");
+    localStorage.removeItem("codefolio_github_token");
     router.push("/login");
   };
 
@@ -423,7 +423,7 @@ export default function RepositoryDetailPage() {
     if (targetOwner.toLowerCase() === "demo" || targetOwner.toLowerCase() === "alex-developer") {
       await new Promise((r) => setTimeout(r, 300));
       if (filePath.endsWith("README.md")) {
-        content = `# ${repoName}\n\nThis is a mocked file preview in DevTrack Repository Explorer.\n\n## Setup\nRun npm install to initialize.\n\n## Usage\nRun npm run dev to launch the service.`;
+        content = `# ${repoName}\n\nThis is a mocked file preview in Codefolio Repository Explorer.\n\n## Setup\nRun npm install to initialize.\n\n## Usage\nRun npm run dev to launch the service.`;
       } else if (filePath.endsWith("package.json")) {
         content = `{\n  "name": "${repoName}",\n  "version": "1.0.0",\n  "private": true,\n  "dependencies": {\n    "react": "^19.0.0",\n    "react-dom": "^19.0.0",\n    "next": "^16.0.0",\n    "lodash": "4.17.15",\n    "axios": "1.2.0"\n  }\n}`;
       } else if (filePath.endsWith("utils.ts")) {
@@ -492,7 +492,7 @@ export default function RepositoryDetailPage() {
     setTerminalLogs([]);
     
     const logs = [
-      "[INFO] [18:22:21] Initializing DevTrack Security Scan Engine v3.0 (Production-grade)...",
+      "[INFO] [18:22:21] Initializing Codefolio Security Scan Engine v3.0 (Production-grade)...",
       "[INFO] Loading vulnerability heuristic databases (OWASP Top 10, CWE, CVE)...",
       "[INFO] Resolving GitHub repository file index tree...",
       `[INFO] Identified ${intelligence?.checklist.length || 12} files in workspace buffers.`,

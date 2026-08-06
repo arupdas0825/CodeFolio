@@ -32,7 +32,7 @@ export const MobilePostCard: React.FC<MobilePostCardProps> = ({ post, onRequireA
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `DevTrack Post by @${post.author?.username || post.authorUsername || 'developer'}`,
+          title: `Codefolio Post by @${post.author?.username || post.authorUsername || 'developer'}`,
           text: post.content,
           url: window.location.href,
         });
@@ -118,7 +118,7 @@ export const MobilePostCard: React.FC<MobilePostCardProps> = ({ post, onRequireA
             </a>
           </div>
           <p className="text-xs text-slate-400 line-clamp-2 mb-2 font-mono">
-            {post.aiSummary || 'Verified repository project card on DevTrack identity network.'}
+            {post.aiSummary || 'Verified repository project card on Codefolio identity network.'}
           </p>
           <div className="flex items-center gap-4 text-[11px] font-mono text-slate-400">
             <div className="flex items-center gap-1">

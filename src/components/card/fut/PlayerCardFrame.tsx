@@ -7,9 +7,9 @@ import { countryForLogin } from './geo';
 import { languageLogoUrl, logoSlugFor } from './languages';
 
 // Faithful port of gitfut's 540x820 FUT card layout (components/PlayerCard.tsx),
-// re-wired for DevTrack: the six stat slots show DevTrack's own metrics
+// re-wired for Codefolio: the six stat slots show Codefolio's own metrics
 // (Repos/Stars/Forks/Followers/PRs/Streak) instead of FIFA PAC/SHO/PAS/DRI/DEF/PHY,
-// and the "position" slot under the rating shows the DevTrack Grade instead of a
+// and the "position" slot under the rating shows the Codefolio Grade instead of a
 // football position. Positions are percentages of the card (x/540, y/820); font
 // sizes are cqw so the card scales fluidly with its container.
 
@@ -38,7 +38,7 @@ function cardDisplayName(name: string): string {
   return tooBig ? first : surname;
 }
 
-// Compact formatting for potentially large DevTrack counts (stars, contributions)
+// Compact formatting for potentially large Codefolio counts (stars, contributions)
 // so they still read cleanly in the narrow FUT stat slots designed for 2-digit
 // FIFA ratings.
 function formatStatValue(raw: number | string | null | undefined): string {
@@ -79,7 +79,7 @@ const hideOnError: React.ReactEventHandler<HTMLImageElement> = (e) => {
 };
 
 const onTierArtError: React.ReactEventHandler<HTMLImageElement> = (e) => {
-  console.error(`[devtrack] tier card art failed to load: ${e.currentTarget.src}`);
+  console.error(`[codefolio] tier card art failed to load: ${e.currentTarget.src}`);
   e.currentTarget.style.visibility = 'hidden';
 };
 
@@ -196,7 +196,7 @@ function PlayerCardFrame({ data }: { data: DeveloperCardData }) {
       ))}
       <div style={{ ...at(50, 66.46), width: '0.3cqw', height: '20.12%', background: ink, opacity: 0.5 }} />
 
-      {/* overall (DevTrack numericScore, 0-99) */}
+      {/* overall (Codefolio numericScore, 0-99) */}
       <div
         style={{
           ...at(16.3, 9.76),
@@ -262,7 +262,7 @@ function PlayerCardFrame({ data }: { data: DeveloperCardData }) {
         {displayName}
       </div>
 
-      {/* six DevTrack stats: Repos / Stars / Forks / Followers / PRs / Streak */}
+      {/* six Codefolio stats: Repos / Stars / Forks / Followers / PRs / Streak */}
       {statCells.map((c) => (
         <div key={c.label}>
           <span
@@ -309,7 +309,7 @@ function PlayerCardFrame({ data }: { data: DeveloperCardData }) {
             opacity: 0.62,
           }}
         >
-          DEVTRACK.APP
+          CODEFOLIO.APP
         </div>
         <div
           style={{

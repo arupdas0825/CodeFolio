@@ -664,7 +664,7 @@ export class GitHubRepoIntelligenceService {
       name: repoName,
       full_name: `alex-developer/${repoName}`,
       html_url: `https://github.com/alex-developer/${repoName}`,
-      description: `A production-ready demo deployment of ${repoName} configured with DevTrack intelligence models.`,
+      description: `A production-ready demo deployment of ${repoName} configured with Codefolio intelligence models.`,
       fork: false,
       created_at: "2024-03-10T12:00:00Z",
       updated_at: new Date().toISOString(),

@@ -21,15 +21,15 @@ export default function ProjectsPage() {
 
   const projects = [
     {
-      id: 'devtrack-2',
-      title: 'DevTrack Identity Platform',
+      id: 'codefolio-2',
+      title: 'Codefolio Identity Platform',
       tagline: 'Developer identity engine transforming GitHub commits into verified scores and visual cards.',
       category: 'Developer Tools',
       stars: 4890,
       forks: 320,
       lang: 'TypeScript',
       author: 'shadcn',
-      demoUrl: 'https://devtrack.io',
+      demoUrl: 'https://codefolio.io',
       githubUrl: 'https://github.com/shadcn/ui',
       aiScore: '99.4%'
     },
@@ -83,7 +83,7 @@ export default function ProjectsPage() {
               Open-Source & Developer Projects
             </h1>
             <p className="mt-2 text-xs text-slate-400 max-w-xl">
-              Explore production-grade tools, libraries, and applications built by the DevTrack developer ecosystem.
+              Explore production-grade tools, libraries, and applications built by the Codefolio developer ecosystem.
             </p>
           </div>
 

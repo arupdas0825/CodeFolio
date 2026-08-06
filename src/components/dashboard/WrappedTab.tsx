@@ -11,7 +11,7 @@ export default function WrappedTab({ data }: WrappedTabProps) {
 
   const handleShareText = () => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
-      const shareText = `🚀 My Dev-Track Wrapped for ${wrapped.year}!\n\n💻 Top Language: ${wrapped.mostUsedLanguage}\n🔥 Active Streak: ${wrapped.longestStreak} Days\n🏆 Achievement: ${wrapped.biggestAchievement} - ${wrapped.achievementDescription}\n\nCheck yours at DevTrack!`;
+      const shareText = `🚀 My Dev-Track Wrapped for ${wrapped.year}!\n\n💻 Top Language: ${wrapped.mostUsedLanguage}\n🔥 Active Streak: ${wrapped.longestStreak} Days\n🏆 Achievement: ${wrapped.biggestAchievement} - ${wrapped.achievementDescription}\n\nCheck yours at Codefolio!`;
       navigator.clipboard.writeText(shareText);
       alert("Wrapped summary copied to clipboard! Share it on Twitter/LinkedIn.");
     }
@@ -49,7 +49,7 @@ export default function WrappedTab({ data }: WrappedTabProps) {
     // 2. Draw Header
     ctx.font = "bold 26px 'Space Grotesk', system-ui, sans-serif";
     ctx.fillStyle = "#58A6FF";
-    ctx.fillText("DEVTRACK", 60, 85);
+    ctx.fillText("CODEFOLIO", 60, 85);
 
     ctx.font = "bold 20px monospace";
     ctx.fillStyle = "#8B949E";
@@ -177,7 +177,7 @@ export default function WrappedTab({ data }: WrappedTabProps) {
       // Footer brand details
       ctx.font = "bold 12px monospace";
       ctx.fillStyle = "#8B949E";
-      ctx.fillText("DEVTRACK.IO/WRAPPED", 60, 762);
+      ctx.fillText("CODEFOLIO.IO/WRAPPED", 60, 762);
 
       ctx.fillStyle = "#3FB950";
       const verifiedText = "VERIFIED DEVELOPER SCORE";
@@ -187,7 +187,7 @@ export default function WrappedTab({ data }: WrappedTabProps) {
       // Trigger download
       try {
         const link = document.createElement("a");
-        link.download = `${profile.login}-devtrack-wrapped.png`;
+        link.download = `${profile.login}-codefolio-wrapped.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
       } catch (err) {
@@ -270,7 +270,7 @@ export default function WrappedTab({ data }: WrappedTabProps) {
               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
             <span className="text-xs font-bold text-[#F0F6FC] tracking-tight font-space-grotesk">
-              DEVTRACK WRAPPED
+              CODEFOLIO WRAPPED
             </span>
           </div>
           <span className="text-xs text-[#8B949E] font-bold">{wrapped.year}</span>
@@ -350,7 +350,7 @@ export default function WrappedTab({ data }: WrappedTabProps) {
 
         {/* Footer Brand Logo */}
         <div className="flex items-center justify-between text-[9px] text-[#8B949E] border-t border-[#30363D]/40 mt-8 pt-4">
-          <span className="font-bold tracking-wider text-[#58A6FF]/70">DEVTRACK.IO/WRAPPED</span>
+          <span className="font-bold tracking-wider text-[#58A6FF]/70">CODEFOLIO.IO/WRAPPED</span>
           <span className="text-[#3FB950] font-bold flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-[#3FB950] animate-pulse" />
             VERIFIED

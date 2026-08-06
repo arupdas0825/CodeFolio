@@ -1,4 +1,4 @@
-// DevTrack Community Ecosystem Service
+// Codefolio Community Ecosystem Service
 import { db } from "@/lib/firebase";
 
 export interface CommunityPost {
@@ -161,7 +161,7 @@ const INITIAL_JOBS: JobListing[] = [
 export const CommunityService = {
   // Local storage keys
   getStorageKey(username: string, suffix: string): string {
-    return `devtrack_community_${username}_${suffix}`;
+    return `codefolio_community_${username}_${suffix}`;
   },
 
   // 1. Developers Directory
@@ -392,7 +392,7 @@ export const CommunityService = {
       } catch (e) {}
     }
     const defaults: DirectMessage[] = [
-      { id: "msg-1", chatId, senderId: "dev-yyx", content: "Hey! Loved your DevTrack profile score.", createdAt: new Date(Date.now() - 3600000 * 24).toISOString(), reactions: {} },
+      { id: "msg-1", chatId, senderId: "dev-yyx", content: "Hey! Loved your Codefolio profile score.", createdAt: new Date(Date.now() - 3600000 * 24).toISOString(), reactions: {} },
       { id: "msg-2", chatId, senderId: "self", content: "Thanks Evan! Vite is awesome, by the way.", createdAt: new Date(Date.now() - 3600000 * 23).toISOString(), reactions: {} },
       { id: "msg-3", chatId, senderId: "dev-yyx", content: "Check out this TypeScript wrapper block I structured recently.", createdAt: new Date(Date.now() - 3600000 * 22).toISOString(), codeSnippet: `// TypeScript generic interface helper\nexport interface ApiResponse<T> {\n  status: 'success' | 'error';\n  payload: T;\n}`, codeLanguage: "typescript", reactions: {} }
     ];

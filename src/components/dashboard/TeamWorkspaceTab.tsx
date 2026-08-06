@@ -82,7 +82,7 @@ export default function TeamWorkspaceTab({
   // Load connected org from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedOrg = localStorage.getItem("devtrack_connected_org") || "";
+      const storedOrg = localStorage.getItem("codefolio_connected_org") || "";
       if (storedOrg) {
         setConnectedOrg(storedOrg);
         loadOrgData(storedOrg);
@@ -110,7 +110,7 @@ export default function TeamWorkspaceTab({
     const cleanOrg = orgInput.trim().toLowerCase();
     setConnectedOrg(cleanOrg);
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_connected_org", cleanOrg);
+      localStorage.setItem("codefolio_connected_org", cleanOrg);
     }
     loadOrgData(cleanOrg);
   };
@@ -119,7 +119,7 @@ export default function TeamWorkspaceTab({
     const demoOrg = "vercel";
     setConnectedOrg(demoOrg);
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_connected_org", demoOrg);
+      localStorage.setItem("codefolio_connected_org", demoOrg);
     }
     loadOrgData(demoOrg);
   };
@@ -129,7 +129,7 @@ export default function TeamWorkspaceTab({
       setConnectedOrg("");
       setOrgData(null);
       if (typeof window !== "undefined") {
-        localStorage.removeItem("devtrack_connected_org");
+        localStorage.removeItem("codefolio_connected_org");
       }
     }
   };

@@ -551,7 +551,7 @@ Would you like me to inspect this configuration logic further?`;
 4. **Firebase Policies**: Never configure 'allow write: if true' in public collection namespaces.`;
     }
 
-    return `I am your **DevTrack Security AI Assistant**.
+    return `I am your **Codefolio Security AI Assistant**.
 
 Scanned active repository: **${repoName || "Workspace"}**
 Total Issues Exposing: **${issues.length} detected**

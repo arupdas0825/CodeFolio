@@ -711,7 +711,7 @@ export default function DeveloperChallengesHub({
                 Unlocked Items & Rewards
               </h3>
               <p className="text-xs text-text-secondary mt-1">
-                Customize your DevTrack experience with unlocked items, custom titles, borders, and themes.
+                Customize your Codefolio experience with unlocked items, custom titles, borders, and themes.
               </p>
             </div>
 

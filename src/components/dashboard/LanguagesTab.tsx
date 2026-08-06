@@ -169,7 +169,7 @@ export default function LanguagesTab({ data }: LanguagesTabProps) {
   // Calculate favorite charts toggle
   const toggleStarChart = (chartId: string) => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("devtrack_starred_charts");
+      const saved = localStorage.getItem("codefolio_starred_charts");
       let list: string[] = [];
       if (saved) {
         try {
@@ -177,14 +177,14 @@ export default function LanguagesTab({ data }: LanguagesTabProps) {
         } catch (e) {}
       }
       const updated = list.includes(chartId) ? list.filter(id => id !== chartId) : [...list, chartId];
-      localStorage.setItem("devtrack_starred_charts", JSON.stringify(updated));
+      localStorage.setItem("codefolio_starred_charts", JSON.stringify(updated));
       window.dispatchEvent(new Event("starred_charts_updated"));
     }
   };
 
   const isChartStarred = (chartId: string) => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("devtrack_starred_charts");
+      const saved = localStorage.getItem("codefolio_starred_charts");
       if (saved) {
         try {
           return JSON.parse(saved).includes(chartId);

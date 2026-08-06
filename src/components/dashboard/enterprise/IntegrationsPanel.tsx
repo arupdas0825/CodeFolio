@@ -42,7 +42,7 @@ export default function IntegrationsPanel() {
   const [selectedConfig, setSelectedConfig] = useState<typeof INITIAL_INTEGRATIONS[0] | null>(null);
 
   // Connection drawer details
-  const [webhookUrl, setWebhookUrl] = useState("https://hooks.devtrack.com/v1/services/928fhks0");
+  const [webhookUrl, setWebhookUrl] = useState("https://hooks.codefolio.com/v1/services/928fhks0");
   const [copiedText, setCopiedText] = useState(false);
 
   const filtered = integrations.filter(item => {

@@ -48,7 +48,7 @@ export default function ExportCenterModal({
         return {
           title: `${username}_Resume`,
           content: `# RESUME: ${name}
-@{username} | Email: ${data.profile.email || `${username}@devtrack.io`} | Portfolio: ${data.profile.blog || "devtrack.io"}
+@{username} | Email: ${data.profile.email || `${username}@codefolio.io`} | Portfolio: ${data.profile.blog || "codefolio.io"}
 
 ## PROFESSIONAL SUMMARY
 Results-driven software engineer with ${activeYears} active on GitHub. Developed a portfolio of ${data.repositories.length} public repositories and logged ${data.contributions.totalCommits} codebase revisions. Specialized in systems design and engineering workflows with ${topLangs}.
@@ -64,7 +64,7 @@ ${r.description || "Designed scalable code structures and documented configurati
 
 ## EDUCATION & VERIFICATION
 - B.S. in Computer Science (Equivalent)
-- DevTrack verified Developer DNA grade: ${grade} (${overallScore}/100)
+- Codefolio verified Developer DNA grade: ${grade} (${overallScore}/100)
 `
         };
 
@@ -88,7 +88,7 @@ Generated via HireSight-AI Career Engine.
 ## ACTIONABLE SUGGESTIONS
 - Set custom domain index pages for your website.
 - Add mockup screenshots or architecture diagrams under a ## Preview header in your pinned repositories.
-- Link DevTrack badges on your portfolio.
+- Link Codefolio badges on your portfolio.
 `
         };
 
@@ -100,7 +100,7 @@ Powered internally by HireSight-AI Career Engine.
 
 ## SCORE CARD
 - **Developer Grade**: ${grade}
-- **Overall DevTrack Score**: ${overallScore} / 100
+- **Overall Codefolio Score**: ${overallScore} / 100
 - **Hiring readiness**: ${Math.min(95, overallScore + 10)}%
 - **Open Source Contributions Score**: ${data.score.openSource || 60} / 100
 
@@ -143,7 +143,7 @@ ATS Calibrations Scan against typical Tier-1 Job Descriptions.
         return {
           title: `${username}_Developer_DNA`,
           content: `# DEVELOPER DNA MAP: @${username}
-DevTrack Verified Telemetry Map.
+Codefolio Verified Telemetry Map.
 
 ## CODING PATTERNS & VELOCITY
 - **Annual Commits**: ${data.contributions.totalCommits} Commits
@@ -191,7 +191,7 @@ Codebase Quality and Architecture Audit.
 ## Top Languages
 ${data.languages.map((l) => `- **${l.name}**: ${l.percentage}%`).join("\n")}
 
-Generated via DevTrack SaaS Platform.
+Generated via Codefolio SaaS Platform.
 `
         };
     }

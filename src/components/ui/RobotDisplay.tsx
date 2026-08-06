@@ -462,7 +462,7 @@ function RobotPrototype({
   );
 }
 
-export function DevTrackRobotDisplay({ text = 'DevTrack' }: { text?: string }) {
+export function CodefolioRobotDisplay({ text = 'Codefolio' }: { text?: string }) {
   const entorno = {
     luzAmbiente: 0.75,
     luzPrincipal: 0.0,
@@ -475,23 +475,12 @@ export function DevTrackRobotDisplay({ text = 'DevTrack' }: { text?: string }) {
 
   return (
     <div className="relative w-full h-full min-h-[460px] flex flex-col items-center justify-center overflow-hidden rounded-3xl">
-      {/* Official DevTrack Floating Brand Badge Overlay */}
-      <div className="absolute top-4 left-4 z-20 flex items-center gap-2 rounded-full border border-white/10 bg-slate-950/80 px-3.5 py-1.5 backdrop-blur-xl shadow-xl">
-        <img
-          src="/devtrack-logo.png"
-          alt="DevTrack Brand Logo"
-          className="h-6 w-6 object-contain animate-logo-breathe animate-logo-float"
-        />
-        <span className="font-extrabold text-xs tracking-tight text-white font-mono">
-          Dev<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Track</span>
-        </span>
-      </div>
 
-      {/* Background DevTrack Branding Text (Auto-scaling SVG to prevent any text clipping) */}
+      {/* Background Codefolio Branding Text (Auto-scaling SVG to prevent any text clipping) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 px-2">
         <svg viewBox="0 0 700 160" className="w-full h-auto max-h-[340px] max-w-full">
           <defs>
-            <linearGradient id="devTrackTitleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id="codefolioTitleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" stopOpacity="0.30" />
               <stop offset="50%" stopColor="#a5b4fc" stopOpacity="0.15" />
               <stop offset="100%" stopColor="#6366f1" stopOpacity="0.05" />
@@ -502,7 +491,7 @@ export function DevTrackRobotDisplay({ text = 'DevTrack' }: { text?: string }) {
             y="50%"
             textAnchor="middle"
             dominantBaseline="central"
-            fill="url(#devTrackTitleGradient)"
+            fill="url(#codefolioTitleGradient)"
             fontFamily="system-ui, -apple-system, sans-serif"
             fontWeight="900"
             fontSize="125"
@@ -546,4 +535,4 @@ export function DevTrackRobotDisplay({ text = 'DevTrack' }: { text?: string }) {
   );
 }
 
-export default DevTrackRobotDisplay;
+export default CodefolioRobotDisplay;

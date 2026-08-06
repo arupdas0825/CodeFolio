@@ -260,7 +260,7 @@ export class GitHubContributionService {
     username: string,
     token?: string
   ): Promise<ContributionStats> {
-    const resolvedToken = token || (typeof window !== "undefined" ? localStorage.getItem("devtrack_github_token") : undefined);
+    const resolvedToken = token || (typeof window !== "undefined" ? localStorage.getItem("codefolio_github_token") : undefined);
     if (resolvedToken) {
       try {
         return await this.fetchContributionsFromGraphQL(username, resolvedToken);

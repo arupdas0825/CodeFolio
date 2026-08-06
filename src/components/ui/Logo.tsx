@@ -29,8 +29,8 @@ export default function Logo({
           />
         )}
         <img
-          src="/devtrack-logo.png"
-          alt="DevTrack Brand Logo"
+          src="/codefolio-logo.png"
+          alt="Codefolio Brand Logo"
           width={size}
           height={size}
           className={cn(

@@ -179,7 +179,7 @@ export default function ApiKeysPanel() {
 
               {/* Monospace Code sample */}
               <div className="bg-[#0D1117] border border-[#30363D] p-3 rounded-lg text-[11px] text-[#8B949E] overflow-x-auto space-y-1">
-                <code>curl -H "Authorization: Bearer dtk_prod_••••" https://api.devtrack.com{doc.path}</code>
+                <code>curl -H "Authorization: Bearer dtk_prod_••••" https://api.codefolio.com{doc.path}</code>
               </div>
             </div>
           ))}

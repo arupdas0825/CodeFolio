@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { DevTrackLogo } from '@/components/ui/DevTrackLogo';
+import { CodefolioLogo } from '@/components/ui/CodefolioLogo';
 import { TierAvatar } from '@/components/ui/TierAvatar';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Bell, MessageSquare, Menu, Search, User } from 'lucide-react';
@@ -33,9 +33,9 @@ export const MobileTopBar: React.FC<MobileTopBarProps> = ({
       <div className="flex items-center justify-between">
         {/* Left: Brand Logo & Title */}
         <Link href="/feed" className="flex items-center gap-2 group active:scale-95 transition-transform">
-          <DevTrackLogo className="w-8 h-8 text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.4)]" />
+          <CodefolioLogo className="w-8 h-8 text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.4)]" />
           <span className="font-mono text-lg font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            DevTrack
+            Codefolio
           </span>
         </Link>
 

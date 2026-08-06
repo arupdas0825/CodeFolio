@@ -296,7 +296,7 @@ type TechnologyOrbitDisplayProps = {
 
 const TechOrbitDisplay = memo(function TechOrbitDisplay({
   iconsArray,
-  text = 'DevTrack',
+  text = 'Codefolio',
 }: TechnologyOrbitDisplayProps) {
   return (
     <section className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg min-h-[420px]'>

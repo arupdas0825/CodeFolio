@@ -189,7 +189,7 @@ export default function HiringDashboard({
     setTimeout(() => {
       setResumeText(`
 NAME: Developer Candidate
-EMAIL: dev@devtrack.io
+EMAIL: dev@codefolio.io
 GITHUB: github.com/${profile.login}
 
 EXPERIENCE:
@@ -407,7 +407,7 @@ Javascript, HTML, CSS, React, Git, Python, SQL, REST APIs
   // Load and Save applications
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("devtrack_job_applications");
+      const stored = localStorage.getItem("codefolio_job_applications");
       if (stored) {
         setApplications(JSON.parse(stored));
       } else {
@@ -417,7 +417,7 @@ Javascript, HTML, CSS, React, Git, Python, SQL, REST APIs
           { id: "app3", company: "Supabase", role: "Backend Developer", status: "Offer", date: "2026-07-05", notes: "Offer letter received. Under review.", salary: "$145k" },
         ];
         setApplications(defaultApps);
-        localStorage.setItem("devtrack_job_applications", JSON.stringify(defaultApps));
+        localStorage.setItem("codefolio_job_applications", JSON.stringify(defaultApps));
       }
     }
   }, []);
@@ -435,7 +435,7 @@ Javascript, HTML, CSS, React, Git, Python, SQL, REST APIs
     };
     const updated = [created, ...applications];
     setApplications(updated);
-    localStorage.setItem("devtrack_job_applications", JSON.stringify(updated));
+    localStorage.setItem("codefolio_job_applications", JSON.stringify(updated));
     setShowAddAppModal(false);
     setNewApp({
       company: "",
@@ -450,13 +450,13 @@ Javascript, HTML, CSS, React, Git, Python, SQL, REST APIs
   const handleDeleteApp = (id: string) => {
     const updated = applications.filter(a => a.id !== id);
     setApplications(updated);
-    localStorage.setItem("devtrack_job_applications", JSON.stringify(updated));
+    localStorage.setItem("codefolio_job_applications", JSON.stringify(updated));
   };
 
   const handleUpdateAppStatus = (id: string, newStatus: Application["status"]) => {
     const updated = applications.map(a => a.id === id ? { ...a, status: newStatus } : a);
     setApplications(updated);
-    localStorage.setItem("devtrack_job_applications", JSON.stringify(updated));
+    localStorage.setItem("codefolio_job_applications", JSON.stringify(updated));
   };
 
   // --- Rendering Subsections ---

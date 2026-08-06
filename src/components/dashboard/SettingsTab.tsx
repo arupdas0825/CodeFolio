@@ -63,13 +63,13 @@ export default function SettingsTab({ data, onTokenUpdate }: SettingsTabProps) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("devtrack_github_token") || "";
+      const storedToken = localStorage.getItem("codefolio_github_token") || "";
       setTokenInput(storedToken);
 
-      const animPref = localStorage.getItem("devtrack_pref_animations");
+      const animPref = localStorage.getItem("codefolio_pref_animations");
       setEnableAnimations(animPref !== "false");
 
-      const contrastPref = localStorage.getItem("devtrack_pref_high_contrast");
+      const contrastPref = localStorage.getItem("codefolio_pref_high_contrast");
       setHighContrast(contrastPref === "true");
     }
   }, []);
@@ -78,11 +78,11 @@ export default function SettingsTab({ data, onTokenUpdate }: SettingsTabProps) {
     e.preventDefault();
     if (typeof window !== "undefined") {
       if (tokenInput.trim()) {
-        localStorage.setItem("devtrack_github_token", tokenInput.trim());
+        localStorage.setItem("codefolio_github_token", tokenInput.trim());
         onTokenUpdate(tokenInput.trim());
         setStatusMessage("Personal Access Token successfully saved!");
       } else {
-        localStorage.removeItem("devtrack_github_token");
+        localStorage.removeItem("codefolio_github_token");
         onTokenUpdate("");
         setStatusMessage("Token cleared. Using public rate limits.");
       }
@@ -99,14 +99,14 @@ export default function SettingsTab({ data, onTokenUpdate }: SettingsTabProps) {
   const handleToggleAnimations = (checked: boolean) => {
     setEnableAnimations(checked);
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_pref_animations", String(checked));
+      localStorage.setItem("codefolio_pref_animations", String(checked));
     }
   };
 
   const handleToggleContrast = (checked: boolean) => {
     setHighContrast(checked);
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_pref_high_contrast", String(checked));
+      localStorage.setItem("codefolio_pref_high_contrast", String(checked));
     }
   };
 
@@ -122,7 +122,7 @@ export default function SettingsTab({ data, onTokenUpdate }: SettingsTabProps) {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
     const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `${profile.login}-devtrack-data.json`);
+    downloadAnchor.setAttribute("download", `${profile.login}-codefolio-data.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -132,7 +132,7 @@ export default function SettingsTab({ data, onTokenUpdate }: SettingsTabProps) {
     if (typeof window !== "undefined") {
       const keys = Object.keys(localStorage);
       keys.forEach(key => {
-        if (key.startsWith("devtrack_profile_")) {
+        if (key.startsWith("codefolio_profile_")) {
           localStorage.removeItem(key);
         }
       });
@@ -164,7 +164,7 @@ export default function SettingsTab({ data, onTokenUpdate }: SettingsTabProps) {
                 Profile Metadata Editor
               </h3>
               <p className="text-xs text-[#8B949E] mt-0.5">
-                Customize local metadata variables displayed across your DevTrack dashboards.
+                Customize local metadata variables displayed across your Codefolio dashboards.
               </p>
             </div>
 
@@ -462,7 +462,7 @@ export default function SettingsTab({ data, onTokenUpdate }: SettingsTabProps) {
 
           {/* About & Version Info */}
           <div className="rounded-xl border border-[#30363D] bg-[#161B22]/40 p-5 space-y-2 text-xs">
-            <h4 className="text-xs font-bold text-[#8B949E] uppercase tracking-wider">About DevTrack</h4>
+            <h4 className="text-xs font-bold text-[#8B949E] uppercase tracking-wider">About Codefolio</h4>
             <div className="flex justify-between text-[11px]">
               <span className="text-[#8B949E]">Application Version:</span>
               <span className="text-[#F0F6FC] font-bold">v2.4.0 Production</span>

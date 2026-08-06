@@ -104,7 +104,7 @@ I classify as a "${dna.workStyle.primaryStyle}" specializing in ${dna.technology
 Strengths:
 ${dna.strengths.map(s => `• ${s.title}: ${s.evidence}`).join("\n")}
 
-Check out your Developer DNA on DevTrack!`;
+Check out your Developer DNA on Codefolio!`;
     navigator.clipboard.writeText(text);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
@@ -591,7 +591,7 @@ ${dna.careers.map(c => `* **${c.name}**: ${c.compatibility}% compatible`).join("
               <div className="flex items-center gap-1.5 text-[#8B949E] text-[9px]">
                 <QrCode size={24} className="text-text-primary" />
                 <div>
-                  <span className="block font-semibold">DevTrack DNA</span>
+                  <span className="block font-semibold">Codefolio DNA</span>
                   <span>Scan to verify</span>
                 </div>
               </div>

@@ -1,12 +1,12 @@
 import type { DeveloperTier } from '../DeveloperCard';
 
-// Ported from gitfut's components/finishTheme.ts. Each DevTrack tier maps to a
+// Ported from gitfut's components/finishTheme.ts. Each Codefolio tier maps to a
 // FUT background image (public/cards — the same art gitfut ships), the text ink
 // the original Python generator used for that finish, a glow for the card's
 // drop-shadow, and a radial avatar tint/halo so the GitHub avatar blends into
 // the card art instead of sitting on top of it as a flat rectangle.
 //
-// DevTrack has 5 tiers (Bronze/Silver/Gold/Diamond/Emerald) vs gitfut's FUT
+// Codefolio has 5 tiers (Bronze/Silver/Gold/Diamond/Emerald) vs gitfut's FUT
 // finishes (bronze/silver/gold/totw/toty/icon/founder) — we don't have unique
 // art for Diamond/Emerald, so we reuse gitfut's "toty" (blue) art for Diamond
 // and "icon" (legend) art for Emerald, tinted toward each tier's own identity

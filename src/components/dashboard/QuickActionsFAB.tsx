@@ -55,8 +55,8 @@ export default function QuickActionsFAB({
   const handleShareDashboard = () => {
     if (navigator.share) {
       navigator.share({
-        title: `${githubUsername}'s DevTrack Profile`,
-        text: `Check out ${githubUsername}'s developer score and activity on DevTrack!`,
+        title: `${githubUsername}'s Codefolio Profile`,
+        text: `Check out ${githubUsername}'s developer score and activity on Codefolio!`,
         url: window.location.href,
       }).catch(() => {});
     } else {

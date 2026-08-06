@@ -66,7 +66,7 @@ export const MobilePostComposer: React.FC<MobilePostComposerProps> = ({
         likesCount: 1,
         commentsCount: 0,
         createdAt: 'Just now',
-        aiSummary: selectedType === 'project_launch' ? 'Community project launch verified on DevTrack.' : undefined,
+        aiSummary: selectedType === 'project_launch' ? 'Community project launch verified on Codefolio.' : undefined,
       };
 
       onPostCreated(newPost);

@@ -1,5 +1,5 @@
 // ============================================================
-// DevTrack Enterprise — TypeScript Type Definitions
+// Codefolio Enterprise — TypeScript Type Definitions
 // ============================================================
 
 export type OrgRole =

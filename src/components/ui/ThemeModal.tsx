@@ -36,11 +36,11 @@ export const ThemeModal = () => {
     "github-dark",
     "github-dark-dimmed",
     "github-dark-hc",
-    "devtrack-midnight",
-    "devtrack-neon-blue",
-    "devtrack-graphite",
-    "devtrack-emerald",
-    "devtrack-purple-matrix",
+    "codefolio-midnight",
+    "codefolio-neon-blue",
+    "codefolio-graphite",
+    "codefolio-emerald",
+    "codefolio-purple-matrix",
   ] as const;
 
   const accentColors = ["blue", "green", "purple", "orange", "red", "cyan"] as const;
@@ -152,7 +152,7 @@ export const ThemeModal = () => {
               className="rounded border border-border bg-background py-0.5 px-1 text-text-primary focus:outline-none"
             >
               <option value="github">GitHub</option>
-              <option value="devtrack">DevTrack</option>
+              <option value="codefolio">Codefolio</option>
               <option value="minimal">Minimal</option>
             </select>
           </label>

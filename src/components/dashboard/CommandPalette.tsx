@@ -29,7 +29,7 @@ export default function CommandPalette({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("devtrack_recent_searches");
+      const stored = localStorage.getItem("codefolio_recent_searches");
       if (stored) {
         try {
           setRecentSearches(JSON.parse(stored));
@@ -43,7 +43,7 @@ export default function CommandPalette({
     const updated = [term, ...recentSearches.filter((s) => s !== term)].slice(0, 4);
     setRecentSearches(updated);
     if (typeof window !== "undefined") {
-      localStorage.setItem("devtrack_recent_searches", JSON.stringify(updated));
+      localStorage.setItem("codefolio_recent_searches", JSON.stringify(updated));
     }
   };
 

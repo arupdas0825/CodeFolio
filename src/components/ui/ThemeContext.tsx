@@ -8,11 +8,11 @@ export type ThemeProfile =
   | "github-dark"
   | "github-dark-dimmed"
   | "github-dark-hc"
-  | "devtrack-midnight"
-  | "devtrack-neon-blue"
-  | "devtrack-graphite"
-  | "devtrack-emerald"
-  | "devtrack-purple-matrix";
+  | "codefolio-midnight"
+  | "codefolio-neon-blue"
+  | "codefolio-graphite"
+  | "codefolio-emerald"
+  | "codefolio-purple-matrix";
 export type AccentColor = "blue" | "green" | "purple" | "orange" | "red" | "cyan";
 export type LayoutDensity = "default" | "compact" | "wide";
 export type InterfaceSettings = {
@@ -26,7 +26,7 @@ export type InterfaceSettings = {
 };
 export type ChartSettings = {
   animatedCharts: boolean;
-  heatmapStyle: "github" | "devtrack" | "minimal";
+  heatmapStyle: "github" | "codefolio" | "minimal";
 };
 
 export interface ThemeContextProps {
@@ -87,35 +87,35 @@ const themeProfiles: Record<ThemeProfile, Record<string, string>> = {
     "--border": "#f1e3bc",
     "--accent": "#ffb300",
   },
-  "devtrack-midnight": {
+  "codefolio-midnight": {
     "--background": "#0a0c10",
     "--surface": "#14171c",
     "--surface-secondary": "#1a1d23",
     "--border": "#2d323c",
     "--accent": "#1e40af",
   },
-  "devtrack-neon-blue": {
+  "codefolio-neon-blue": {
     "--background": "#020617",
     "--surface": "#091135",
     "--surface-secondary": "#0d1c4a",
     "--border": "#17386b",
     "--accent": "#3b82f6",
   },
-  "devtrack-graphite": {
+  "codefolio-graphite": {
     "--background": "#111418",
     "--surface": "#1c2127",
     "--surface-secondary": "#262c33",
     "--border": "#404752",
     "--accent": "#6366f1",
   },
-  "devtrack-emerald": {
+  "codefolio-emerald": {
     "--background": "#041c15",
     "--surface": "#07352c",
     "--surface-secondary": "#084d3a",
     "--border": "#2e7d5b",
     "--accent": "#10b981",
   },
-  "devtrack-purple-matrix": {
+  "codefolio-purple-matrix": {
     "--background": "#181125",
     "--surface": "#241a34",
     "--surface-secondary": "#30243e",
@@ -146,12 +146,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   // Load persisted settings on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const storedMode = localStorage.getItem("devtrack_theme_mode") as ThemeMode;
-    const storedProfile = localStorage.getItem("devtrack_theme_profile") as ThemeProfile;
-    const storedAccent = localStorage.getItem("devtrack_accent_color") as AccentColor;
-    const storedLayout = localStorage.getItem("devtrack_layout_density") as LayoutDensity;
-    const storedInterface = localStorage.getItem("devtrack_interface_settings");
-    const storedChart = localStorage.getItem("devtrack_chart_settings");
+    const storedMode = localStorage.getItem("codefolio_theme_mode") as ThemeMode;
+    const storedProfile = localStorage.getItem("codefolio_theme_profile") as ThemeProfile;
+    const storedAccent = localStorage.getItem("codefolio_accent_color") as AccentColor;
+    const storedLayout = localStorage.getItem("codefolio_layout_density") as LayoutDensity;
+    const storedInterface = localStorage.getItem("codefolio_interface_settings");
+    const storedChart = localStorage.getItem("codefolio_chart_settings");
     if (storedMode) setMode(storedMode);
     if (storedProfile) setProfile(storedProfile);
     if (storedAccent) setAccent(storedAccent);
@@ -195,15 +195,15 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     document.documentElement.style.setProperty("--accent", accentColors[accent]);
 
     // Persist
-    localStorage.setItem("devtrack_theme_mode", mode);
-    localStorage.setItem("devtrack_theme_profile", profile);
-    localStorage.setItem("devtrack_accent_color", accent);
-    localStorage.setItem("devtrack_layout_density", layout);
+    localStorage.setItem("codefolio_theme_mode", mode);
+    localStorage.setItem("codefolio_theme_profile", profile);
+    localStorage.setItem("codefolio_accent_color", accent);
+    localStorage.setItem("codefolio_layout_density", layout);
     localStorage.setItem(
-      "devtrack_interface_settings",
+      "codefolio_interface_settings",
       JSON.stringify(interfaceSettings)
     );
-    localStorage.setItem("devtrack_chart_settings", JSON.stringify(chartSettings));
+    localStorage.setItem("codefolio_chart_settings", JSON.stringify(chartSettings));
   }, [mode, profile, accent, layout, interfaceSettings, chartSettings]);
 
   const toggleThemeMode = () => {

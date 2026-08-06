@@ -28,7 +28,7 @@ export const MobileSearchModal: React.FC<MobileSearchModalProps> = ({ isOpen, on
   // Load recent searches from localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('devtrack_recent_searches');
+      const stored = localStorage.getItem('codefolio_recent_searches');
       if (stored) {
         try {
           setRecentSearches(JSON.parse(stored));
@@ -64,7 +64,7 @@ export const MobileSearchModal: React.FC<MobileSearchModalProps> = ({ isOpen, on
     const timer = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('devtrack_github_token') ?? undefined : undefined;
+        const token = typeof window !== 'undefined' ? localStorage.getItem('codefolio_github_token') ?? undefined : undefined;
         const headers: Record<string, string> = { Accept: 'application/vnd.github.v3+json' };
         if (token) headers['Authorization'] = `token ${token}`;
 
@@ -87,14 +87,14 @@ export const MobileSearchModal: React.FC<MobileSearchModalProps> = ({ isOpen, on
     const updated = [username, ...recentSearches.filter((s) => s.toLowerCase() !== username.toLowerCase())].slice(0, 5);
     setRecentSearches(updated);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('devtrack_recent_searches', JSON.stringify(updated));
+      localStorage.setItem('codefolio_recent_searches', JSON.stringify(updated));
     }
   };
 
   const clearRecentSearches = () => {
     setRecentSearches([]);
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('devtrack_recent_searches');
+      localStorage.removeItem('codefolio_recent_searches');
     }
   };
 
