@@ -36,6 +36,8 @@ import {
   ChevronUp,
   FolderGit2,
   LayoutDashboard,
+  AlertCircle,
+  LucideIcon,
 } from 'lucide-react';
 import ContributionHeatmap from '@/components/dashboard/ContributionHeatmap';
 
@@ -102,7 +104,7 @@ const CHART_COLORS = {
 
 const SectionCard: React.FC<{
   title: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   children: React.ReactNode;
   defaultOpen?: boolean;
 }> = ({ title, icon: Icon, children, defaultOpen = true }) => {
@@ -255,7 +257,7 @@ export const GitHubAnalyticsDashboard: React.FC<GitHubAnalyticsDashboardProps> =
 
   const timelineEvents = useMemo(() => {
     return userEvents.slice(0, 15).map((ev: any, idx) => {
-      let icon = Activity;
+      let icon: LucideIcon = Activity;
       let desc = ev.type;
       
       switch (ev.type) {
