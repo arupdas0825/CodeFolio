@@ -21,9 +21,8 @@ const firebaseConfig = {
 
 // Check if variables are configured
 const isFirebaseEnabled = 
-  typeof window !== "undefined" && 
-  process.env.NEXT_PUBLIC_FIREBASE_API_KEY && 
-  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  Boolean(process.env.NEXT_PUBLIC_FIREBASE_API_KEY) && 
+  Boolean(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
 
 let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
@@ -89,6 +88,13 @@ export async function signInWithGitHub(): Promise<CodefolioUser> {
           }
         }
 
+        // Trigger Firestore sync asynchronously for user document and repos
+        if (db) {
+          syncUserAndReposInFirestore(dtUser.uid, dtUser.username, token).catch((err) => {
+            console.warn("Background Firestore user sync notice:", err?.message || err);
+          });
+        }
+
         return dtUser;
       } finally {
         authInFlightPromise = null;
@@ -98,7 +104,7 @@ export async function signInWithGitHub(): Promise<CodefolioUser> {
     return authInFlightPromise;
   } else {
     // Under strict "No mock data" requirement, throw error if configuration is missing
-    throw new Error("Firebase configuration is missing or disabled. Cannot log in.");
+    throw new Error("Firebase configuration is missing or disabled. Check your environment variables.");
   }
 }
 

@@ -53,20 +53,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         return;
       }
 
-      console.warn("GitHub Sign In notice:", err?.message);
-      // Fallback local session for demo/preview authorization
-      const demoUser = {
-        uid: 'dev_' + Date.now(),
-        displayName: 'Codefolio Creator',
-        username: 'codefolio-user',
-        photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-        email: 'developer@codefolio.io'
-      };
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('codefolio_current_user', JSON.stringify(demoUser));
+      console.error("GitHub authentication error:", err);
+      let userFriendlyMessage = err?.message || 'Authentication failed. Please check your connection and try again.';
+      if (code === 'auth/unauthorized-domain') {
+        userFriendlyMessage = 'This domain is not authorized in Firebase Console. Please add your domain under Firebase Auth Settings > Authorized Domains.';
+      } else if (code === 'auth/popup-blocked') {
+        userFriendlyMessage = 'The authentication popup was blocked by your browser. Please allow popups for this site and try again.';
+      } else if (code === 'auth/operation-not-allowed') {
+        userFriendlyMessage = 'GitHub provider is disabled in Firebase Console. Please enable GitHub under Firebase Auth > Sign-in method.';
       }
-      if (onSuccess) onSuccess(demoUser);
-      onClose();
+      setError(userFriendlyMessage);
     } finally {
       setLoading(false);
     }

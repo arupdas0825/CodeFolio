@@ -167,89 +167,109 @@ export class GitHubContributionService {
   static async fetchContributionsFromScraper(
     username: string
   ): Promise<ContributionStats> {
-    const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}`);
-    if (!res.ok) {
-      throw new Error(`Fallback contribution scraper failed: ${res.statusText}`);
-    }
-
-    const data = await res.json();
-    if (!data.contributions || data.contributions.length === 0) {
-      throw new Error("No contribution calendar returned by scraper.");
-    }
-
-    // Populate daily contributions
-    const dailyContributions: Record<string, number> = {};
-    
-    // Sort contributions chronologically
-    const rawContribs = data.contributions as { date: string; count: number }[];
-    rawContribs.forEach(c => {
-      dailyContributions[c.date] = c.count;
-    });
-
-    // Find the range of last 365 days for the calendar heatmap
-    const today = new Date();
-    const startDate = new Date();
-    startDate.setDate(today.getDate() - 365);
-    const startDateStr = startDate.toISOString().split("T")[0];
-
-    // Filter contributions to the last 365 days
-    const last365DaysContributions = rawContribs.filter(c => c.date >= startDateStr);
-    const totalContributions = last365DaysContributions.reduce((sum, c) => sum + c.count, 0);
-
-    // Compute streaks on full history for maximum accuracy
-    const { currentStreak, longestStreak } = this.calculateStreaks(dailyContributions);
-
-    // Fetch real PRs count using GitHub REST Search API (never fabricate or estimate values)
-    let totalPRs = 0;
-    try {
-      const searchRes = await fetch(`https://api.github.com/search/issues?q=type:pr+author:${username}`, {
-        headers: { Accept: "application/vnd.github.v3+json" }
-      });
-      if (searchRes.ok) {
-        const searchJson = await searchRes.json();
-        if (typeof searchJson.total_count === "number") {
-          totalPRs = searchJson.total_count;
-        }
-      }
-    } catch (e) {
-      // Leave totalPRs as 0 if unverified
-    }
-
-    let totalIssues = 0;
-    try {
-      const searchRes = await fetch(`https://api.github.com/search/issues?q=type:issue+author:${username}`, {
-        headers: { Accept: "application/vnd.github.v3+json" }
-      });
-      if (searchRes.ok) {
-        const searchJson = await searchRes.json();
-        if (typeof searchJson.total_count === "number") {
-          totalIssues = searchJson.total_count;
-        }
-      }
-    } catch (e) {
-      // Leave totalIssues as 0 if unverified
-    }
-
-    const totalCommits = Math.max(0, totalContributions - totalPRs - totalIssues);
-
-    // Estimate active months count from last 365 days
-    const activeDates = last365DaysContributions
-      .filter(c => c.count > 0)
-      .map(c => c.date.substring(0, 7)); // YYYY-MM
-    const uniqueMonths = new Set(activeDates);
-    const activeMonthsCount = Math.max(1, uniqueMonths.size);
-
-    return {
-      totalCommits,
-      totalPRs,
-      totalIssues,
-      totalStarsEarned: 0, // Filled in by caller
-      totalForksEarned: 0, // Filled in by caller
-      activeMonthsCount,
-      longestStreak,
-      currentStreak,
-      dailyContributions,
+    const emptyStats: ContributionStats = {
+      totalCommits: 0,
+      totalPRs: 0,
+      totalIssues: 0,
+      totalStarsEarned: 0,
+      totalForksEarned: 0,
+      activeMonthsCount: 0,
+      longestStreak: 0,
+      currentStreak: 0,
+      dailyContributions: {},
     };
+
+    try {
+      const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}`);
+      if (!res.ok) {
+        console.warn(`Contribution scraper unavailable (${res.status} ${res.statusText}) for user ${username}. Returning empty contribution stats.`);
+        return emptyStats;
+      }
+
+      const data = await res.json();
+      if (!data.contributions || !Array.isArray(data.contributions) || data.contributions.length === 0) {
+        return emptyStats;
+      }
+
+      // Populate daily contributions
+      const dailyContributions: Record<string, number> = {};
+      
+      // Sort contributions chronologically
+      const rawContribs = data.contributions as { date: string; count: number }[];
+      rawContribs.forEach(c => {
+        if (c.date && typeof c.count === 'number') {
+          dailyContributions[c.date] = c.count;
+        }
+      });
+
+      // Find the range of last 365 days for the calendar heatmap
+      const today = new Date();
+      const startDate = new Date();
+      startDate.setDate(today.getDate() - 365);
+      const startDateStr = startDate.toISOString().split("T")[0];
+
+      // Filter contributions to the last 365 days
+      const last365DaysContributions = rawContribs.filter(c => c.date >= startDateStr);
+      const totalContributions = last365DaysContributions.reduce((sum, c) => sum + c.count, 0);
+
+      // Compute streaks on full history for maximum accuracy
+      const { currentStreak, longestStreak } = this.calculateStreaks(dailyContributions);
+
+      // Fetch real PRs count using GitHub REST Search API (never fabricate or estimate values)
+      let totalPRs = 0;
+      try {
+        const searchRes = await fetch(`https://api.github.com/search/issues?q=type:pr+author:${username}`, {
+          headers: { Accept: "application/vnd.github.v3+json" }
+        });
+        if (searchRes.ok) {
+          const searchJson = await searchRes.json();
+          if (typeof searchJson.total_count === "number") {
+            totalPRs = searchJson.total_count;
+          }
+        }
+      } catch (e) {
+        // Leave totalPRs as 0 if unverified
+      }
+
+      let totalIssues = 0;
+      try {
+        const searchRes = await fetch(`https://api.github.com/search/issues?q=type:issue+author:${username}`, {
+          headers: { Accept: "application/vnd.github.v3+json" }
+        });
+        if (searchRes.ok) {
+          const searchJson = await searchRes.json();
+          if (typeof searchJson.total_count === "number") {
+            totalIssues = searchJson.total_count;
+          }
+        }
+      } catch (e) {
+        // Leave totalIssues as 0 if unverified
+      }
+
+      const totalCommits = Math.max(0, totalContributions - totalPRs - totalIssues);
+
+      // Estimate active months count from last 365 days
+      const activeDates = last365DaysContributions
+        .filter(c => c.count > 0)
+        .map(c => c.date.substring(0, 7)); // YYYY-MM
+      const uniqueMonths = new Set(activeDates);
+      const activeMonthsCount = Math.max(0, uniqueMonths.size);
+
+      return {
+        totalCommits,
+        totalPRs,
+        totalIssues,
+        totalStarsEarned: 0, // Filled in by caller
+        totalForksEarned: 0, // Filled in by caller
+        activeMonthsCount,
+        longestStreak,
+        currentStreak,
+        dailyContributions,
+      };
+    } catch (err) {
+      console.warn(`Error fetching contribution stats for ${username}:`, err);
+      return emptyStats;
+    }
   }
 
   /**

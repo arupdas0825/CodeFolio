@@ -4,19 +4,20 @@ service cloud.firestore {
     
     // User profile document rules: users/{userId}
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      // Allow authenticated users to look up basic profiles by username if needed
-      allow read: if request.auth != null;
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
     
     // Analytics document rules: analytics/{userId}
     match /analytics/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
     
     // Repositories subcollection rules: repositories/{userId}/items/{itemId}
     match /repositories/{userId}/items/{itemId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
 
     // ── DevFeed collections ──────────────────────────────────────────────────
