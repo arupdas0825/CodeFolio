@@ -211,55 +211,24 @@ export class GitHubOrganizationService {
 
     if (rawMembers && rawMembers.length > 0) {
       finalMembers = rawMembers.map((m, idx) => {
-        const randSeed = (m.id + idx) % 100;
         return {
           login: m.login,
           id: m.id,
           avatar_url: m.avatar_url,
           html_url: m.html_url,
-          name: m.login.charAt(0).toUpperCase() + m.login.slice(1),
-          role: roles[idx % roles.length],
-          grade: grades[idx % grades.length],
-          streak: Math.round(5 + (randSeed % 15)),
-          topLanguage: topLangs[idx % topLangs.length],
-          reposCount: Math.round(3 + (randSeed % 20)),
-          followersCount: Math.round(10 + (randSeed * 5)),
-          contributionsCount: Math.round(120 + (randSeed * 12)),
-          recentActivity: "Pushed 3 commits to main",
-        };
-      });
-    } else {
-      // Generate some realistic members based on events and common active contributors
-      // Vercel example: shuhei, leerob, pacocoursey, trueadm, gajus
-      const fallbackLogins = [
-        { login: "leeerob", name: "Lee Robinson", role: "Owner", grade: "Principal", lang: "TypeScript" },
-        { login: "delbaoliveira", name: "Delba Oliveira", role: "Admin", grade: "Lead", lang: "TypeScript" },
-        { login: "timneutkens", name: "Tim Neutkens", role: "Admin", grade: "Principal", lang: "Rust" },
-        { login: "shuhei", name: "Shuhei Kagawa", role: "Maintainer", grade: "Senior", lang: "JavaScript" },
-        { login: "pacocoursey", name: "Paco Coursey", role: "Developer", grade: "Senior", lang: "TypeScript" },
-        { login: "trueadm", name: "Dominic Gannaway", role: "Maintainer", grade: "Principal", lang: "Rust" },
-        { login: "gajus", name: "Gajus Kuizinas", role: "Developer", grade: "Senior", lang: "Go" },
-      ];
-
-      finalMembers = fallbackLogins.map((m, idx) => {
-        const hash = (orgName.charCodeAt(0) + idx) * 17;
-        return {
-          login: m.login,
-          id: 1000000 + idx,
-          avatar_url: `https://images.unsplash.com/photo-${1535713875002 + idx}-d1d0cf377fde?auto=format&fit=crop&w=150&h=150`,
-          html_url: `https://github.com/${m.login}`,
-          name: m.name,
-          role: m.role as any,
-          grade: m.grade as any,
-          streak: Math.round(5 + (hash % 20)),
-          topLanguage: m.lang,
-          reposCount: Math.round(5 + (hash % 15)),
-          followersCount: Math.round(50 + (hash * 3)),
-          contributionsCount: Math.round(150 + (hash * 2)),
-          recentActivity: "Merged pull request #" + Math.floor(100 + hash % 50),
+          name: m.login,
+          role: idx === 0 ? "Owner" : "Developer",
+          grade: "Senior",
+          streak: 0,
+          topLanguage: "TypeScript",
+          reposCount: 0,
+          followersCount: 0,
+          contributionsCount: 0,
+          recentActivity: "Member of " + orgName,
         };
       });
     }
+
 
     // 3. Metrics calculations
     const totalContributions = finalMembers.reduce((a, b) => a + b.contributionsCount, 0);

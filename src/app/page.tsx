@@ -360,7 +360,7 @@ export default function LandingPage() {
         label: 'GitHub Username',
         required: true,
         type: 'text' as const,
-        placeholder: 'e.g. shadcn, torvalds, gaearon',
+        placeholder: 'Enter GitHub username',
         value: githubUsername,
         onChange: (e: ChangeEvent<HTMLInputElement>) => setGithubUsername(e.target.value),
       },

@@ -35,11 +35,14 @@ import {
   ChevronDown,
   ChevronUp,
   FolderGit2,
-  LayoutDashboard,
+  Building2,
+  TrendingUp,
+  Eye,
   AlertCircle,
   LucideIcon,
 } from 'lucide-react';
 import ContributionHeatmap from '@/components/dashboard/ContributionHeatmap';
+import EmptyState from '@/components/ui/EmptyState';
 
 interface GitHubAnalyticsDashboardProps {
   username: string;
@@ -80,8 +83,10 @@ interface GitHubAnalyticsDashboardProps {
     language: string | null;
     forks_count: number;
     open_issues_count: number;
+    private?: boolean;
   }>;
-  userEvents: any[];
+  userEvents?: any[];
+  organizations?: Array<{ login: string; avatar_url: string; description?: string }>;
 }
 
 const TOOLTIP_STYLE = {
@@ -111,7 +116,7 @@ const SectionCard: React.FC<{
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl overflow-hidden">
+    <div className="rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl overflow-hidden shadow-2xl transition-all duration-300">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-6 bg-white/5 hover:bg-white/10 transition-colors"
@@ -127,12 +132,17 @@ const SectionCard: React.FC<{
   );
 };
 
-const StatBox: React.FC<{ label: string; value: string | number | undefined }> = ({ label, value }) => (
-  <div className="flex flex-col bg-slate-950/50 rounded-2xl p-4 border border-white/5">
+const StatBox: React.FC<{ label: string; value: string | number | undefined; subtitle?: string }> = ({
+  label,
+  value,
+  subtitle,
+}) => (
+  <div className="flex flex-col bg-slate-950/50 rounded-2xl p-4 border border-white/5 hover:border-indigo-500/30 transition-all duration-300">
     <span className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-1">{label}</span>
     <span className="text-xl font-extrabold text-white">
-      {value !== undefined && value !== null ? value : 'Not Available'}
+      {value !== undefined && value !== null && value !== '' ? value : '0'}
     </span>
+    {subtitle && <span className="text-[10px] text-slate-500 font-mono mt-1">{subtitle}</span>}
   </div>
 );
 
@@ -141,73 +151,155 @@ export const GitHubAnalyticsDashboard: React.FC<GitHubAnalyticsDashboardProps> =
   profileData,
   contributions,
   repos,
-  userEvents,
+  userEvents = [],
+  organizations = [],
 }) => {
-  // Data processing memoizations
-  const monthlyTrend = useMemo(() => {
+  // 1. Commit & Contribution Analytics
+  const dailyEntries = useMemo(() => {
     if (!contributions?.dailyContributions) return [];
+    return Object.entries(contributions.dailyContributions).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [contributions]);
+
+  const commitsThisWeek = useMemo(() => {
+    if (dailyEntries.length === 0) return 0;
+    const now = new Date();
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(now.getDate() - 7);
+    const dateStr = oneWeekAgo.toISOString().split('T')[0];
+    return dailyEntries.filter(([d]) => d >= dateStr).reduce((sum, [_, count]) => sum + count, 0);
+  }, [dailyEntries]);
+
+  const commitsThisMonth = useMemo(() => {
+    if (dailyEntries.length === 0) return 0;
+    const currentMonthStr = new Date().toISOString().substring(0, 7); // YYYY-MM
+    return dailyEntries.filter(([d]) => d.startsWith(currentMonthStr)).reduce((sum, [_, count]) => sum + count, 0);
+  }, [dailyEntries]);
+
+  const commitsThisYear = useMemo(() => {
+    if (dailyEntries.length === 0) return 0;
+    const currentYearStr = new Date().getFullYear().toString();
+    return dailyEntries.filter(([d]) => d.startsWith(currentYearStr)).reduce((sum, [_, count]) => sum + count, 0);
+  }, [dailyEntries]);
+
+  const activeDaysCount = useMemo(() => {
+    return dailyEntries.filter(([_, count]) => count > 0).length;
+  }, [dailyEntries]);
+
+  const avgDailyCommits = useMemo(() => {
+    if (dailyEntries.length === 0) return '0.0';
+    const total = dailyEntries.reduce((sum, [_, count]) => sum + count, 0);
+    return (total / dailyEntries.length).toFixed(1);
+  }, [dailyEntries]);
+
+  const weeklyTrend = useMemo(() => {
+    if (dailyEntries.length === 0) return [];
+    const weeksMap: Record<string, number> = {};
+    dailyEntries.slice(-84).forEach(([dateStr, count]) => {
+      const date = new Date(dateStr);
+      const day = date.getDay();
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(date.setDate(diff));
+      const weekLabel = monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      weeksMap[weekLabel] = (weeksMap[weekLabel] || 0) + count;
+    });
+    return Object.entries(weeksMap).map(([week, count]) => ({ week, contributions: count }));
+  }, [dailyEntries]);
+
+  const monthlyTrend = useMemo(() => {
+    if (dailyEntries.length === 0) return [];
     const monthly: Record<string, number> = {};
-    Object.entries(contributions.dailyContributions).forEach(([dateStr, count]) => {
+    dailyEntries.forEach(([dateStr, count]) => {
       const monthStr = dateStr.substring(0, 7); // YYYY-MM
       monthly[monthStr] = (monthly[monthStr] || 0) + count;
     });
     return Object.entries(monthly)
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .slice(-12) // Last 12 months
+      .slice(-12)
       .map(([month, count]) => {
         const date = new Date(month + '-01');
         return {
           month: date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
           contributions: count,
-          rawMonth: month,
         };
       });
-  }, [contributions]);
+  }, [dailyEntries]);
 
   const dailyDistribution = useMemo(() => {
-    if (!contributions?.dailyContributions) return [];
+    if (dailyEntries.length === 0) return [];
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const counts = [0, 0, 0, 0, 0, 0, 0];
-    Object.entries(contributions.dailyContributions).forEach(([dateStr, count]) => {
+    dailyEntries.forEach(([dateStr, count]) => {
       const date = new Date(dateStr);
       if (!isNaN(date.getTime())) {
         counts[date.getUTCDay()] += count;
       }
     });
-    // Reorder to Mon-Sun
-    const reordered = [1, 2, 3, 4, 5, 6, 0].map(i => ({
+    return [1, 2, 3, 4, 5, 6, 0].map(i => ({
       day: days[i],
       contributions: counts[i],
     }));
-    return reordered;
-  }, [contributions]);
+  }, [dailyEntries]);
 
+  const peakCodingDay = useMemo(() => {
+    if (dailyDistribution.length === 0) return 'None';
+    const sorted = [...dailyDistribution].sort((a, b) => b.contributions - a.contributions);
+    return sorted[0].contributions > 0 ? sorted[0].day : 'None';
+  }, [dailyDistribution]);
+
+  // 2. Repository Insights & Growth Timeline
   const repoStats = useMemo(() => {
     const total = repos.length;
-    const forked = repos.filter(r => r.fork).length;
-    const original = total - forked;
+    const publicCount = repos.filter(r => !r.private).length;
+    const privateCount = repos.filter(r => r.private).length;
+    const totalStars = repos.reduce((acc, r) => acc + r.stargazers_count, 0);
+    const totalForks = repos.reduce((acc, r) => acc + r.forks_count, 0);
+    const totalWatchers = repos.reduce((acc, r) => acc + r.watchers_count, 0);
+    const totalOpenIssues = repos.reduce((acc, r) => acc + r.open_issues_count, 0);
+
     const sortedByStars = [...repos].sort((a, b) => b.stargazers_count - a.stargazers_count);
     const sortedByForks = [...repos].sort((a, b) => b.forks_count - a.forks_count);
+    const sortedByActivity = [...repos].sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime());
+    const sortedBySize = [...repos].sort((a, b) => b.size - a.size);
+
+    const mostStarred = sortedByStars[0]?.name || 'None';
+    const mostForked = sortedByForks[0]?.name || 'None';
+    const mostActive = sortedByActivity[0]?.name || 'None';
+    const recentlyUpdated = sortedByActivity[0]?.name || 'None';
+    const largestRepo = sortedBySize[0] ? `${sortedBySize[0].name} (${(sortedBySize[0].size / 1024).toFixed(1)}MB)` : 'None';
+
     return {
       total,
-      forked,
-      original,
-      mostStarred: sortedByStars[0]?.name || 'N/A',
-      mostForked: sortedByForks[0]?.name || 'N/A',
+      publicCount,
+      privateCount,
+      totalStars,
+      totalForks,
+      totalWatchers,
+      totalOpenIssues,
+      mostStarred,
+      mostForked,
+      mostActive,
+      recentlyUpdated,
+      largestRepo,
       top10ByStars: sortedByStars.slice(0, 10).map(r => ({ name: r.name, stars: r.stargazers_count })),
-      sizeDistribution: [...repos]
-        .sort((a, b) => b.size - a.size)
-        .slice(0, 10)
-        .map(r => ({ name: r.name, sizeKB: r.size })),
+      sizeDistribution: sortedBySize.slice(0, 10).map(r => ({ name: r.name, sizeMB: Number((r.size / 1024).toFixed(2)) })),
     };
   }, [repos]);
 
-  const peakCodingDay = useMemo(() => {
-    if (dailyDistribution.length === 0) return 'Not Available';
-    const sorted = [...dailyDistribution].sort((a, b) => b.contributions - a.contributions);
-    return sorted[0].contributions > 0 ? sorted[0].day : 'Not Available';
-  }, [dailyDistribution]);
+  const repoGrowthTimeline = useMemo(() => {
+    if (repos.length === 0) return [];
+    const yearlyMap: Record<string, number> = {};
+    repos.forEach(r => {
+      if (r.created_at) {
+        const year = r.created_at.substring(0, 4);
+        yearlyMap[year] = (yearlyMap[year] || 0) + 1;
+      }
+    });
+    return Object.entries(yearlyMap)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([year, count]) => ({ year, repos: count }));
+  }, [repos]);
 
+  // 3. Language Analytics
   const languageStats = useMemo(() => {
     const langCounts: Record<string, number> = {};
     repos.forEach(r => {
@@ -220,89 +312,56 @@ export const GitHubAnalyticsDashboard: React.FC<GitHubAnalyticsDashboardProps> =
       .map(([lang, count]) => ({ lang, repos: count }));
   }, [repos]);
 
-  const accountAgeDays = useMemo(() => {
-    if (!profileData.createdAt) return undefined;
-    const created = new Date(profileData.createdAt);
-    if (isNaN(created.getTime())) return undefined;
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - created.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }, [profileData.createdAt]);
+  const mostUsedLanguage = useMemo(() => {
+    if (profileData.topLanguages.length > 0) return profileData.topLanguages[0].name;
+    if (languageStats.length > 0) return languageStats[0].lang;
+    return 'None';
+  }, [profileData.topLanguages, languageStats]);
 
-  const aiInsights = useMemo(() => {
-    const sortedMonths = [...monthlyTrend].sort((a, b) => b.contributions - a.contributions);
-    const mostProductiveMonth = sortedMonths[0]?.contributions > 0 ? sortedMonths[0].month : 'N/A';
-    
-    const strongestLang = profileData.topLanguages[0]?.name || 'N/A';
-    
-    const mostActiveRepoStr = [...repos].sort((a, b) => {
-      return new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime();
-    })[0]?.name || 'N/A';
-
-    let consistency = 'Not Available';
-    if (contributions?.currentStreak !== undefined && accountAgeDays) {
-      if (contributions.longestStreak > 30) consistency = 'Exceptional';
-      else if (contributions.longestStreak > 14) consistency = 'High';
-      else if (contributions.longestStreak > 7) consistency = 'Moderate';
-      else consistency = 'Casual';
-    }
-
-    return {
-      mostProductiveMonth,
-      strongestLang,
-      mostActiveRepoStr,
-      consistency,
-    };
-  }, [monthlyTrend, profileData.topLanguages, repos, contributions, accountAgeDays]);
-
-  const timelineEvents = useMemo(() => {
-    return userEvents.slice(0, 15).map((ev: any, idx) => {
-      let icon: LucideIcon = Activity;
-      let desc = ev.type;
-      
-      switch (ev.type) {
-        case 'PushEvent': icon = GitCommit; desc = 'Pushed commits'; break;
-        case 'PullRequestEvent': icon = GitPullRequest; desc = ev.payload?.action ? `PR ${ev.payload.action}` : 'Pull Request'; break;
-        case 'IssuesEvent': icon = AlertCircle; desc = ev.payload?.action ? `Issue ${ev.payload.action}` : 'Issue Event'; break;
-        case 'CreateEvent': icon = FolderGit2; desc = 'Created repository/branch'; break;
-        case 'WatchEvent': icon = Star; desc = 'Starred repository'; break;
-        case 'ForkEvent': icon = GitFork; desc = 'Forked repository'; break;
-      }
-      return {
-        id: ev.id || idx,
-        type: ev.type,
-        repoName: ev.repo?.name || 'Unknown',
-        createdAt: ev.created_at ? new Date(ev.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Unknown date',
-        desc,
-        Icon: icon
-      };
+  const fastestGrowingLanguage = useMemo(() => {
+    const recentRepos = repos.filter(r => {
+      const updated = new Date(r.updated_at).getTime();
+      const sixMonthsAgo = Date.now() - 180 * 24 * 60 * 60 * 1000;
+      return updated >= sixMonthsAgo && r.language;
     });
-  }, [userEvents]);
+    if (recentRepos.length === 0) return mostUsedLanguage;
+    const counts: Record<string, number> = {};
+    recentRepos.forEach(r => {
+      if (r.language) counts[r.language] = (counts[r.language] || 0) + 1;
+    });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    return sorted[0] ? sorted[0][0] : mostUsedLanguage;
+  }, [repos, mostUsedLanguage]);
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6 font-sans">
       {/* A. Contribution Analytics */}
       <SectionCard title="Contribution Analytics" icon={Activity}>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <StatBox label="Total Contributions" value={contributions?.totalCommits ? contributions.totalCommits + (contributions.totalPRs || 0) + (contributions.totalIssues || 0) : 'Not Available'} />
-          <StatBox label="Current Streak" value={contributions?.currentStreak !== undefined ? `${contributions.currentStreak} days` : 'Not Available'} />
-          <StatBox label="Longest Streak" value={contributions?.longestStreak !== undefined ? `${contributions.longestStreak} days` : 'Not Available'} />
-          <StatBox label="Total PRs" value={contributions?.totalPRs} />
-          <StatBox label="Total Issues" value={contributions?.totalIssues} />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <StatBox label="Total Contributions" value={contributions?.totalCommits ? contributions.totalCommits + (contributions.totalPRs || 0) + (contributions.totalIssues || 0) : 0} />
+          <StatBox label="Current Streak" value={contributions?.currentStreak !== undefined ? `${contributions.currentStreak} days` : '0 days'} />
+          <StatBox label="Longest Streak" value={contributions?.longestStreak !== undefined ? `${contributions.longestStreak} days` : '0 days'} />
+          <StatBox label="Active Days" value={`${activeDaysCount} days`} />
         </div>
 
-        {contributions?.dailyContributions && (
+        {contributions?.dailyContributions && Object.keys(contributions.dailyContributions).length > 0 ? (
           <div className="mb-8 overflow-x-auto">
             <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">365-Day Contribution Heatmap</h3>
             <div className="min-w-[700px]">
               <ContributionHeatmap dailyContributions={contributions.dailyContributions} />
             </div>
           </div>
+        ) : (
+          <EmptyState
+            title="No Public Contributions"
+            description="No contribution data recorded over the past year for this account."
+            icon={<Calendar className="w-8 h-8 text-indigo-400" />}
+          />
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
-            <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Monthly Contribution Trend</h3>
+            <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Monthly Contribution Graph</h3>
             <div className="h-48">
               {monthlyTrend.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
@@ -321,26 +380,26 @@ export const GitHubAnalyticsDashboard: React.FC<GitHubAnalyticsDashboardProps> =
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500 font-mono text-sm">Not Available</div>
+                <EmptyState title="No Monthly Data" description="Not enough data to map monthly trends." />
               )}
             </div>
           </div>
 
           <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
-            <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Daily Distribution (Mon-Sun)</h3>
+            <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Weekly Contribution Graph</h3>
             <div className="h-48">
-              {dailyDistribution.length > 0 ? (
+              {weeklyTrend.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dailyDistribution} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
+                  <BarChart data={weeklyTrend} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#30363D" vertical={false} />
-                    <XAxis dataKey="day" stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} />
+                    <XAxis dataKey="week" stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} />
                     <YAxis stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} />
                     <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: '#ffffff10' }} />
                     <Bar dataKey="contributions" fill={CHART_COLORS.cyan} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500 font-mono text-sm">Not Available</div>
+                <EmptyState title="No Weekly Data" description="Not enough data to map weekly trends." />
               )}
             </div>
           </div>
@@ -349,19 +408,18 @@ export const GitHubAnalyticsDashboard: React.FC<GitHubAnalyticsDashboardProps> =
 
       {/* B. Repository Analytics */}
       <SectionCard title="Repository Analytics" icon={BookOpen}>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <StatBox label="Total Repos" value={repoStats.total} />
-          <StatBox label="Original (Non-fork)" value={repoStats.original} />
-          <StatBox label="Forked Repos" value={repoStats.forked} />
-          <StatBox label="Most Starred" value={repoStats.mostStarred} />
-          <StatBox label="Most Forked" value={repoStats.mostForked} />
+          <StatBox label="Public Repos" value={profileData.publicRepos || repoStats.publicCount} />
+          <StatBox label="Total Stars Earned" value={repoStats.totalStars || profileData.totalStars} />
+          <StatBox label="Total Forks" value={repoStats.totalForks || profileData.totalForks || 0} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
-            <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Top 10 Repos by Stars</h3>
-            <div className="h-64">
-              {repoStats.top10ByStars.length > 0 ? (
+        {repos.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
+              <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Top Repositories by Stars</h3>
+              <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={repoStats.top10ByStars} layout="vertical" margin={{ top: 5, right: 10, left: 40, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#30363D" horizontal={false} />
@@ -371,85 +429,50 @@ export const GitHubAnalyticsDashboard: React.FC<GitHubAnalyticsDashboardProps> =
                     <Bar dataKey="stars" fill={CHART_COLORS.amber} radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500 font-mono text-sm">Not Available</div>
-              )}
+              </div>
+            </div>
+
+            <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
+              <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Repository Growth Timeline</h3>
+              <div className="h-64">
+                {repoGrowthTimeline.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={repoGrowthTimeline} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#30363D" vertical={false} />
+                      <XAxis dataKey="year" stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} />
+                      <Tooltip contentStyle={TOOLTIP_STYLE} />
+                      <Line type="monotone" dataKey="repos" stroke={CHART_COLORS.emerald} strokeWidth={2} dot={{ r: 4, fill: CHART_COLORS.emerald }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <EmptyState title="No Growth Data" description="Unable to render growth timeline." />
+                )}
+              </div>
             </div>
           </div>
-
-          <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
-            <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Repository Size Distribution (KB)</h3>
-            <div className="h-64">
-              {repoStats.sizeDistribution.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={repoStats.sizeDistribution} margin={{ top: 5, right: 0, left: -10, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#30363D" vertical={false} />
-                    <XAxis dataKey="name" stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val) => val.substring(0, 10) + '..'} />
-                    <YAxis stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} />
-                    <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: '#ffffff10' }} />
-                    <Bar dataKey="sizeKB" fill={CHART_COLORS.emerald} radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500 font-mono text-sm">Not Available</div>
-              )}
-            </div>
-          </div>
-        </div>
+        ) : (
+          <EmptyState
+            title="Repository Not Found"
+            description="No public repositories were found for this GitHub account."
+            icon={<BookOpen className="w-8 h-8 text-indigo-400" />}
+          />
+        )}
       </SectionCard>
 
-      {/* C. Commit Analytics */}
-      <SectionCard title="Commit Analytics" icon={GitCommit}>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <StatBox label="Total Commits" value={contributions?.totalCommits} />
-          <StatBox label="Peak Coding Day" value={peakCodingDay} />
-          <StatBox label="Monthly Commits Avg" value={monthlyTrend.length ? Math.round(monthlyTrend.reduce((a, b) => a + b.contributions, 0) / monthlyTrend.length) : 'Not Available'} />
-        </div>
-        
-        <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
-          <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Monthly Commits Trend</h3>
-          <div className="h-48">
-            {monthlyTrend.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyTrend} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#30363D" vertical={false} />
-                  <XAxis dataKey="month" stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#8B949E" fontSize={10} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Line type="monotone" dataKey="contributions" stroke={CHART_COLORS.secondary} strokeWidth={2} dot={{ r: 3, fill: CHART_COLORS.secondary }} />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-500 font-mono text-sm">Not Available</div>
-            )}
-          </div>
-        </div>
-      </SectionCard>
-
-      {/* D & E. Combined PR, Issue, Stars & Forks */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SectionCard title="PR & Issue Analytics" icon={GitPullRequest}>
-          <div className="grid grid-cols-2 gap-4">
-            <StatBox label="Total Pull Requests" value={contributions?.totalPRs} />
-            <StatBox label="Total Issues" value={contributions?.totalIssues} />
-          </div>
-        </SectionCard>
-
-        <SectionCard title="Stars & Forks Analytics" icon={Star}>
-          <div className="grid grid-cols-2 gap-4">
-            <StatBox label="Total Stars Earned" value={contributions?.totalStarsEarned ?? profileData.totalStars} />
-            <StatBox label="Total Forks Earned" value={contributions?.totalForksEarned ?? profileData.totalForks} />
-          </div>
-        </SectionCard>
-      </div>
-
-      {/* F. Language Analytics */}
+      {/* C. Language Analytics */}
       <SectionCard title="Language Analytics" icon={Code2}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5 flex flex-col items-center">
-            <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4 w-full text-left">Language Distribution (Size/Usage)</h3>
-            <div className="h-64 w-full">
-              {profileData.topLanguages.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          <StatBox label="Most Used Language" value={mostUsedLanguage} />
+          <StatBox label="Fastest Growing" value={fastestGrowingLanguage} />
+          <StatBox label="Languages Tracked" value={profileData.topLanguages.length || languageStats.length} />
+        </div>
+
+        {profileData.topLanguages.length > 0 || languageStats.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5 flex flex-col items-center">
+              <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4 w-full text-left">Interactive Language Distribution</h3>
+              <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -469,25 +492,20 @@ export const GitHubAnalyticsDashboard: React.FC<GitHubAnalyticsDashboardProps> =
                     <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(value) => `${value}%`} />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500 font-mono text-sm">Not Available</div>
-              )}
+              </div>
+              <div className="flex flex-wrap gap-3 mt-4 justify-center">
+                {profileData.topLanguages.slice(0, 6).map((lang, idx) => (
+                  <div key={idx} className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: lang.color }} />
+                    <span className="text-xs text-slate-300 font-mono">{lang.name} ({lang.percent}%)</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            {/* Custom Legend */}
-            <div className="flex flex-wrap gap-3 mt-4 justify-center">
-              {profileData.topLanguages.slice(0, 6).map((lang, idx) => (
-                <div key={idx} className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: lang.color }} />
-                  <span className="text-xs text-slate-300 font-mono">{lang.name} ({lang.percent}%)</span>
-                </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
-            <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Repos per Language</h3>
-            <div className="h-64">
-              {languageStats.length > 0 ? (
+            <div className="bg-slate-950/30 p-4 rounded-2xl border border-white/5">
+              <h3 className="text-[10px] text-slate-400 uppercase font-bold font-mono mb-4">Repositories per Language</h3>
+              <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={languageStats} layout="vertical" margin={{ top: 5, right: 10, left: 30, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#30363D" horizontal={false} />
@@ -497,62 +515,69 @@ export const GitHubAnalyticsDashboard: React.FC<GitHubAnalyticsDashboardProps> =
                     <Bar dataKey="repos" fill={CHART_COLORS.rose} radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500 font-mono text-sm">Not Available</div>
-              )}
+              </div>
             </div>
           </div>
+        ) : (
+          <EmptyState
+            title="No Language Data"
+            description="No primary code languages identified across public repositories."
+            icon={<Code2 className="w-8 h-8 text-indigo-400" />}
+          />
+        )}
+      </SectionCard>
+
+      {/* D. Commit Analytics */}
+      <SectionCard title="Commit Analytics" icon={GitCommit}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <StatBox label="Commits This Week" value={commitsThisWeek} />
+          <StatBox label="Commits This Month" value={commitsThisMonth} />
+          <StatBox label="Commits This Year" value={commitsThisYear} />
+          <StatBox label="Average Daily Commits" value={avgDailyCommits} />
         </div>
       </SectionCard>
 
-      {/* G & I. Social Metrics & AI Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SectionCard title="Social Metrics" icon={Users}>
-          <div className="grid grid-cols-2 gap-4">
-            <StatBox label="Followers" value={profileData.followers} />
-            <StatBox label="Following" value={profileData.following} />
-            <StatBox label="Account Age" value={accountAgeDays !== undefined ? `${Math.floor(accountAgeDays / 365)}y ${Math.floor((accountAgeDays % 365) / 30)}m` : 'Not Available'} />
+      {/* E. Pull Requests & Issues */}
+      <SectionCard title="Pull Requests & Issues" icon={GitPullRequest}>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <StatBox label="PRs Created" value={contributions?.totalPRs || 0} />
+          <StatBox label="Issues Opened" value={contributions?.totalIssues || 0} />
+          <StatBox label="Peak Coding Day" value={peakCodingDay} />
+        </div>
+        {(!contributions?.totalPRs || contributions.totalPRs === 0) && (
+          <div className="mt-6">
+            <EmptyState
+              title="No Pull Requests Yet"
+              description="No public pull requests recorded for this profile."
+              icon={<GitPullRequest className="w-8 h-8 text-indigo-400" />}
+            />
           </div>
-        </SectionCard>
+        )}
+      </SectionCard>
 
-        <SectionCard title="AI Insights" icon={BrainCircuit}>
-          <div className="grid grid-cols-2 gap-4">
-            <StatBox label="Most Productive Month" value={aiInsights.mostProductiveMonth} />
-            <StatBox label="Strongest Language" value={aiInsights.strongestLang} />
-            <StatBox label="Most Active Repo" value={aiInsights.mostActiveRepoStr} />
-            <StatBox label="Consistency Rating" value={aiInsights.consistency} />
-          </div>
-        </SectionCard>
-      </div>
-
-      {/* H. Activity Timeline */}
-      <SectionCard title="Activity Timeline" icon={Clock} defaultOpen={false}>
-        {timelineEvents.length > 0 ? (
-          <div className="relative border-l border-slate-700/50 ml-4 py-2 space-y-6">
-            {timelineEvents.map((event) => {
-              const EventIcon = event.Icon;
-              return (
-                <div key={event.id} className="relative pl-6 group">
-                  <div className="absolute -left-[13px] top-1 bg-slate-900 border border-slate-700 p-1 rounded-full group-hover:border-indigo-500 transition-colors">
-                    <EventIcon className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-400" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-slate-200">{event.desc}</span>
-                      <span className="text-xs text-slate-500 font-mono">{event.createdAt}</span>
-                    </div>
-                    <span className="text-xs text-slate-400 font-mono">{event.repoName}</span>
-                  </div>
+      {/* F. Open Source & Organizations */}
+      <SectionCard title="Open Source & Organizations" icon={Building2}>
+        {organizations.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {organizations.map((org, idx) => (
+              <div key={idx} className="flex items-center gap-3 bg-slate-950/50 p-4 rounded-2xl border border-white/5">
+                <img src={org.avatar_url} alt={org.login} className="w-10 h-10 rounded-xl" />
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-white font-mono">{org.login}</span>
+                  {org.description && <span className="text-xs text-slate-400 line-clamp-1">{org.description}</span>}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         ) : (
-          <div className="py-8 text-center text-slate-500 font-mono text-sm">
-            No recent activity available
-          </div>
+          <EmptyState
+            title="No Organizations Found"
+            description="This developer is not a member of any public GitHub organizations."
+            icon={<Building2 className="w-8 h-8 text-indigo-400" />}
+          />
         )}
       </SectionCard>
     </div>
   );
 };
+

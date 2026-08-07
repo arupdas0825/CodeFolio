@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { CodefolioLogo } from "./CodefolioLogo";
 
 interface LogoProps {
   className?: string;
@@ -28,17 +29,7 @@ export default function Logo({
             className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-cyan-500/40 via-indigo-500/40 to-purple-600/40 opacity-70 blur-md transition-opacity duration-300 group-hover:opacity-100 animate-pulse-glow"
           />
         )}
-        <img
-          src="/codefolio-logo.png"
-          alt="Codefolio Brand Logo"
-          width={size}
-          height={size}
-          className={cn(
-            "relative z-10 flex-shrink-0 object-contain transition-all duration-300 group-hover:scale-105 antialiased",
-            animated && "animate-logo-float"
-          )}
-          style={{ width: size, height: size }}
-        />
+        <CodefolioLogo size={size} animated={animated} />
       </div>
 
       {showText && (

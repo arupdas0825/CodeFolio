@@ -180,7 +180,7 @@ export const ChallengesEngine = {
     // Add history log entry
     updated.history = [
       {
-        id: `log-${Date.now()}-${Math.random()}`,
+        id: `log-${Date.now()}-${updated.history.length}`,
         type: "challenge",
         title: sourceTitle,
         xpEarned: amount,

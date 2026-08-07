@@ -80,83 +80,12 @@ export interface CommunityDeveloper {
   skills: string[];
 }
 
-// Initial mock data templates to pre-populate community feed
-const INITIAL_DEVELOPERS: CommunityDeveloper[] = [
-  { uid: "dev-yyx", username: "yyx990803", displayName: "Evan You", avatar: "E", title: "Creator of Vue.js", grade: "S", reputation: 4500, followers: [], following: [], skills: ["TypeScript", "Vue", "Vite", "Rust"] },
-  { uid: "dev-torvalds", username: "torvalds", displayName: "Linus Torvalds", avatar: "L", title: "Creator of Linux & Git", grade: "S+", reputation: 9000, followers: [], following: [], skills: ["C", "Assembly", "Kernel", "Git"] },
-  { uid: "dev-dan", username: "gaearon", displayName: "Dan Abramov", avatar: "D", title: "Ex-React Team", grade: "A+", reputation: 3500, followers: [], following: [], skills: ["JavaScript", "React", "Next.js", "Redux"] },
-  { uid: "dev-alex", username: "alex_coder", displayName: "Alex Coder", avatar: "A", title: "Frontend Engineer", grade: "B+", reputation: 820, followers: [], following: [], skills: ["React", "TypeScript", "TailwindCSS"] }
-];
+// Community data templates (starts empty for live user content)
+const INITIAL_DEVELOPERS: CommunityDeveloper[] = [];
+const INITIAL_POSTS: CommunityPost[] = [];
+const INITIAL_DISCUSSIONS: DiscussionThread[] = [];
+const INITIAL_JOBS: JobListing[] = [];
 
-const INITIAL_POSTS: CommunityPost[] = [
-  {
-    id: "post-1",
-    authorId: "dev-yyx",
-    authorName: "Evan You",
-    authorAvatar: "E",
-    authorTitle: "Creator of Vue.js",
-    content: "Just finalized the initial release candidate for Vite 6! We're upgrading our module resolution strategies and improving overall developer experience when wrapping packages.",
-    type: "launch",
-    createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-    likes: [],
-    commentsCount: 3,
-    bookmarks: [],
-    codeSnippet: `// Vite 6 Module Resolution configuration\nexport default defineConfig({\n  resolve: {\n    conditions: ['development', 'production'],\n    mainFields: ['module', 'jsnext:main', 'jsnext']\n  }\n});`,
-    codeLanguage: "javascript"
-  },
-  {
-    id: "post-2",
-    authorId: "dev-dan",
-    authorName: "Dan Abramov",
-    authorAvatar: "D",
-    authorTitle: "Ex-React Team",
-    content: "Working on a new documentation piece detailing the hydration issues developers face with Server Components. Always ensure that initial client renders match server markup completely!",
-    type: "general",
-    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-    likes: [],
-    commentsCount: 1,
-    bookmarks: []
-  }
-];
-
-const INITIAL_DISCUSSIONS: DiscussionThread[] = [
-  {
-    id: "disc-1",
-    title: "Next.js 16 Hydration Error Debugging Strategies",
-    category: "frontend",
-    authorId: "dev-dan",
-    authorName: "Dan Abramov",
-    authorAvatar: "D",
-    content: "What are your best tips for diagnosing and fixing server-client mismatch errors in SSR contexts? Many developers hit mismatch alerts due to inconsistent Date parsing or missing browser checks.",
-    createdAt: new Date(Date.now() - 3600000 * 8).toISOString(),
-    upvotes: [],
-    downvotes: [],
-    repliesCount: 2,
-    tags: ["React", "Next.js", "SSR"],
-    acceptedAnswerId: "rep-1"
-  },
-  {
-    id: "disc-2",
-    title: "FastAPI vs Go for high throughput microservices?",
-    category: "backend",
-    authorId: "dev-alex",
-    authorName: "Alex Coder",
-    authorAvatar: "A",
-    content: "I am choosing between Python (FastAPI) and Go (Gin) for an analytics ingestion service. CPU cycles are key. Which has better serialization velocity?",
-    createdAt: new Date(Date.now() - 3600000 * 12).toISOString(),
-    upvotes: [],
-    downvotes: [],
-    repliesCount: 0,
-    tags: ["Backend", "Go", "FastAPI"],
-    acceptedAnswerId: null
-  }
-];
-
-const INITIAL_JOBS: JobListing[] = [
-  { id: "job-1", company: "Vercel", role: "Senior Frontend Engineer", salary: "$140,000 - $180,000", location: "Remote, US", experience: "5+ years", applyLink: "https://vercel.com/careers", requirements: ["TypeScript", "React", "Next.js", "Vercel", "TailwindCSS"] },
-  { id: "job-2", company: "Supabase", role: "Database Architect", salary: "$150,000 - $190,000", location: "Remote, Global", experience: "6+ years", applyLink: "https://supabase.com/careers", requirements: ["PostgreSQL", "Go", "Rust", "Database Tuning", "SQL"] },
-  { id: "job-3", company: "OpenAI", role: "AI Integration Lead", salary: "$200,000 - $260,000", location: "San Francisco, CA", experience: "4+ years", applyLink: "https://openai.com/careers", requirements: ["Python", "OpenAI API", "PyTorch", "LLM Fine-tuning", "TypeScript"] }
-];
 
 export const CommunityService = {
   // Local storage keys

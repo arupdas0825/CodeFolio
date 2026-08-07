@@ -249,7 +249,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               href="/feed" 
               className="group flex items-center gap-2.5 focus-visible:outline-none rounded-xl"
             >
-              <CodefolioLogo size={32} animated={false} />
+              <CodefolioLogo size={32} animated={true} />
               <span className="codefolio-wordmark codefolio-wordmark--desktop">
                 Codefolio
               </span>

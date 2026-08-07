@@ -319,7 +319,7 @@ export async function getUserFromFirestore(username: string, targetUid?: string)
     reposSnapshot.forEach((doc) => {
       const repoData = doc.data();
       repositories.push({
-        id: repoData.id || Math.floor(Math.random() * 1000000),
+        id: repoData.id || 0,
         name: repoData.name,
         full_name: `${profileData!.username}/${repoData.name}`,
         html_url: `https://github.com/${profileData!.username}/${repoData.name}`,

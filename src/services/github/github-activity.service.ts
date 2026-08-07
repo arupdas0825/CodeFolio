@@ -63,9 +63,7 @@ export class GitHubActivityService {
   }
 
   static async fetchUserEvents(username: string, token?: string): Promise<LiveEvent[]> {
-    if (!username || username === "demo" || username === "codefolio-demo") {
-      return this.generateMockEvents();
-    }
+    if (!username) return [];
 
     try {
       const res = await fetch(`https://api.github.com/users/${username}/events`, {
@@ -73,30 +71,26 @@ export class GitHubActivityService {
       });
 
       if (!res.ok) {
-        throw new Error(`GitHub API returned status ${res.status}: ${res.statusText}`);
+        return [];
       }
 
       const rawEvents = await res.json();
       return this.parseGitHubEvents(rawEvents);
     } catch (error) {
-      console.warn("Falling back to mock events due to API error:", error);
-      return this.generateMockEvents();
+      console.warn("Error fetching user events:", error);
+      return [];
     }
   }
 
   static async fetchNotifications(token?: string): Promise<GitHubNotification[]> {
-    if (!token) {
-      return this.generateMockNotifications();
-    }
+    if (!token) return [];
 
     try {
       const res = await fetch("https://api.github.com/notifications", {
         headers: this.defaultHeaders(token),
       });
 
-      if (!res.ok) {
-        throw new Error(`GitHub Notifications API returned status ${res.status}`);
-      }
+      if (!res.ok) return [];
 
       const rawNotifications = await res.json();
       return rawNotifications.map((notif: any) => ({
@@ -117,31 +111,28 @@ export class GitHubActivityService {
         },
       }));
     } catch (error) {
-      console.warn("Falling back to mock notifications:", error);
-      return this.generateMockNotifications();
+      console.warn("Error fetching notifications:", error);
+      return [];
     }
   }
 
   static async fetchRepositoryEvents(owner: string, repo: string, token?: string): Promise<LiveEvent[]> {
-    if (owner === "demo") {
-      return this.generateMockEvents().filter(e => e.repoName.includes(repo));
-    }
+    if (!owner || !repo) return [];
 
     try {
       const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/events`, {
         headers: this.defaultHeaders(token),
       });
 
-      if (!res.ok) {
-        throw new Error(`Repo events status ${res.status}`);
-      }
+      if (!res.ok) return [];
 
       const rawEvents = await res.json();
       return this.parseGitHubEvents(rawEvents);
     } catch (e) {
-      return this.generateMockEvents().filter(e => e.repoName.includes(repo));
+      return [];
     }
   }
+
 
   private static parseGitHubEvents(rawEvents: any[]): LiveEvent[] {
     if (!Array.isArray(rawEvents)) return [];
@@ -224,152 +215,5 @@ export class GitHubActivityService {
       };
     });
   }
-
-  private static generateMockEvents(): LiveEvent[] {
-    const now = new Date();
-    return [
-      {
-        id: "mock-1",
-        type: "push",
-        repoName: "vercel/next.js",
-        repoUrl: "https://github.com/vercel/next.js",
-        actorName: "leeerob",
-        actorAvatar: "https://github.com/leeerob.png",
-        description: "pushed to canary",
-        createdAt: new Date(now.getTime() - 1000 * 45).toISOString(), // 45 seconds ago
-        githubUrl: "https://github.com/vercel/next.js",
-        details: {
-          commitMsg: "fix(router): improve scroll restoration logic (#62145)",
-          branch: "canary",
-          filesCount: 3,
-        },
-      },
-      {
-        id: "mock-2",
-        type: "pr_merged",
-        repoName: "facebook/react",
-        repoUrl: "https://github.com/facebook/react",
-        actorName: "gaearon",
-        actorAvatar: "https://github.com/gaearon.png",
-        description: "merged pull request #28410",
-        createdAt: new Date(now.getTime() - 1000 * 180).toISOString(), // 3 mins ago
-        githubUrl: "https://github.com/facebook/react",
-        details: {
-          prTitle: "DevTools: Add inspection indicators for Server Components",
-          prNumber: 28410,
-        },
-      },
-      {
-        id: "mock-3",
-        type: "star",
-        repoName: "tailwindlabs/tailwindcss",
-        repoUrl: "https://github.com/tailwindlabs/tailwindcss",
-        actorName: "adamwathan",
-        actorAvatar: "https://github.com/adamwathan.png",
-        description: "starred tailwindcss v4 experimental",
-        createdAt: new Date(now.getTime() - 1000 * 600).toISOString(), // 10 mins ago
-        githubUrl: "https://github.com/tailwindlabs/tailwindcss",
-      },
-      {
-        id: "mock-4",
-        type: "issue_opened",
-        repoName: "microsoft/vscode",
-        repoUrl: "https://github.com/microsoft/vscode",
-        actorName: "bpasero",
-        actorAvatar: "https://github.com/bpasero.png",
-        description: "opened issue #194012: Scrollbar performance issue in terminal view",
-        createdAt: new Date(now.getTime() - 1000 * 1200).toISOString(), // 20 mins ago
-        githubUrl: "https://github.com/microsoft/vscode",
-        details: {
-          issueTitle: "Scrollbar performance issue in terminal view",
-          issueNumber: 194012,
-        },
-      },
-      {
-        id: "mock-5",
-        type: "release",
-        repoName: "features/copilot",
-        repoUrl: "https://github.com/features/copilot",
-        actorName: "github",
-        actorAvatar: "https://github.com/github.png",
-        description: "published release v1.4.2",
-        createdAt: new Date(now.getTime() - 1000 * 3600).toISOString(), // 1 hour ago
-        githubUrl: "https://github.com/features/copilot",
-        details: {
-          releaseTag: "v1.4.2",
-          releaseTitle: "GitHub Copilot Chat Integration Beta",
-        },
-      },
-      {
-        id: "mock-6",
-        type: "fork",
-        repoName: "shadcn-ui/ui",
-        repoUrl: "https://github.com/shadcn-ui/ui",
-        actorName: "shadcn",
-        actorAvatar: "https://github.com/shadcn.png",
-        description: "forked repository to personal workspace",
-        createdAt: new Date(now.getTime() - 1000 * 7200).toISOString(), // 2 hours ago
-        githubUrl: "https://github.com/shadcn-ui/ui",
-        details: {
-          forkee: "my-shadcn-fork",
-        },
-      },
-    ];
-  }
-
-  private static generateMockNotifications(): GitHubNotification[] {
-    return [
-      {
-        id: "notif-1",
-        unread: true,
-        reason: "mention",
-        updatedAt: new Date(Date.now() - 1000 * 300).toISOString(),
-        subject: {
-          title: "Discussion: Next steps for Server Actions",
-          url: "https://api.github.com/repos/vercel/next.js/issues/4901",
-          latest_comment_url: "https://api.github.com/repos/vercel/next.js/issues/comments/1245",
-          type: "Issue",
-        },
-        repository: {
-          name: "next.js",
-          full_name: "vercel/next.js",
-          html_url: "https://github.com/vercel/next.js",
-        },
-      },
-      {
-        id: "notif-2",
-        unread: true,
-        reason: "review_requested",
-        updatedAt: new Date(Date.now() - 1000 * 1800).toISOString(),
-        subject: {
-          title: "docs: Fix broken links in authentication guide",
-          url: "https://api.github.com/repos/facebook/react/pulls/2940",
-          latest_comment_url: "https://api.github.com/repos/facebook/react/pulls/comments/293",
-          type: "PullRequest",
-        },
-        repository: {
-          name: "react",
-          full_name: "facebook/react",
-          html_url: "https://github.com/facebook/react",
-        },
-      },
-      {
-        id: "notif-3",
-        unread: false,
-        reason: "state_change",
-        updatedAt: new Date(Date.now() - 1000 * 7200).toISOString(),
-        subject: {
-          title: "V1.0.0 Release Candidate",
-          url: "https://api.github.com/repos/tailwindlabs/tailwindcss/releases/102",
-          latest_comment_url: "https://api.github.com/repos/tailwindlabs/tailwindcss/releases/102",
-          type: "Release",
-        },
-        repository: {
-          name: "tailwindcss",
-          full_name: "tailwindlabs/tailwindcss",
-          html_url: "https://github.com/tailwindlabs/tailwindcss",
-        },
-      },
-    ];
-  }
 }
+
