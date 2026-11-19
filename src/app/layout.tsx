@@ -40,8 +40,8 @@ const dinMedium = localFont({ src: "./fonts/DINPro-CondMedium.otf", variable: "-
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
-  title: "Codefolio — The Professional Developer Identity Platform",
-  description: "Build your professional developer identity. Codefolio transforms raw GitHub commits, pull requests, and repositories into verified profile cards, real-time developer scores, and a social developer network.",
+  title: "CodeFolio — Developer Network and Project Showcase",
+  description: "Share what you build, showcase projects, and connect with other developers on CodeFolio.",
   keywords: ["developer identity", "developer network", "GitHub profile card", "developer score", "open source portfolio", "developer ecosystem"],
   icons: {
     icon: [
@@ -60,8 +60,8 @@ export const metadata: Metadata = {
     title: "Codefolio",
   },
   openGraph: {
-    title: "Codefolio — The Professional Developer Identity Platform",
-    description: "Build your professional developer identity. Transform GitHub activity into verified profile cards and developer scores.",
+    title: "CodeFolio — Developer Network and Project Showcase",
+    description: "Discover projects, follow developers, and share milestones with the CodeFolio community.",
     images: [
       {
         url: "/codefolio-logo.png?v=1",
@@ -77,7 +77,6 @@ export const viewport: Viewport = {
   themeColor: "#0f172a",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
 };
 
 export default function RootLayout({

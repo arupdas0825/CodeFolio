@@ -27,6 +27,18 @@
 
 ---
 
+## Community workspace
+
+The homepage opens the developer feed. Use the feed to post updates, code snippets, and project launches. A launch appears in the feed, in the project directory, and on its author’s profile. The developer card generator is available at `/card`, and GitHub analytics are available under GitHub insights on developer profiles.
+
+Run `npm ci` and `npm run dev`, then open http://localhost:3000. Without Firebase configuration, the workspace opens in preview mode with fictional developers and projects. Preview activity stays in your browser.
+
+For the shared workspace, create `.env.local` from `.env.example`, set the Firebase client values, and enable the GitHub provider in Firebase Authentication. Deploy this repository’s Firestore rules and indexes from a Firebase CLI session with access to your project.
+
+```sh
+firebase deploy --only firestore --project YOUR_FIREBASE_PROJECT_ID
+```
+
 ## 📋 Table of Contents
 
 - [Overview](#-overview)

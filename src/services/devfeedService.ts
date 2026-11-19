@@ -1,10 +1,6 @@
 /**
  * devfeedService.ts
- * Service layer for DevFeed — posts, likes, comments, follows.
- * Follows exact conventions of src/lib/firebase.ts:
- *   - Guards every function with isFirebaseEnabled / db check
- *   - Uses increment() for counters (no read-modify-write)
- *   - Explicit return types on all exported functions
+ * Firestore queries and mutations for posts, likes, comments, follows, and bookmarks.
  */
 
 import {
@@ -19,10 +15,14 @@ import {
   orderBy,
   limit,
   startAfter,
+  documentId,
+  runTransaction,
   writeBatch,
   increment,
   QueryDocumentSnapshot,
   DocumentData,
+  DocumentSnapshot,
+  QueryConstraint,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import {
@@ -57,8 +57,8 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return chunks;
 }
 
-function docToPost(snap: QueryDocumentSnapshot<DocumentData>): DevFeedPost {
-  const d = snap.data();
+function docToPost(snap: DocumentSnapshot<DocumentData>): DevFeedPost {
+  const d = snap.data()!;
   return {
     id: snap.id,
     authorId: d.authorId,
@@ -70,6 +70,7 @@ function docToPost(snap: QueryDocumentSnapshot<DocumentData>): DevFeedPost {
     codeSnippet: d.codeSnippet ?? null,
     codeLanguage: d.codeLanguage ?? null,
     imageUrl: d.imageUrl ?? null,
+    ...(d.project ? { project: d.project } : {}),
     likesCount: d.likesCount ?? 0,
     commentsCount: d.commentsCount ?? 0,
     createdAt: d.createdAt,
@@ -115,16 +116,16 @@ export async function createPost(
     codeSnippet: input.codeSnippet ?? null,
     codeLanguage: input.codeLanguage ?? null,
     imageUrl: input.imageUrl ?? null,
+    ...(input.project ? { project: input.project } : {}),
     likesCount: 0,
     commentsCount: 0,
     createdAt: now,
   };
 
-  await setDoc(postRef, payload);
-
-  // Increment postsCount on the author's user doc (merge-safe)
-  const userRef = doc(db!, "users", author.uid);
-  await setDoc(userRef, { postsCount: increment(1) }, { merge: true });
+  const batch = writeBatch(db!);
+  batch.set(postRef, payload);
+  batch.set(doc(db!, "users", author.uid), { postsCount: increment(1) }, { merge: true });
+  await batch.commit();
 
   return { id: postRef.id, ...payload };
 }
@@ -133,133 +134,84 @@ export async function createPost(
 
 const DEFAULT_PAGE_SIZE = 20;
 
-/**
- * Global feed across all users ("Everyone" tab).
- * Uses single-field query + client-side sorting so no composite index is required.
- */
-export async function getEveryoneFeed(
-  cursor?: string,
-  pageSize = DEFAULT_PAGE_SIZE
-): Promise<{ posts: DevFeedPost[]; nextCursor: string | null }> {
+/** Public posts ordered by publication time and document ID. */
+export async function getEveryoneFeed(cursor?: string, pageSize = DEFAULT_PAGE_SIZE, launchesOnly = false) {
   assertFirebase();
-
-  const q = query(collection(db!, "posts"), limit(200));
-  const snap = await getDocs(q);
-  const allPosts: DevFeedPost[] = [];
-  snap.forEach((s) => allPosts.push(docToPost(s)));
-
-  allPosts.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
-
-  let startIndex = 0;
-  if (cursor) {
-    const idx = allPosts.findIndex((p) => p.createdAt === cursor);
-    startIndex = idx !== -1 ? idx + 1 : allPosts.findIndex((p) => p.createdAt < cursor);
-    if (startIndex === -1) startIndex = allPosts.length;
-  }
-
-  const page = allPosts.slice(startIndex, startIndex + pageSize);
-  const hasMore = startIndex + pageSize < allPosts.length;
-  const nextCursor = hasMore && page.length > 0 ? page[page.length - 1].createdAt : null;
-
-  return { posts: page, nextCursor };
+  const constraints = launchesOnly ? [where("type", "==", "launch")] : [];
+  return slicePage(await readPostPage(constraints, cursor, pageSize), pageSize);
 }
 
-/**
- * Pull-based feed for a user: their own posts + posts from followed users.
- * Respects Firestore's 30-item `in` operator limit by chunking author IDs.
- * Uses single-field queries and client-side sorting so no composite index is required.
- */
-export async function getFeedForUser(
-  uid: string,
-  cursor?: string,
-  pageSize = DEFAULT_PAGE_SIZE
-): Promise<{ posts: DevFeedPost[]; nextCursor: string | null }> {
-  assertFirebase();
+async function readPostPage(constraints: QueryConstraint[], cursor: string | undefined, pageSize: number) {
+  const [createdAt, id] = cursor ? (JSON.parse(cursor) as [string, string]) : [];
+  const postsRef = collection(db!, "posts");
+  const snapshot = await getDocs(query(
+    postsRef,
+    ...constraints,
+    orderBy("createdAt", "desc"),
+    orderBy(documentId(), "desc"),
+    ...(createdAt && id ? [startAfter(createdAt, id)] : []),
+    limit(pageSize + 1)
+  ));
+  return snapshot.docs.map(docToPost);
+}
 
-  // 1. Resolve the set of authors: uid + everyone uid follows
-  const followsSnap = await getDocs(
-    query(collection(db!, "follows"), where("followerId", "==", uid))
-  );
-  const authorIds: string[] = [uid];
-  followsSnap.forEach((s) => {
-    const f = s.data() as DevFeedFollow;
-    if (!authorIds.includes(f.followingId)) {
-      authorIds.push(f.followingId);
-    }
+function slicePage(entries: DevFeedPost[], pageSize: number) {
+  const posts = entries.slice(0, pageSize);
+  const last = posts.at(-1);
+  return {
+    posts,
+    nextCursor: last && entries.length > pageSize ? JSON.stringify([last.createdAt, last.id]) : null,
+  };
+}
+
+export async function getPost(id: string): Promise<DevFeedPost | null> {
+  assertFirebase();
+  const snapshot = await getDoc(doc(db!, "posts", id));
+  return snapshot.exists() ? docToPost(snapshot) : null;
+}
+
+export async function getBookmarks(userId: string): Promise<DevFeedPost[]> {
+  assertFirebase();
+  const snapshot = await getDocs(query(collection(db!, "users", userId, "bookmarks"), orderBy("createdAt", "desc")));
+  const posts = await getPostsByIds(snapshot.docs.map((entry) => entry.id));
+  const byId = new Map(posts.map((post) => [post.id, post]));
+  return snapshot.docs.flatMap((entry) => {
+    const post = byId.get(entry.id);
+    return post ? [post] : [];
   });
-
-  // 2. Chunk into groups of 30 (Firestore `in` limit)
-  const chunks = chunkArray(authorIds, 30);
-
-  // 3. Fire all chunk queries in parallel (using single-field index only)
-  const allPosts: DevFeedPost[] = [];
-  await Promise.all(
-    chunks.map(async (chunk) => {
-      const q = query(
-        collection(db!, "posts"),
-        where("authorId", "in", chunk),
-        limit(200)
-      );
-      const snap = await getDocs(q);
-      snap.forEach((s) => allPosts.push(docToPost(s)));
-    })
-  );
-
-  // 4. Sort by createdAt desc in memory
-  allPosts.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
-
-  // 5. Apply cursor and pagination
-  let startIndex = 0;
-  if (cursor) {
-    const idx = allPosts.findIndex((p) => p.createdAt === cursor);
-    startIndex = idx !== -1 ? idx + 1 : allPosts.findIndex((p) => p.createdAt < cursor);
-    if (startIndex === -1) startIndex = allPosts.length;
-  }
-
-  const page = allPosts.slice(startIndex, startIndex + pageSize);
-  const hasMore = startIndex + pageSize < allPosts.length;
-  const nextCursor = hasMore && page.length > 0 ? page[page.length - 1].createdAt : null;
-
-  return { posts: page, nextCursor };
 }
 
-/**
- * Fetches posts by a specific username (for profile Posts tab).
- * Uses single-field query + client-side sort so no composite index is required.
- */
-export async function getPostsByUsername(
-  username: string,
-  cursor?: string,
-  pageSize = DEFAULT_PAGE_SIZE
-): Promise<{ posts: DevFeedPost[]; nextCursor: string | null }> {
+export async function setBookmark(userId: string, postId: string, saved: boolean): Promise<void> {
+  assertFirebase();
+  const reference = doc(db!, "users", userId, "bookmarks", postId);
+  if (saved) await setDoc(reference, { createdAt: new Date().toISOString() });
+  else await deleteDoc(reference);
+}
+
+/** Includes the user's own posts and posts from developers they follow. */
+export async function getFeedForUser(uid: string, cursor?: string, pageSize = DEFAULT_PAGE_SIZE) {
   assertFirebase();
 
-  const q = query(
-    collection(db!, "posts"),
-    where("authorUsername", "==", username.toLowerCase()),
-    limit(200)
-  );
+  const follows = await getDocs(query(collection(db!, "follows"), where("followerId", "==", uid)));
+  const authors = [...new Set([uid, ...follows.docs.map((entry) => (entry.data() as DevFeedFollow).followingId)])];
+  const pages = await Promise.all(chunkArray(authors, 30).map((chunk) =>
+    readPostPage([where("authorId", "in", chunk)], cursor, pageSize)
+  ));
 
-  const snap = await getDocs(q);
-  const allPosts: DevFeedPost[] = [];
-  snap.forEach((s) => allPosts.push(docToPost(s)));
-
-  allPosts.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
-
-  let startIndex = 0;
-  if (cursor) {
-    const idx = allPosts.findIndex((p) => p.createdAt === cursor);
-    startIndex = idx !== -1 ? idx + 1 : allPosts.findIndex((p) => p.createdAt < cursor);
-    if (startIndex === -1) startIndex = allPosts.length;
-  }
-
-  const page = allPosts.slice(startIndex, startIndex + pageSize);
-  const hasMore = startIndex + pageSize < allPosts.length;
-  const nextCursor = hasMore && page.length > 0 ? page[page.length - 1].createdAt : null;
-
-  return { posts: page, nextCursor };
+  // Match Firestore's string ordering, including the document-ID tiebreaker.
+  const ordered = pages.flat().sort((a, b) => {
+    if (a.createdAt !== b.createdAt) return a.createdAt > b.createdAt ? -1 : 1;
+    return a.id === b.id ? 0 : a.id > b.id ? -1 : 1;
+  });
+  return slicePage(ordered, pageSize);
 }
 
+/** Fetches recent public activity for the developer profile. */
+export async function getPostsByUsername(username: string, cursor?: string, pageSize = DEFAULT_PAGE_SIZE) {
+  assertFirebase();
+  const entries = await readPostPage([where("authorUsername", "==", username.toLowerCase())], cursor, pageSize);
+  return slicePage(entries, pageSize);
+}
 
 // ─── likes ────────────────────────────────────────────────────────────────────
 
@@ -277,28 +229,19 @@ export async function toggleLike(
   const likeRef = doc(db!, "likes", likeId);
   const postRef = doc(db!, "posts", postId);
 
-  const existing = await getDoc(likeRef);
+  return runTransaction(db!, async (transaction) => {
+    const existing = await transaction.get(likeRef);
+    const liked = !existing.exists();
 
-  const batch = writeBatch(db!);
-
-  if (existing.exists()) {
-    // Unlike
-    batch.delete(likeRef);
-    batch.update(postRef, { likesCount: increment(-1) });
-    await batch.commit();
-    return { liked: false };
-  } else {
-    // Like
-    const payload: DevFeedLike = {
-      postId,
-      userId,
-      createdAt: new Date().toISOString(),
-    };
-    batch.set(likeRef, payload);
-    batch.update(postRef, { likesCount: increment(1) });
-    await batch.commit();
-    return { liked: true };
-  }
+    if (liked) {
+      const payload: DevFeedLike = { postId, userId, createdAt: new Date().toISOString() };
+      transaction.set(likeRef, payload);
+    } else {
+      transaction.delete(likeRef);
+    }
+    transaction.update(postRef, { likesCount: increment(liked ? 1 : -1) });
+    return { liked };
+  });
 }
 
 /**
@@ -340,7 +283,7 @@ export async function addComment(
 
   const batch = writeBatch(db!);
   batch.set(commentRef, payload);
-  batch.update(postRef, { commentsCount: increment(1) });
+  batch.update(postRef, { commentsCount: increment(1), lastCommentId: commentRef.id });
   await batch.commit();
 
   return { id: commentRef.id, ...payload };
@@ -354,13 +297,12 @@ export async function getComments(postId: string): Promise<DevFeedComment[]> {
 
   const q = query(
     collection(db!, "comments"),
-    where("postId", "==", postId),
-    orderBy("createdAt", "asc")
+    where("postId", "==", postId)
   );
   const snap = await getDocs(q);
   const comments: DevFeedComment[] = [];
   snap.forEach((s) => comments.push(docToComment(s)));
-  return comments;
+  return comments.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 }
 
 // ─── follows ──────────────────────────────────────────────────────────────────
@@ -380,29 +322,22 @@ export async function toggleFollow(
   const followerUserRef = doc(db!, "users", followerId);
   const followingUserRef = doc(db!, "users", followingId);
 
-  const existing = await getDoc(followRef);
-  const batch = writeBatch(db!);
+  if (followerId === followingId) throw new Error("You cannot follow yourself.");
 
-  if (existing.exists()) {
-    // Unfollow
-    batch.delete(followRef);
-    batch.set(followerUserRef, { devFeedFollowingCount: increment(-1) }, { merge: true });
-    batch.set(followingUserRef, { devFeedFollowersCount: increment(-1) }, { merge: true });
-    await batch.commit();
-    return { following: false };
-  } else {
-    // Follow
-    const payload: DevFeedFollow = {
-      followerId,
-      followingId,
-      createdAt: new Date().toISOString(),
-    };
-    batch.set(followRef, payload);
-    batch.set(followerUserRef, { devFeedFollowingCount: increment(1) }, { merge: true });
-    batch.set(followingUserRef, { devFeedFollowersCount: increment(1) }, { merge: true });
-    await batch.commit();
-    return { following: true };
-  }
+  return runTransaction(db!, async (transaction) => {
+    const existing = await transaction.get(followRef);
+    const following = !existing.exists();
+    if (following) {
+      const payload: DevFeedFollow = { followerId, followingId, createdAt: new Date().toISOString() };
+      transaction.set(followRef, payload);
+    } else {
+      transaction.delete(followRef);
+    }
+    const change = following ? 1 : -1;
+    transaction.set(followerUserRef, { devFeedFollowingCount: increment(change) }, { merge: true });
+    transaction.update(followingUserRef, { devFeedFollowersCount: increment(change) });
+    return { following };
+  });
 }
 
 /**

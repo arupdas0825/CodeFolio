@@ -2,6 +2,13 @@
 
 export type PostType = "milestone" | "launch" | "learning" | "general";
 
+export interface LaunchProject {
+  title: string;
+  stack: string[];
+  repoUrl: string | null;
+  demoUrl: string | null;
+}
+
 // posts/{postId}
 export interface DevFeedPost {
   id: string;
@@ -14,6 +21,7 @@ export interface DevFeedPost {
   codeSnippet: string | null;
   codeLanguage: string | null;
   imageUrl: string | null;
+  project?: LaunchProject;
   likesCount: number;
   commentsCount: number;
   createdAt: string; // ISO string
@@ -52,4 +60,5 @@ export interface CreatePostInput {
   codeSnippet?: string;
   codeLanguage?: string;
   imageUrl?: string;
+  project?: LaunchProject;
 }

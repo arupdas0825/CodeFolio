@@ -15,6 +15,7 @@ export interface UserProfileDoc {
   email: string | null;
   avatarUrl: string | null;
   bio: string | null;
+  about?: string;
   company: string | null;
   location: string | null;
   blog: string | null;
