@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/ui/ThemeContext";
 import { ThemeModal } from "@/components/ui/ThemeModal";
 import { AuthModalProvider } from "@/components/auth/AuthModalContext";
+import { Workspace } from "@/components/social/Workspace";
 import InstallPrompt from "@/components/ui/InstallPrompt";
 import "./globals.css";
 
@@ -74,7 +75,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f172a",
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f5f6f0" }, { media: "(prefers-color-scheme: dark)", color: "#171f1b" }],
   width: "device-width",
   initialScale: 1,
 };
@@ -95,7 +96,7 @@ export default function RootLayout({
         </head>
         <body className="min-h-full flex flex-col bg-background text-foreground font-inter">
           <AuthModalProvider>
-            {children}
+            <Workspace>{children}</Workspace>
             <ThemeModal />
             <InstallPrompt />
           </AuthModalProvider>

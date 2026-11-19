@@ -55,7 +55,7 @@ export function DeveloperRow({ person, social, requireAuth, compact = false }: {
   return <article className={compact ? styles.personRow : styles.personCard}>
     <Link href={`/u/${person.username}`} className={styles.personLink}>
       <Avatar name={person.name} src={person.avatar} size={compact ? 34 : 43} />
-      <span><strong>{person.name}</strong><small>@{person.username}</small></span>
+      <span><strong>{person.name}</strong><small>{person.headline || person.company || `@${person.username}`}</small></span>
     </Link>
     <FollowControl person={person} social={social} requireAuth={requireAuth} compact={compact} />
     {!compact && person.bio && <p>{person.bio}</p>}

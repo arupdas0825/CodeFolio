@@ -7,6 +7,12 @@ export interface CodefolioUser {
   token?: string; // GitHub Access Token if retrieved
 }
 
+export interface PublicProfileDetails {
+  about: string;
+  headline: string;
+  skills: string[];
+}
+
 export interface UserProfileDoc {
   uid: string;
   githubId: number;
@@ -16,6 +22,8 @@ export interface UserProfileDoc {
   avatarUrl: string | null;
   bio: string | null;
   about?: string;
+  headline?: string;
+  skills?: string[];
   company: string | null;
   location: string | null;
   blog: string | null;

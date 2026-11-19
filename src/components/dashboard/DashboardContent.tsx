@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CodefolioUser, subscribeToAuthChanges, logOutUser, syncUserAndReposInFirestore } from "@/lib/firebase";
 import { UserDashboardData } from "@/types";
-import Navbar from "../layout/Navbar";
 import DashboardHeader from "./DashboardHeader";
 import ContributionHeatmap from "./ContributionHeatmap";
 import DeveloperMilestones from "./DeveloperMilestones";
@@ -493,10 +492,7 @@ function DashboardContent() {
     setGithubToken(newToken);
   };
 
-  const handleLoginSuccess = (user: CodefolioUser) => {
-    setCurrentUser(user);
-    router.push(`/dashboard?user=${user.username}`);
-  };
+
 
   const mainCategories = [
     {
@@ -1232,8 +1228,7 @@ function DashboardContent() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
-        <Navbar currentUser={currentUser} onLoginSuccess={handleLoginSuccess} onLogout={handleLogout} onOpenSearch={() => setIsCommandPaletteOpen(true)} />
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-text-secondary pt-24">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-text-secondary pt-8">
           <div className="relative mb-6">
             <div className="absolute inset-0 rounded-full bg-accent/25 blur-xl animate-pulse" />
             <Logo size={64} showText={false} className="relative z-10 animate-bounce" />
@@ -1247,8 +1242,7 @@ function DashboardContent() {
   if (error && !dashboardData) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
-        <Navbar currentUser={currentUser} onLoginSuccess={handleLoginSuccess} onLogout={handleLogout} onOpenSearch={() => setIsCommandPaletteOpen(true)} />
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto pt-24">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto pt-8">
           <div className="h-12 w-12 rounded-lg bg-danger/10 text-danger flex items-center justify-center mb-4">
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -1854,8 +1848,7 @@ function DashboardContent() {
   if (error && !dashboardData) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
-        <Navbar currentUser={currentUser} onLoginSuccess={handleLoginSuccess} onLogout={handleLogout} onOpenSearch={() => setIsCommandPaletteOpen(true)} />
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto pt-24">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto pt-8">
           <div className="h-12 w-12 rounded-lg bg-danger/10 text-danger flex items-center justify-center mb-4">
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -1878,9 +1871,8 @@ function DashboardContent() {
     <>
       {/* DESKTOP LAYOUT SHELL (md and larger) */}
       <div className="hidden md:flex min-h-screen flex-col bg-background relative selection:bg-accent/30 w-full">
-        <Navbar currentUser={currentUser} onLoginSuccess={handleLoginSuccess} onLogout={handleLogout} onOpenSearch={() => setIsCommandPaletteOpen(true)} />
 
-        <div className={`flex-1 mx-auto w-full px-4 pt-24 pb-8 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8 transition-all duration-300 ${
+        <div className={`flex-1 mx-auto w-full px-4 pt-8 pb-8 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8 transition-all duration-300 ${
           isFocusMode ? "max-w-4xl" : "max-w-7xl"
         }`}>
           

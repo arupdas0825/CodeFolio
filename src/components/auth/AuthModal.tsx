@@ -1,201 +1,71 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Shield, 
-  X, 
-  ArrowRight, 
-  Loader2, 
-  CheckCircle2, 
-  IdCard, 
-  Share2 
-} from 'lucide-react';
-import { GithubIcon } from '@/components/ui/GithubIcon';
-import { CodefolioLogo } from '@/components/ui/CodefolioLogo';
-import { signInWithGitHub } from '@/lib/firebase';
+import { useEffect, useRef, useState } from "react";
+import { GitBranch, Loader2, X } from "lucide-react";
+import { GithubIcon } from "@/components/ui/GithubIcon";
+import { signInWithGitHub, type CodefolioUser } from "@/lib/firebase";
+import styles from "@/components/social/social.module.css";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: (user?: any) => void;
+  onSuccess?: (user: CodefolioUser) => void;
   actionTitle?: string;
   title?: string;
   message?: string;
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({
-  isOpen,
-  onClose,
-  onSuccess,
-  actionTitle,
-  title,
-  message
-}) => {
+export function AuthModal({ isOpen, ...props }: AuthModalProps) {
+  return isOpen ? <SignInDialog {...props} /> : null;
+}
+
+function SignInDialog({ onClose, onSuccess, actionTitle, title, message }: Omit<AuthModalProps, "isOpen">) {
+  const dialog = useRef<HTMLDialogElement>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
-  const displayTitle = title || actionTitle || 'Continue with Codefolio';
+  useEffect(() => {
+    const element = dialog.current;
+    element?.showModal();
+    return () => element?.close();
+  }, []);
 
-  const handleGitHubAuth = async () => {
+  async function signIn() {
     if (loading) return;
     setLoading(true);
-    setError(null);
+    setError("");
     try {
       const user = await signInWithGitHub();
-      if (onSuccess) onSuccess(user);
+      onSuccess?.(user);
       onClose();
-    } catch (err: any) {
-      const code = err?.code || '';
-      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
-        console.log("GitHub authentication popup closed or cancelled by user.");
-        setLoading(false);
-        return;
-      }
-
-      console.error("GitHub authentication error:", err);
-      let userFriendlyMessage = err?.message || 'Authentication failed. Please check your connection and try again.';
-      if (code === 'auth/unauthorized-domain') {
-        userFriendlyMessage = 'This domain is not authorized in Firebase Console. Please add your domain under Firebase Auth Settings > Authorized Domains.';
-      } else if (code === 'auth/popup-blocked') {
-        userFriendlyMessage = 'The authentication popup was blocked by your browser. Please allow popups for this site and try again.';
-      } else if (code === 'auth/operation-not-allowed') {
-        userFriendlyMessage = 'GitHub provider is disabled in Firebase Console. Please enable GitHub under Firebase Auth > Sign-in method.';
-      }
-      setError(userFriendlyMessage);
+    } catch (reason: unknown) {
+      const code = typeof reason === "object" && reason && "code" in reason ? reason.code : "";
+      if (code === "auth/cancelled-popup-request" || code === "auth/popup-closed-by-user") return;
+      if (code === "auth/popup-blocked") setError("Allow pop-ups for this site and try again.");
+      else if (code === "auth/unauthorized-domain" || code === "auth/operation-not-allowed") setError("GitHub sign-in is unavailable for this workspace.");
+      else setError("Couldn’t connect to GitHub. Try again in a moment.");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  if (!isOpen) return null;
-
-  const features = [
-    {
-      icon: CheckCircle2,
-      title: 'Verified Developer Identity',
-      color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/25',
-    },
-    {
-      icon: IdCard,
-      title: 'Professional Developer Card',
-      color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/25',
-    },
-    {
-      icon: Share2,
-      title: 'Export & Share',
-      color: 'text-purple-400 bg-purple-500/10 border-purple-500/25',
-    },
-  ];
-
-  return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans">
-        {/* Backdrop: Soft Blur Liquid Glass */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-[32px]"
-        />
-
-        {/* Liquid Glass Modal Panel (Compact, Zero-Scroll) */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 w-full max-w-[380px] sm:max-w-[400px] overflow-hidden rounded-[24px] sm:rounded-[28px] border border-white/15 bg-gradient-to-b from-slate-900/95 via-slate-950/98 to-slate-900/95 p-5 sm:p-6 shadow-[0_24px_80px_rgba(0,0,0,0.85)] backdrop-blur-2xl text-slate-100"
-        >
-          {/* Subtle Ambient Glows */}
-          <div className="pointer-events-none absolute -top-16 -left-16 h-36 w-36 rounded-full bg-indigo-500/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-16 -right-16 h-36 w-36 rounded-full bg-purple-500/20 blur-3xl" />
-
-          {/* Close Button (Top-Right) */}
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close modal"
-            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 hover:bg-white/15 hover:text-white hover:border-white/20 hover:scale-105 transition-all shadow-sm z-20"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-
-          {/* HEADER SECTION */}
-          <div className="text-center">
-            {/* Codefolio Logo Top Center */}
-            <div className="flex justify-center">
-              <CodefolioLogo size={40} />
-            </div>
-
-            {/* Title */}
-            <h2 className="mt-3 text-lg sm:text-xl font-black text-white tracking-tight leading-snug">
-              {displayTitle}
-            </h2>
-
-            {/* Subtitle */}
-            <p className="mt-1 text-xs text-slate-400 font-medium leading-normal">
-              {message || 'Verify your GitHub identity & unlock your profile.'}
-            </p>
-          </div>
-
-          {/* 3 COMPACT FEATURE CARDS */}
-          <div className="my-4 space-y-2">
-            {features.map((feat) => {
-              const IconComp = feat.icon;
-              return (
-                <div
-                  key={feat.title}
-                  className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2.5 hover:border-indigo-500/30 hover:bg-slate-900/60 transition-all"
-                >
-                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${feat.color}`}>
-                    <IconComp className="h-3.5 w-3.5" />
-                  </div>
-                  <span className="text-xs font-bold text-slate-200 truncate">
-                    {feat.title}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          {error && (
-            <div className="mb-3 rounded-xl bg-rose-500/10 border border-rose-500/20 p-2.5 text-center text-xs text-rose-300">
-              {error}
-            </div>
-          )}
-
-          {/* CONTINUE WITH GITHUB BUTTON */}
-          <button
-            type="button"
-            onClick={handleGitHubAuth}
-            disabled={loading}
-            className="group relative flex w-full items-center justify-between rounded-xl border border-indigo-500/40 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 px-4 py-3 font-extrabold text-xs sm:text-sm text-white shadow-[0_0_24px_rgba(99,102,241,0.35)] hover:shadow-[0_0_32px_rgba(168,85,247,0.5)] hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
-          >
-            <div className="flex items-center gap-2.5">
-              <GithubIcon className="h-4.5 w-4.5 fill-current text-white shrink-0" />
-              <span className="tracking-wide">
-                {loading ? 'Authenticating...' : 'Continue with GitHub'}
-              </span>
-            </div>
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin text-white/80 shrink-0" />
-            ) : (
-              <ArrowRight className="h-4 w-4 text-white/80 transition-transform group-hover:translate-x-1 shrink-0" />
-            )}
-          </button>
-
-          {/* SMALL SECURITY NOTE AT BOTTOM */}
-          <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-slate-400 font-medium">
-            <Shield className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-            <span>Secure GitHub OAuth Authentication</span>
-          </div>
-        </motion.div>
+  return <dialog ref={dialog} className={styles.dialog + " " + styles.authDialog} aria-labelledby="auth-dialog-title"
+    onCancel={(event) => { event.preventDefault(); if (!loading) onClose(); }}
+    onClick={(event) => { if (event.target === event.currentTarget && !loading) onClose(); }}>
+    <div className={styles.authDialogBody}>
+      <div className={styles.authDialogHeader}>
+        <span className={styles.brandIcon}><GitBranch size={22} /></span>
+        <button className={styles.iconButton} type="button" onClick={onClose} disabled={loading} aria-label="Close sign-in"><X size={18} /></button>
       </div>
-    </AnimatePresence>
-  );
-};
+      <h2 id="auth-dialog-title">{title || actionTitle || "Join CodeFolio"}</h2>
+      <p>{message || "Connect your GitHub account to publish projects and build your developer profile."}</p>
+      {error && <p className={styles.formError} role="alert">{error}</p>}
+      <button type="button" className={styles.primary} onClick={signIn} disabled={loading}>
+        {loading ? <Loader2 className="animate-spin" size={17} /> : <GithubIcon className={styles.icon18} />}
+        {loading ? "Connecting…" : "Continue with GitHub"}
+      </button>
+    </div>
+  </dialog>;
+}
 
 export default AuthModal;

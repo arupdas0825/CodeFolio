@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { GlassEffect } from "@/components/ui/liquid-glass";
+import styles from "@/components/social/social.module.css";
 import { Download, Share, X, Smartphone } from "lucide-react";
 import { subscribeToAuthChanges } from "@/lib/firebase";
 import { CodefolioUser } from "@/types/user";
@@ -20,6 +20,13 @@ export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const serwist = (window as Window & { serwist?: { register(): Promise<unknown> } }).serwist;
+    void serwist?.register().catch(() => {
+      // Browsing and publishing remain available when workers are blocked.
+    });
+  }, []);
 
   // 1. Only show for logged-in users
   useEffect(() => {
@@ -94,8 +101,8 @@ export default function InstallPrompt() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 max-w-sm w-[calc(100%-3rem)] md:w-96 rounded-2xl animate-in fade-in slide-in-from-bottom-5 duration-300">
-      <GlassEffect className="rounded-2xl p-4 shadow-2xl border border-border/80 bg-surface/90">
+    <aside className={styles.installPanel} aria-label="Install CodeFolio">
+      <div className={styles.toolPanel}>
         <div className="flex items-start justify-between gap-3 mb-2.5">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent flex-shrink-0">
@@ -103,9 +110,9 @@ export default function InstallPrompt() {
             </div>
             <div>
               <h4 className="text-sm font-bold font-space-grotesk text-text-primary leading-tight">
-                Install Codefolio
+                Install CodeFolio
               </h4>
-              <p className="text-[11px] font-mono text-accent">Native App & Offline Mode</p>
+              <p className="text-[11px] font-mono text-accent">Install on this device</p>
             </div>
           </div>
           <button
@@ -120,7 +127,7 @@ export default function InstallPrompt() {
         {isIOS ? (
           <div className="text-xs text-text-secondary font-sans space-y-2 pt-1">
             <p className="leading-relaxed">
-              Install Codefolio to your home screen for quick access and full-screen experience:
+              Install CodeFolio to your home screen for quick access and full-screen experience:
             </p>
             <div className="flex items-center gap-2 py-1.5 px-3 rounded-lg bg-background/60 border border-border/50 text-[11px] text-text-primary font-mono">
               <span>1. Tap</span>
@@ -135,7 +142,7 @@ export default function InstallPrompt() {
         ) : (
           <div className="space-y-3 pt-1">
             <p className="text-xs text-text-secondary leading-relaxed font-sans">
-              Install Codefolio on your device for lightning-fast access, native performance, and offline capabilities.
+              Add CodeFolio to your home screen for quick access.
             </p>
             <div className="flex items-center gap-2 pt-1">
               <button
@@ -154,7 +161,7 @@ export default function InstallPrompt() {
             </div>
           </div>
         )}
-      </GlassEffect>
-    </div>
+      </div>
+    </aside>
   );
 }
