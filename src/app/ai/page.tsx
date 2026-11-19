@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Navbar } from '@/components/layout/Navbar';
+import styles from '@/components/social/social.module.css';
 import { 
   Sparkles, 
   Cpu, 
@@ -48,29 +48,14 @@ export default function AISuitePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white pb-24">
-      <Navbar />
-
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Banner Header */}
-        <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900 via-purple-950/60 to-indigo-950/40 p-6 sm:p-8 backdrop-blur-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1 text-xs font-semibold text-purple-300">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Codefolio AI Intelligence Layer</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-              AI-Powered Developer Insights & Analytics
-            </h1>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Real-time deep analysis of code quality, architecture archetypes, resume ATS optimization, and personalized career trajectories.
-            </p>
-          </div>
-        </div>
+    <main className={styles.content}>
+      <header className={styles.pageHeading}>
+        <div><h1>AI tools</h1><p>Explore sample reviews, project ideas, and career insights.</p></div>
+        <span className={styles.previewBadge}>Sample content</span>
+      </header>
 
         {/* Module Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-white/10 pb-4 overflow-x-auto no-scrollbar">
+        <div className={styles.toolTabs} aria-label="Sections">
           {modules.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -94,7 +79,7 @@ export default function AISuitePage() {
         {/* Tab 1: Profile Review */}
         {activeTab === 'profile' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-xl space-y-6">
+            <div className="lg:col-span-8 cf-tool-panel p-6 sm:p-8  space-y-6">
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400">
@@ -128,7 +113,7 @@ export default function AISuitePage() {
               </div>
             </div>
 
-            <div className="lg:col-span-4 rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl space-y-4">
+            <div className="lg:col-span-4 cf-tool-panel p-6  space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-white font-mono">Profile Strengths</h4>
               <div className="space-y-3 text-xs">
                 <div className="flex items-start gap-2 text-emerald-300 bg-emerald-950/30 p-3 rounded-2xl border border-emerald-800/40">
@@ -146,7 +131,7 @@ export default function AISuitePage() {
 
         {/* Tab 2: GitHub Analysis */}
         {activeTab === 'github' && (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-xl space-y-4">
+          <div className="cf-tool-panel p-6 sm:p-8  space-y-4">
             <h3 className="font-bold text-white text-base">Deep AI GitHub Code Analysis</h3>
             <p className="text-xs text-slate-300">Evaluating 14,200+ commits across 90+ repositories.</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
@@ -172,7 +157,7 @@ export default function AISuitePage() {
 
         {/* Tab 3: Resume Review */}
         {activeTab === 'resume' && (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-xl space-y-6">
+          <div className="cf-tool-panel p-6 sm:p-8  space-y-6">
             <div className="space-y-2">
               <h3 className="text-lg font-bold text-white">Paste Resume / CV for Real-time ATS Evaluation</h3>
               <p className="text-xs text-slate-400">
@@ -190,7 +175,7 @@ export default function AISuitePage() {
 
             <button
               onClick={handleAnalyzeResume}
-              className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-lg hover:opacity-90 active:scale-95 transition-all"
+              className="flex items-center gap-2 rounded-2xl cf-tool-primary px-6 py-2.5 text-xs font-bold hover:opacity-90 active:scale-95 transition-all"
             >
               <Sparkles className="h-4 w-4" />
               <span>Run AI ATS Audit</span>
@@ -219,12 +204,12 @@ export default function AISuitePage() {
         {/* Tab 4: Project Suggestions */}
         {activeTab === 'projects' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-6 rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl space-y-2">
+            <div className="p-6 rounded-3xl border border-white/10 bg-slate-900/80  space-y-2">
               <span className="px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800/40 text-[10px] font-mono font-bold">High Impact</span>
               <h4 className="font-bold text-white text-base">Distributed Vector Similarity Cache</h4>
               <p className="text-xs text-slate-300">Rust + WASM SIMD memory allocator to speed up local RAG query execution.</p>
             </div>
-            <div className="p-6 rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl space-y-2">
+            <div className="p-6 rounded-3xl border border-white/10 bg-slate-900/80  space-y-2">
               <span className="px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-300 border border-purple-800/40 text-[10px] font-mono font-bold">Recommended</span>
               <h4 className="font-bold text-white text-base">Next.js Realtime Presence Hook</h4>
               <p className="text-xs text-slate-300">Zero-dependency WebSocket hook with optimistic conflict resolution.</p>
@@ -234,14 +219,13 @@ export default function AISuitePage() {
 
         {/* Tab 5 & 6: Career & Coding Insights */}
         {(activeTab === 'career' || activeTab === 'coding') && (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-xl space-y-4">
+          <div className="cf-tool-panel p-6 sm:p-8  space-y-4">
             <h3 className="font-bold text-white text-base">Engineering Trajectory Insights</h3>
             <p className="text-xs text-slate-300">
               Your coding profile maps to high-growth Staff Engineer and Tech Lead roles across Silicon Valley & EU startups.
             </p>
           </div>
         )}
-      </main>
-    </div>
+    </main>
   );
 }

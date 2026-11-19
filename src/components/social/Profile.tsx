@@ -2,14 +2,15 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Building2, FolderOpen, Link2, MapPin, Pencil, Plus, UserRound } from "lucide-react";
+import { ArrowUpRight, Building2, FolderOpen, Layers3, Link2, MapPin, Pencil, Plus } from "lucide-react";
 import { GithubIcon } from "@/components/ui/GithubIcon";
 import { getPostsByUsername } from "@/services/devfeedService";
 import { GitHubUserService } from "@/services/github/github-user.service";
 import { GitHubRepositoryService } from "@/services/github/github-repository.service";
 import type { DevFeedPost, PostType } from "@/types/devfeed";
 import type { GitHubRepository } from "@/types/github";
-import { ActivityCard, Avatar, Empty, FollowControl, Loading, More, ProjectCard, safeUrl } from "./SocialUI";
+import type { PublicProfileDetails } from "@/types/user";
+import { ActivityCard, Avatar, Empty, FollowControl, Loading, More, ProjectCard, Tags, safeUrl } from "./SocialUI";
 import { findDeveloper, type SocialState } from "./useSocial";
 import type { Developer } from "./preview";
 import styles from "./social.module.css";
@@ -31,11 +32,12 @@ export function Profile({ slug, initialTab, social, openComposer, requireAuth }:
   }>();
   const [more, setMore] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [about, setAbout] = useState<string>();
-  const [aboutInput, setAboutInput] = useState("");
+  const [editor, setEditor] = useState({ headline: "", about: "", skills: "" });
   const [saving, setSaving] = useState(false);
   const [loadVersion, setLoadVersion] = useState(0);
   const listed = social.people.find((person) => person.username === username);
+  const previewPerson = social.preview && Boolean(listed);
+  const selectedTab = previewPerson && activeTab === "repositories" ? "overview" : activeTab;
   const activityKey = JSON.stringify([username, loadVersion]);
   const activity = remoteActivity?.key === activityKey ? remoteActivity : null;
   const nextCursor = activity?.cursor;
@@ -72,20 +74,16 @@ export function Profile({ slug, initialTab, social, openComposer, requireAuth }:
   }, [username, social.preview, activityKey]);
 
   useEffect(() => {
-    if (!username || (social.preview && listed) || activeTab !== "repositories" || repos !== undefined) return;
+    if (!username || (social.preview && listed) || selectedTab !== "repositories" || repos !== undefined) return;
     let active = true;
     GitHubRepositoryService.fetchUserProfileRepos(username).then((items) => {
       if (active) setRemoteRepos({ username, repos: items.filter((repo) => !repo.private).slice(0, 12) });
     }).catch(() => { if (active) setRemoteRepos({ username, repos: null }); });
     return () => { active = false; };
-  }, [activeTab, listed, social.preview, username, repos]);
+  }, [selectedTab, listed, social.preview, username, repos]);
 
-  const fallback = own && social.user ? {
-    uid: social.user.uid, username: social.user.username, name: social.user.displayName || social.user.username,
-    avatar: social.user.photoURL, github: `https://github.com/${social.user.username}`,
-  } satisfies Developer : undefined;
-  const person: Developer | null | undefined = (resolved?.user === username ? resolved?.developer : null) || listed || fallback;
-  const publicAbout = about ?? (own && social.preview ? social.localAbout : undefined) ?? person?.bio ?? "";
+  const person = (own ? social.currentProfile : (resolved?.user === username ? resolved?.developer : null) || listed);
+  const publicAbout = person?.bio ?? "";
   const recent = social.posts.filter((post) => post.authorUsername === username);
   const recentIds = new Set(recent.map((post) => post.id));
   const posts = [...recent, ...(activity?.posts || []).filter((post) => !recentIds.has(post.id))];
@@ -96,8 +94,9 @@ export function Profile({ slug, initialTab, social, openComposer, requireAuth }:
     if (!own || saving) return;
     setSaving(true);
     try {
-      await social.saveAbout(aboutInput.trim());
-      setAbout(aboutInput.trim());
+      const skills = [...new Set(editor.skills.split(",").map((skill) => skill.trim().slice(0, 32)).filter(Boolean))].slice(0, 10);
+      const details: PublicProfileDetails = { headline: editor.headline.trim(), about: editor.about.trim(), skills };
+      await social.saveProfile(details);
       setEditing(false);
     } catch {
       social.setNotice("Couldn’t save your profile.");
@@ -122,69 +121,94 @@ export function Profile({ slug, initialTab, social, openComposer, requireAuth }:
   }
 
   if (!username) return <Empty title="Create your developer profile" description="Connect your GitHub account to publish projects and share updates." action={<button className={styles.primary} onClick={requireAuth}>Sign in with GitHub</button>} />;
+  if (person?.privacy === "private" && !own) return <Empty title="This CodeFolio profile is private" action={<Link className={styles.secondary} href="/network">Browse developers</Link>} />;
   if (!person) return resolved ? <Empty title="Developer profile unavailable" description={`We couldn’t find a profile for @${username}.`} action={<Link className={styles.secondary} href="/network">Browse developers</Link>} /> : <Loading />;
 
   const website = safeUrl(person.website) || (person.website && !person.website.includes("://") ? safeUrl(`https://${person.website}`) : null);
-  const previewPerson = social.preview && Boolean(listed);
+  const skills = person.skills?.length ? person.skills : [...new Set(projects.flatMap((project) => project.project?.stack || []))].slice(0, 10);
+  const gitHubPage = previewPerson ? null : safeUrl(person.github) || `https://github.com/${encodeURIComponent(username)}`;
+
+  function editProfile() {
+    setEditor({ headline: person?.headline || "", about: publicAbout, skills: (person?.skills || []).join(", ") });
+    setEditing(true);
+  }
+
+  async function copyProfile() {
+    try {
+      await navigator.clipboard.writeText(new URL(`/u/${encodeURIComponent(username || "")}`, window.location.origin).href);
+      social.setNotice("Profile link copied");
+    } catch {
+      social.setNotice("Couldn’t copy the profile link.");
+    }
+  }
 
   return <div className={styles.profile}>
-    <section className={styles.profileHero}>
-      <div className={styles.profileCover} aria-hidden="true"><div /><span>&lt;/&gt;</span></div>
+    <section className={styles.profileHero} aria-label="Developer profile">
+      <div className={styles.profileCover} aria-hidden="true" />
       <div className={styles.profileIdentity}>
         <div className={styles.profileTopLine}>
-          <Avatar name={person.name} src={person.avatar} size={86} />
+          <Avatar name={person.name} src={person.avatar} size={103} />
           <div className={styles.profileCtas}>
-            {own ? <button className={styles.secondary} onClick={() => { setEditing(!editing); setAboutInput(publicAbout); }}><Pencil size={16} /> Edit profile</button>
+            <button type="button" className={styles.secondary} onClick={copyProfile} aria-label="Copy profile link"><Link2 size={17} /><span>Share</span></button>
+            {own ? <button type="button" className={styles.primary} onClick={editProfile}><Pencil size={16} /> Edit profile</button>
               : <FollowControl person={person} social={social} requireAuth={requireAuth} />}
-            {!previewPerson && <a className={styles.secondary} href={`https://github.com/${encodeURIComponent(username)}`} target="_blank" rel="noreferrer" aria-label="GitHub profile"><GithubIcon className={styles.icon18} /></a>}
           </div>
         </div>
-        <h1>{person.name}</h1>
-        <p className={styles.handle}>@{person.username}</p>
-        {publicAbout && <p className={styles.profileBio}>{publicAbout}</p>}
+        <div className={styles.profileName}>
+          <h1>{person.name}</h1>
+          <p>@{person.username}</p>
+        </div>
+        {person.headline && <p className={styles.profileHeadline}>{person.headline}</p>}
         <div className={styles.profileMetadata}>
-          {person.company && <span><Building2 size={16} />{person.company}</span>}
           {person.location && <span><MapPin size={16} />{person.location}</span>}
+          {person.company && <span><Building2 size={16} />{person.company}</span>}
           {website && <a href={website} target="_blank" rel="noreferrer"><Link2 size={16} />{new URL(website).hostname}</a>}
+          {gitHubPage && <a href={gitHubPage} target="_blank" rel="noreferrer"><GithubIcon className={styles.icon18} /> GitHub</a>}
         </div>
         {editing && <form className={styles.editPanel} onSubmit={save}>
-          <label>About<textarea value={aboutInput} onChange={(event) => setAboutInput(event.target.value)} rows={3} maxLength={500} /></label>
+          <label>Headline<input value={editor.headline} onChange={(event) => setEditor({ ...editor, headline: event.target.value })} maxLength={100} autoFocus /></label>
+          <label>About<textarea aria-label="About" value={editor.about} onChange={(event) => setEditor({ ...editor, about: event.target.value })} rows={3} maxLength={500} /></label>
+          <label>Technologies <small>Separate with commas</small><input value={editor.skills} onChange={(event) => setEditor({ ...editor, skills: event.target.value })} maxLength={260} /></label>
           <button type="button" className={styles.secondary} onClick={() => setEditing(false)} disabled={saving}>Cancel</button>
           <button className={styles.primary} disabled={saving}>{saving ? "Saving…" : "Save profile"}</button>
         </form>}
       </div>
       <div className={styles.tabs} aria-label="Profile sections">
         {(Object.entries(tabLabels) as [Tab, string][]).filter(([key]) => !previewPerson || key !== "repositories").map(([value, label]) => (
-          <button key={value} aria-pressed={activeTab === value} onClick={() => setActiveTab(value)}>{label}</button>
+          <button key={value} type="button" aria-pressed={selectedTab === value} onClick={() => setActiveTab(value)}>{label}</button>
         ))}
       </div>
     </section>
 
     <div className={styles.profileLayout}>
       <div className={styles.profileMain}>
-        {(activeTab === "overview" || activeTab === "projects") && <section className={styles.profileSection}>
+        {selectedTab === "overview" && (publicAbout || own) && <section className={styles.aboutPanel}>
+          <div className={styles.sectionHeading}><h2>About</h2>{own && <button type="button" className={styles.headerIcon} onClick={editProfile} aria-label="Edit about"><Pencil size={16} /></button>}</div>
+          <p>{publicAbout || "Add a short introduction so other developers can learn what you work on."}</p>
+        </section>}
+        {(selectedTab === "overview" || selectedTab === "projects") && <section className={styles.profileSection}>
           <div className={styles.sectionHeading}>
-            <h2>{activeTab === "overview" ? "Featured work" : "Projects"}</h2>
+            <h2>{selectedTab === "overview" ? "Featured work" : "Projects"}</h2>
             {own && <button className={styles.secondary} onClick={() => openComposer("launch")}><Plus size={16} /> Add project</button>}
           </div>
           {projects.length ? <div className={styles.profileProjects}>
-            {(activeTab === "overview" ? projects.slice(0, 2) : projects).map((post) => <ProjectCard key={post.id} post={post} />)}
+            {(selectedTab === "overview" ? projects.slice(0, 2) : projects).map((post) => <ProjectCard key={post.id} post={post} />)}
           </div> : !postsLoading && !postsError && <Empty title="No projects published yet" />}
-          {activeTab === "overview" && projects.length > 2 && <button className={styles.secondary} onClick={() => setActiveTab("projects")}>View all projects</button>}
+          {selectedTab === "overview" && projects.length > 2 && <button className={styles.secondary} onClick={() => setActiveTab("projects")}>View all projects</button>}
         </section>}
-        {(activeTab === "overview" || activeTab === "posts") && <section className={styles.profileSection}>
-          <div className={styles.sectionHeading}><h2>{activeTab === "overview" ? "Recent activity" : "Posts"}</h2>
-            {activeTab === "overview" && posts.length > 2 && <button className={styles.secondary} onClick={() => setActiveTab("posts")}>All posts</button>}
+        {(selectedTab === "overview" || selectedTab === "posts") && <section className={styles.profileSection}>
+          <div className={styles.sectionHeading}><h2>{selectedTab === "overview" ? "Recent activity" : "Posts"}</h2>
+            {selectedTab === "overview" && posts.length > 2 && <button className={styles.secondary} onClick={() => setActiveTab("posts")}>All posts</button>}
           </div>
-          {(activeTab === "overview" ? posts.slice(0, 2) : posts).map((post) => <ActivityCard key={post.id} post={post} social={social} requireAuth={requireAuth} />)}
+          {(selectedTab === "overview" ? posts.slice(0, 2) : posts).map((post) => <ActivityCard key={post.id} post={post} social={social} requireAuth={requireAuth} />)}
           {!posts.length && !postsLoading && !postsError && <Empty title="No activity yet" action={own ? <button className={styles.secondary} onClick={() => openComposer()}>Create a post</button> : undefined} />}
         </section>}
-        {activeTab !== "repositories" && <>
+        {selectedTab !== "repositories" && <>
           {postsLoading && <Loading />}
           {postsError && <Empty title="Couldn’t load profile activity" action={<button className={styles.secondary} onClick={() => setLoadVersion((n) => n + 1)}>Retry</button>} />}
-          {activeTab !== "overview" && nextCursor && <More pending={more} onClick={loadMore} />}
+          {selectedTab !== "overview" && nextCursor && <More pending={more} onClick={loadMore} />}
         </>}
-        {activeTab === "repositories" && <section className={styles.profileSection}>
+        {selectedTab === "repositories" && <section className={styles.profileSection}>
           <div className={styles.sectionHeading}><h2>Public GitHub repositories</h2></div>
           {repos === undefined && <Loading />}
           {repos === null && <Empty title="Couldn’t load repositories" action={<button className={styles.secondary} onClick={() => setRemoteRepos(undefined)}>Retry</button>} />}
@@ -196,13 +220,19 @@ export function Profile({ slug, initialTab, social, openComposer, requireAuth }:
       </div>
       <aside className={styles.profileAside}>
         <section className={styles.sidePanel}>
-          <div className={styles.sideHeading}><h2>On CodeFolio</h2><UserRound size={17} /></div>
+          <div className={styles.sideHeading}><h2>On CodeFolio</h2></div>
           <div className={styles.profileCounts}>
-            <button onClick={() => setActiveTab("projects")}><strong>{projects.length}{nextCursor ? "+" : ""}</strong> Projects</button>
-            <button onClick={() => setActiveTab("posts")}><strong>{posts.length}{nextCursor ? "+" : ""}</strong> Posts</button>
+            <button type="button" onClick={() => setActiveTab("projects")}><strong>{projects.length}{nextCursor ? "+" : ""}</strong> Projects</button>
+            <button type="button" onClick={() => setActiveTab("posts")}><strong>{posts.length}{nextCursor ? "+" : ""}</strong> Posts</button>
           </div>
-          {!previewPerson && <Link href={`/insights/${username}`} className={styles.panelLink}>GitHub insights <ArrowUpRight size={15} /></Link>}
+          {!previewPerson && <Link href={`/insights/${encodeURIComponent(username)}`} className={styles.panelLink}>GitHub insights <ArrowUpRight size={15} /></Link>}
         </section>
+        {(skills.length > 0 || own) && <section className={styles.sidePanel}>
+          <div className={styles.sideHeading}><h2>Tech stack</h2><Layers3 size={17} /></div>
+          <div className={styles.profileSkills}>
+            {skills.length ? <Tags tags={skills} /> : <button type="button" className={styles.secondary} onClick={editProfile}><Plus size={15} /> Add technologies</button>}
+          </div>
+        </section>}
       </aside>
     </div>
   </div>;

@@ -4,9 +4,8 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { subscribeToAuthChanges, logOutUser, CodefolioUser, getUserFromFirestore } from "@/lib/firebase";
+import { subscribeToAuthChanges, getUserFromFirestore } from "@/lib/firebase";
 import { fetchGitHubDashboardData } from "@/lib/github";
-import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { GitHubRepoIntelligenceService, GitHubRepoIntelligence } from "@/services/github/github-intelligence.service";
 import { AICodeReviewEngine, FileReviewReport, FunctionDetail, PullRequestDetail, ArchitectureReport, TechnicalDebtReport, AISuggestionsReport } from "@/services/aiCodeReviewEngine";
@@ -113,7 +112,6 @@ export default function RepositoryDetailPage() {
   const ownerParam = searchParams.get("owner") || "";
 
   // Auth & Token states
-  const [currentUser, setCurrentUser] = useState<CodefolioUser | null>(null);
   const [githubToken, setGithubToken] = useState("");
   const [owner, setOwner] = useState(ownerParam);
 
@@ -169,7 +167,7 @@ export default function RepositoryDetailPage() {
   // 1. Subscribe to Auth and load token
   useEffect(() => {
     const unsubscribe = subscribeToAuthChanges((user) => {
-      setCurrentUser(user);
+      setGithubToken(user?.token || "");
       if (user && !ownerParam) {
         setOwner(user.username);
       }
@@ -208,23 +206,6 @@ export default function RepositoryDetailPage() {
   const archReport: ArchitectureReport = useMemo(() => {
     return AICodeReviewEngine.getArchitectureReview(checklistPaths);
   }, [checklistPaths]);
-
-  const handleLoginSuccess = (user: any) => {
-    setCurrentUser(user);
-    if (user.githubToken) {
-      setGithubToken(user.githubToken);
-      localStorage.setItem("codefolio_github_token", user.githubToken);
-    }
-    setOwner(user.username);
-  };
-
-  const handleLogout = async () => {
-    await logOutUser();
-    setCurrentUser(null);
-    setGithubToken("");
-    localStorage.removeItem("codefolio_github_token");
-    router.push("/login");
-  };
 
   // Loader screen
   if (loading) {
@@ -642,10 +623,9 @@ export default function RepositoryDetailPage() {
 
   return (
     <div className={`flex min-h-screen flex-col bg-background selection:bg-accent/30 selection:text-text-primary text-foreground font-sans transition-colors duration-300 ${workspaceMode === "security" ? "theme-security" : ""}`}>
-      <Navbar currentUser={currentUser} onLoginSuccess={handleLoginSuccess} onLogout={handleLogout} />
 
       {/* Main Workspace Frame */}
-      <div className="flex-1 flex h-[calc(100vh-64px)] pt-16 overflow-hidden relative">
+      <div className="flex-1 flex h-[calc(100dvh-var(--cf-header))] overflow-hidden relative">
         
         {/* LEFT SIDEBAR NAVIGATION */}
         <aside className="w-64 border-r border-border bg-[#0D1117]/80 backdrop-blur-md flex flex-col justify-between flex-shrink-0 overflow-y-auto select-none">

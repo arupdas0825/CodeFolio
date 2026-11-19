@@ -1,13 +1,13 @@
 {
   "id": "/",
-  "name": "Codefolio",
-  "short_name": "Codefolio",
-  "description": "Codefolio transforms GitHub activity into actionable developer intelligence.",
+  "name": "CodeFolio",
+  "short_name": "CodeFolio",
+  "description": "A developer network for sharing projects and following people who build.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#4f46e5",
+  "background_color": "#f4f6f1",
+  "theme_color": "#285945",
   "icons": [
     {
       "src": "/favicon-16x16.png",

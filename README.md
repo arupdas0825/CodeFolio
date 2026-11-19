@@ -29,7 +29,7 @@
 
 ## Community workspace
 
-The homepage opens the developer feed. Use the feed to post updates, code snippets, and project launches. A launch appears in the feed, in the project directory, and on its author’s profile. The developer card generator is available at `/card`, and GitHub analytics are available under GitHub insights on developer profiles.
+The homepage opens the developer feed. Use it to share updates, code snippets, and project launches. A launch appears in the feed, in the project directory, and on its author’s profile. Explore developers by technology under Network, and use your profile’s About and Tech stack sections to describe your work. The developer card generator is at `/card`, with GitHub analytics under GitHub insights on developer profiles.
 
 Run `npm ci` and `npm run dev`, then open http://localhost:3000. Without Firebase configuration, the workspace opens in preview mode with fictional developers and projects. Preview activity stays in your browser.
 

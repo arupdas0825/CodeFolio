@@ -7,25 +7,48 @@ export interface Developer {
   name: string;
   avatar: string | null;
   bio?: string | null;
+  headline?: string | null;
+  skills?: string[];
+  privacy?: "public" | "unlisted" | "private";
   location?: string | null;
   company?: string | null;
   website?: string | null;
   github?: string | null;
 }
 
+const maya: Developer = {
+  uid: "maya", username: "maya-chen", name: "Maya Chen", avatar: "/social/maya.jpg",
+  headline: "Independent developer · Creator of Patchwork",
+  bio: "I build tools that make the hidden parts of software easier to work with. Right now, I’m building Patchwork, an open-source dashboard for background jobs. I care about small teams, good documentation, and a calmer on-call experience.",
+  skills: ["TypeScript", "React", "Redis"], location: "San Francisco, CA",
+};
+const jordan: Developer = {
+  uid: "jordan", username: "jordan-lee", name: "Jordan Lee", avatar: "/social/jordan.jpg",
+  headline: "Backend engineer", bio: "Systems, APIs, and all things Go.", skills: ["Go", "PostgreSQL", "Docker"],
+  location: "Toronto, Canada",
+};
+const priya: Developer = {
+  uid: "priya", username: "priya-nair", name: "Priya Nair", avatar: "/social/priya.jpg",
+  headline: "Open-source maintainer", bio: "Design systems and accessible developer tools.",
+  skills: ["TypeScript", "React", "Go"], location: "Bengaluru, India",
+};
+const alex: Developer = {
+  uid: "alex", username: "alex-morgan", name: "Alex Morgan", avatar: "/social/alex.jpg",
+  headline: "Product engineer", bio: "I build for the web and write about developer experience.",
+  skills: ["TypeScript", "React", "Next.js"], location: "Brooklyn, NY",
+};
+
 export const previewPeople: Developer[] = [
-  { uid: "maya", username: "maya-chen", name: "Maya Chen", avatar: "/social/maya.jpg", bio: "Building thoughtful tools for developers.", location: "San Francisco, CA", company: "Independent developer" },
-  { uid: "jordan", username: "jordan-lee", name: "Jordan Lee", avatar: "/social/jordan.jpg", bio: "Systems, APIs, and all things Go.", location: "Toronto, Canada", company: "Backend engineer" },
-  { uid: "priya", username: "priya-nair", name: "Priya Nair", avatar: "/social/priya.jpg", bio: "Open source maintainer and design systems engineer.", location: "Bengaluru, India" },
-  { uid: "alex", username: "alex-morgan", name: "Alex Morgan", avatar: "/social/alex.jpg", bio: "Software engineer interested in the web and developer experience." },
+  maya, jordan, priya,
+  { uid: "leo", username: "leo-martins", name: "Leo Martins", avatar: "/social/leo.jpg", headline: "Platform engineer", bio: "Making deployments routine for small teams.", skills: ["Docker", "Go", "Kubernetes"], location: "Lisbon, Portugal" },
+  { uid: "sana", username: "sana-ahmed", name: "Sana Ahmed", avatar: "/social/sana.jpg", headline: "Machine learning engineer", bio: "Building thoughtful interfaces for applied ML.", skills: ["Python", "PyTorch", "React"], location: "London, UK" },
+  { uid: "noah", username: "noah-williams", name: "Noah Williams", avatar: "/social/noah.jpg", headline: "Developer experience engineer", bio: "Documentation, CLIs, and the glue between tools.", skills: ["Rust", "TypeScript", "Docker"], location: "Austin, TX" },
+  alex,
 ];
 
-const alex = previewPeople[3];
 export const previewUser: CodefolioUser = {
   uid: alex.uid, username: alex.username, displayName: alex.name, photoURL: alex.avatar, email: null,
 };
-
-const [maya, jordan, priya] = previewPeople;
 
 export const previewPosts: DevFeedPost[] = [
   {

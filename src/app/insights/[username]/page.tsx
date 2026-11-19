@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, use } from 'react';
-import { Navbar } from '@/components/layout/Navbar';
 import { MobileProfileView } from '@/components/profile/MobileProfileView';
 import { DeveloperCard, DeveloperCardData } from '@/components/card/DeveloperCard';
 import { AuthModal } from '@/components/auth/AuthModal';
@@ -358,7 +357,6 @@ export default function UserProfilePage({ params, searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white font-sans">
-      <Navbar />
 
       {/* 📱 MOBILE NATIVE STACKED PROFILE (< md) */}
       <div className="px-3 pt-3 block md:hidden">

@@ -134,7 +134,7 @@ const accentColors: Record<AccentColor, string> = {
 };
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setMode] = useState<ThemeMode>("dark");
+  const [mode, setMode] = useState<ThemeMode>("light");
   const [profile, setProfile] = useState<ThemeProfile>("github-dark");
   const [accent, setAccent] = useState<AccentColor>("blue");
   const [layout, setLayout] = useState<LayoutDensity>("default");
@@ -173,13 +173,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     if (effectiveMode === "light") {
       document.documentElement.classList.remove("dark");
       document.documentElement.classList.add("light");
-      document.documentElement.style.setProperty("--background", "#ffffff");
-      document.documentElement.style.setProperty("--surface", "#f8fafc");
-      document.documentElement.style.setProperty("--surface-secondary", "#f1f5f9");
+      document.documentElement.style.setProperty("--background", "#f4f6f1");
+      document.documentElement.style.setProperty("--surface", "#ffffff");
+      document.documentElement.style.setProperty("--surface-secondary", "#f0f3ed");
       document.documentElement.style.setProperty("--border", "rgba(0, 0, 0, 0.08)");
-      document.documentElement.style.setProperty("--foreground", "#0f172a");
-      document.documentElement.style.setProperty("--text-primary", "#0f172a");
-      document.documentElement.style.setProperty("--text-secondary", "#475569");
+      document.documentElement.style.setProperty("--foreground", "#192720");
+      document.documentElement.style.setProperty("--text-primary", "#192720");
+      document.documentElement.style.setProperty("--text-secondary", "#58685e");
     } else {
       document.documentElement.classList.remove("light");
       document.documentElement.classList.add("dark");

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Navbar } from '@/components/layout/Navbar';
+import styles from '@/components/social/social.module.css';
 import { 
   Briefcase, 
   Sparkles, 
@@ -75,32 +75,17 @@ const RECOMMENDED_JOBS: JobPosting[] = [
 export default function JobAnalyzerPage() {
   const [activeModule, setActiveModule] = useState<'match' | 'roadmap' | 'jobs'>('match');
   const [resumeText, setResumeText] = useState('');
-  const [analyzed, setAnalyzed] = useState(true);
+  const [analyzed, setAnalyzed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white pb-24">
-      <Navbar />
-
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Banner Header */}
-        <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900 via-indigo-950/60 to-purple-950/40 p-6 sm:p-8 backdrop-blur-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-1 text-xs font-semibold text-cyan-300">
-              <Briefcase className="h-3.5 w-3.5" />
-              <span>Codefolio AI Career & Job Analyzer</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Match Your Verified Skills to High-Pay Tech Roles
-            </h1>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Analyze ATS scores, calculate skill gap deficits, generate custom 30-day learning roadmaps, and match directly with top engineering teams.
-            </p>
-          </div>
-        </div>
+    <main className={styles.content}>
+      <header className={styles.pageHeading}>
+        <div><h1>Jobs and career</h1><p>Explore example job matches and learning roadmaps.</p></div>
+        <span className={styles.previewBadge}>Sample content</span>
+      </header>
 
         {/* Module Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-white/10 pb-4 overflow-x-auto no-scrollbar">
+        <div className={styles.toolTabs} aria-label="Sections">
           {[
             { id: 'match', label: 'ATS & GitHub Match', icon: Target },
             { id: 'roadmap', label: 'Skill Gap & Roadmap', icon: BookOpen },
@@ -128,42 +113,42 @@ export default function JobAnalyzerPage() {
         {/* Module 1: ATS & GitHub Match */}
         {activeModule === 'match' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl space-y-2">
+            {analyzed && <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="cf-tool-panel p-6  space-y-2">
                 <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold">Overall ATS Score</span>
                 <p className="text-3xl font-extrabold text-emerald-400 font-mono">94 / 100</p>
                 <p className="text-xs text-slate-300">Top 3% among Senior Frontend Architects.</p>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl space-y-2">
+              <div className="cf-tool-panel p-6  space-y-2">
                 <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold">GitHub Code Match</span>
                 <p className="text-3xl font-extrabold text-cyan-400 font-mono">98.2%</p>
                 <p className="text-xs text-slate-300">Verified commits validate 12 key job skills.</p>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl space-y-2">
+              <div className="cf-tool-panel p-6  space-y-2">
                 <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold">Market Salary Potential</span>
                 <p className="text-3xl font-extrabold text-purple-400 font-mono">$195k / yr</p>
                 <p className="text-xs text-slate-300">Estimated for US & Remote Senior roles.</p>
               </div>
-            </div>
+            </div>}
 
             {/* Resume Input & Analyzer */}
-            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-xl space-y-4">
-              <h3 className="font-bold text-white text-base">Paste Job Description to Run Match Audit</h3>
+            <div className="cf-tool-panel p-6 sm:p-8  space-y-4">
+              <h3 className="font-bold text-white text-base">Sample job match report</h3>
               <textarea
                 rows={4}
                 value={resumeText}
                 onChange={(e) => setResumeText(e.target.value)}
-                placeholder="Paste any job posting or requirement text to analyze match score..."
+                placeholder="Optional notes for previewing the report…"
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 p-4 text-xs text-white placeholder-slate-400 focus:border-cyan-500 focus:outline-none font-mono"
               />
               <button
                 onClick={() => setAnalyzed(true)}
-                className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-6 py-2.5 text-xs font-bold text-slate-950 shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:opacity-95 active:scale-95 transition-all"
+                className="flex items-center gap-2 rounded-2xl cf-tool-primary px-6 py-2.5 text-xs font-bold hover:opacity-95 active:scale-95 transition-all"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Calculate Job Match Score</span>
+                <span>View sample match</span>
               </button>
             </div>
           </div>
@@ -171,7 +156,7 @@ export default function JobAnalyzerPage() {
 
         {/* Module 2: Skill Gap & Learning Roadmap */}
         {activeModule === 'roadmap' && (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-xl space-y-6">
+          <div className="cf-tool-panel p-6 sm:p-8  space-y-6">
             <div className="space-y-1">
               <h3 className="font-bold text-white text-lg">Personalized Skill Gap & 30-Day Learning Roadmap</h3>
               <p className="text-xs text-slate-300">Based on high-paying job trends for your archetype.</p>
@@ -215,7 +200,7 @@ export default function JobAnalyzerPage() {
             {RECOMMENDED_JOBS.map((job) => (
               <div
                 key={job.id}
-                className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl hover:border-slate-700 transition-all space-y-4 shadow-lg"
+                className="cf-tool-panel p-6  hover:border-slate-700 transition-all space-y-4 shadow-lg"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1">
@@ -250,16 +235,12 @@ export default function JobAnalyzerPage() {
                     ))}
                   </div>
 
-                  <button className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-bold hover:bg-cyan-500/30 active:scale-95 transition-all">
-                    <span>Apply Now</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </button>
+                  <span className="text-xs text-text-secondary">Example listing</span>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </main>
-    </div>
+    </main>
   );
 }

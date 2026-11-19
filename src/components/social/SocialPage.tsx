@@ -1,21 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
-  ArrowDownUp, ArrowRight, ArrowUpRight, Bookmark, Braces, Code2, House,
-  ImageIcon, LayoutGrid, Plus, Rocket, Search, Settings, UserRound, Users, X,
+  ArrowDownUp, ArrowRight, ArrowUpRight, Bookmark, Braces, ImageIcon, LayoutGrid, MapPin, Plus, Rocket, Search, Users,
 } from "lucide-react";
-import { useAuthModal } from "@/components/auth/AuthModalContext";
 import { GithubIcon } from "@/components/ui/GithubIcon";
-import { logOutUser } from "@/lib/firebase";
 import { getEveryoneFeed, getFeedForUser, getPost } from "@/services/devfeedService";
 import type { DevFeedPost, PostType } from "@/types/devfeed";
 import { ActivityCard, Avatar, DeveloperRow, Empty, ProjectCard, ProjectCover, Tags, Loading, More } from "./SocialUI";
-import { Composer } from "./Composer";
+import { Network } from "./Network";
+import { useWorkspace, WorkspaceLinks } from "./Workspace";
 import { Profile } from "./Profile";
-import { useSocial, type SocialState } from "./useSocial";
+import type { SocialState } from "./useSocial";
 import styles from "./social.module.css";
 
 type Page = "feed" | "projects" | "project" | "post" | "profile" | "network" | "saved" | "search";
@@ -23,48 +20,7 @@ type OpenComposer = (type?: PostType, field?: "code" | "image") => void;
 type GetPosts = (cursor?: string) => Promise<{ posts: DevFeedPost[]; nextCursor: string | null }>;
 
 export function SocialPage({ page, slug, initialTab }: { page: Page; slug?: string; initialTab?: string }) {
-  const social = useSocial();
-  const { openAuthModal } = useAuthModal();
-  const [composer, setComposer] = useState<{ type: PostType; field?: "code" | "image" } | null>(null);
-  const [accountOpen, setAccountOpen] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-
-  const requireAuth = () => openAuthModal({ title: "Join CodeFolio", message: "Connect your GitHub account to join the developer network." });
-  const openComposer: OpenComposer = (type = "general", field) => {
-    if (!social.user) return requireAuth();
-    setComposer({ type, field });
-  };
-
-  useEffect(() => {
-    function focusSearch(event: KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        searchRef.current?.focus();
-      }
-      if (event.key === "Escape") setAccountOpen(false);
-    }
-    window.addEventListener("keydown", focusSearch);
-    return () => window.removeEventListener("keydown", focusSearch);
-  }, []);
-
-  function search(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const value = searchRef.current?.value.trim();
-    if (value) router.push(`/search?q=${encodeURIComponent(value)}`);
-  }
-
-  const mainLinks = [
-    { href: "/feed", label: "Feed", icon: House, active: page === "feed" },
-    { href: "/projects", label: "Projects", icon: LayoutGrid, active: page === "projects" || page === "project" },
-    { href: "/network", label: "Network", icon: Users, active: page === "network" },
-  ];
-  const profileUrl = social.user ? `/u/${social.user.username}` : "/profile";
-  const profileActive = page === "profile" && (!slug || slug === social.user?.username);
-  const personalLinks = [
-    { href: profileUrl, label: "My profile", icon: UserRound, active: profileActive },
-    { href: "/saved", label: "Saved posts", icon: Bookmark, active: page === "saved" },
-  ];
+  const { social, openComposer, requireAuth } = useWorkspace();
 
   let content: ReactNode;
   switch (page) {
@@ -73,101 +29,12 @@ export function SocialPage({ page, slug, initialTab }: { page: Page; slug?: stri
     case "project":
     case "post": content = <PostDetail key={slug} slug={slug || ""} project={page === "project"} social={social} requireAuth={requireAuth} />; break;
     case "profile": content = <Profile key={slug || social.user?.username || "me"} slug={slug} initialTab={initialTab} social={social} openComposer={openComposer} requireAuth={requireAuth} />; break;
-    case "network": content = <Network social={social} requireAuth={requireAuth} />; break;
+    case "network": content = <Network key={initialTab} social={social} requireAuth={requireAuth} initialTab={initialTab} />; break;
     case "search": content = <SearchResults key={slug} search={slug || ""} social={social} />; break;
     case "saved": content = <Saved social={social} requireAuth={requireAuth} />; break;
   }
 
-  return (
-    <div className={styles.app}>
-      <a className={styles.skip} href="#main-content">Skip to content</a>
-      <aside className={styles.rail}>
-        <Link href="/feed" className={styles.brand}>
-          <span className={styles.brandIcon}><Code2 size={21} strokeWidth={2.35} /></span>
-          <span>CodeFolio<span className={styles.brandDot}>.</span></span>
-        </Link>
-
-        <nav aria-label="Main navigation" className={styles.railNav}>
-          <span className={styles.navLabel}>Workspace</span>
-          {mainLinks.map(({ href, label, icon: Icon, active }) => (
-            <Link key={href} className={styles.navLink} href={href} aria-label={label} aria-current={active ? "page" : undefined}>
-              <Icon size={19} /><span>{label}</span>
-            </Link>
-          ))}
-          <span className={styles.navLabel}>Personal</span>
-          {personalLinks.map(({ href, label, icon: Icon, active }) => (
-            <Link key={href} className={styles.navLink} href={href} aria-label={label} aria-current={active ? "page" : undefined}>
-              <Icon size={19} /><span>{label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <button className={styles.primary + " " + styles.railCreate} aria-label="New post" onClick={() => openComposer()}>
-          <Plus size={18} /> New post
-        </button>
-
-        <div className={styles.railBottom}>
-          <Link className={styles.navLink} href="/settings" aria-label="Settings"><Settings size={18} /><span>Settings</span></Link>
-          {social.user ? (
-            <Link className={styles.railAccount} href={profileUrl}>
-              <Avatar name={social.user.displayName || social.user.username} src={social.user.photoURL} size={34} />
-              <span>
-                <strong>{social.user.displayName || social.user.username}</strong>
-                <small>{social.preview ? "Preview account" : `@${social.user.username}`}</small>
-              </span>
-            </Link>
-          ) : (
-            <button className={styles.navLink} onClick={requireAuth}><GithubIcon className={styles.icon18} /> Sign in</button>
-          )}
-        </div>
-      </aside>
-
-      <div className={styles.workspace}>
-        <header className={styles.topbar}>
-          <div className={styles.topbarInner}>
-            <Link href="/feed" className={styles.mobileBrand} aria-label="CodeFolio feed"><span className={styles.brandIcon}><Code2 size={20} /></span></Link>
-            <form className={styles.globalSearch} role="search" onSubmit={search}>
-              <Search size={18} />
-              <input ref={searchRef} type="search" aria-label="Search CodeFolio" placeholder="Search people and projects" defaultValue={page === "search" ? slug : ""} />
-              <kbd>Ctrl K</kbd>
-            </form>
-            <div className={styles.topActions}>
-              {social.preview ? <span className={styles.previewBadge}><i /> Preview mode</span> : social.user ? (
-                <div className={styles.accountMenu}>
-                  <button className={styles.iconButton} aria-label="Account menu" aria-expanded={accountOpen} onClick={() => setAccountOpen(!accountOpen)}>
-                    <Avatar name={social.user.displayName || social.user.username} src={social.user.photoURL} size={33} />
-                  </button>
-                  {accountOpen && <div className={styles.dropdown}>
-                    <Link href={profileUrl}>My profile</Link>
-                    <Link href="/settings">Settings</Link>
-                    <button onClick={() => {
-                      logOutUser().then(() => setAccountOpen(false)).catch(() => social.setNotice("Couldn’t sign out. Try again."));
-                    }}>Sign out</button>
-                  </div>}
-                </div>
-              ) : (
-                <button className={styles.secondary} onClick={requireAuth}><GithubIcon className={styles.icon18} /> Sign in</button>
-              )}
-            </div>
-          </div>
-        </header>
-        <main id="main-content" className={styles.content}>{content}</main>
-      </div>
-
-      <nav className={styles.bottomNav} aria-label="Mobile navigation">
-        {mainLinks.map(({ href, label, icon: Icon, active }) => (
-          <Link key={href} href={href} aria-current={active ? "page" : undefined}><Icon size={20} /><span>{label}</span></Link>
-        ))}
-        <Link href={profileUrl} aria-current={profileActive ? "page" : undefined}><UserRound size={20} /><span>Profile</span></Link>
-        <Link href="/saved" aria-current={page === "saved" ? "page" : undefined}><Bookmark size={20} /><span>Saved</span></Link>
-      </nav>
-
-      {composer && <Composer start={composer} close={() => setComposer(null)} social={social} />}
-      {social.notice && <div className={styles.toast} role="status">
-        {social.notice}<button aria-label="Dismiss notification" onClick={() => social.setNotice("")}><X size={16} /></button>
-      </div>}
-    </div>
-  );
+  return <main className={styles.content}>{content}</main>;
 }
 
 function Heading({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
@@ -227,9 +94,12 @@ function Feed({ social, openComposer, requireAuth }: { social: SocialState; open
   const [sort, setSort] = useState<"recent" | "popular">("recent");
   const canLoad = !social.preview && (filter !== "following" || Boolean(social.user));
 
-  return <div className={styles.feedLayout}>
-    <div className={styles.feedColumn}>
-      <Heading title="Developer feed" description="See what developers are building, shipping, and learning." />
+  return <>
+    <Heading title="Developer feed" description="Follow the people and projects moving your craft forward."
+      action={social.preview && <span className={styles.previewBadge}>Preview mode</span>} />
+    <div className={styles.feedLayout}>
+      <FeedSidebar social={social} requireAuth={requireAuth} />
+      <div className={styles.feedColumn}>
       <section className={styles.quickComposer} aria-label="Create a post">
         <div className={styles.quickInput}>
           <Avatar name={social.user?.displayName || social.user?.username || "You"} src={social.user?.photoURL} size={42} />
@@ -260,10 +130,40 @@ function Feed({ social, openComposer, requireAuth }: { social: SocialState; open
         </label>
       </div>
 
-      <FeedEntries key={`${filter}-${social.user?.uid || "guest"}`} social={social} canLoad={canLoad} filter={filter} sort={sort} requireAuth={requireAuth} />
+        <FeedEntries key={`${filter}-${social.user?.uid || "guest"}`} social={social} canLoad={canLoad} filter={filter} sort={sort} requireAuth={requireAuth} />
+      </div>
+      <Discover social={social} requireAuth={requireAuth} />
     </div>
-    <Discover social={social} requireAuth={requireAuth} />
-  </div>;
+  </>;
+}
+
+function FeedSidebar({ social, requireAuth }: { social: SocialState; requireAuth: () => void }) {
+  const profile = social.currentProfile;
+
+  return <aside className={styles.feedSidebar} aria-label="Your workspace">
+    <section className={styles.sidePanel}>
+      <div className={styles.miniCover} aria-hidden="true" />
+      {profile ? <>
+        <div className={styles.miniProfile}>
+          <Link href={`/u/${encodeURIComponent(profile.username)}`} aria-label={`View ${profile.name}’s profile`}><Avatar name={profile.name} src={profile.avatar} size={61} /></Link>
+          <h2><Link href={`/u/${encodeURIComponent(profile.username)}`}>{profile.name}</Link></h2>
+          <p>{profile.headline || `@${profile.username}`}</p>
+          {profile.location && <span className={styles.location}><MapPin size={13} />{profile.location}</span>}
+        </div>
+        <Link className={styles.panelLink} href={`/u/${encodeURIComponent(profile.username)}`}>View my profile <ArrowUpRight size={15} /></Link>
+      </> : <div className={styles.miniProfile + " " + styles.guestProfile}>
+        <h2>Join CodeFolio</h2>
+        <p>Publish projects and follow developers.</p>
+        <button type="button" className={styles.secondary} onClick={requireAuth}><GithubIcon className={styles.icon18} /> Sign in</button>
+      </div>}
+    </section>
+    <section className={styles.sidePanel}>
+      <div className={styles.sideHeading}><h2>Your workspace</h2></div>
+      <Link href="/network?tab=following" className={styles.sideRow}><Users size={17} /><span>Following</span><strong>{social.following.length}</strong></Link>
+      <Link href="/saved" className={styles.sideRow}><Bookmark size={17} /><span>Saved posts</span><strong>{social.savedPosts.length}</strong></Link>
+      <Link href="/projects" className={styles.sideRow}><LayoutGrid size={17} /><span>Project gallery</span><ArrowUpRight size={14} /></Link>
+    </section>
+  </aside>;
 }
 
 function FeedEntries({ social, canLoad, filter, sort, requireAuth }: {
@@ -311,7 +211,7 @@ function Discover({ social, requireAuth }: { social: SocialState; requireAuth: (
   const suggestions = social.people.filter((person) => person.uid !== social.user?.uid && !social.following.includes(person.uid)).slice(0, 3);
   return <aside className={styles.discover} aria-label="Discover CodeFolio">
     <section className={styles.sidePanel}>
-      <div className={styles.sideHeading}><h2>Featured project</h2><Rocket size={17} /></div>
+      <div className={styles.sideHeading}><h2>Project spotlight</h2><Rocket size={17} /></div>
       {featured ? <>
         <Link href={`/projects/${featured.id}`} className={styles.featureCover}><ProjectCover post={featured} /></Link>
         <div className={styles.featureInfo}>
@@ -324,7 +224,7 @@ function Discover({ social, requireAuth }: { social: SocialState; requireAuth: (
     </section>
 
     <section className={styles.sidePanel}>
-      <div className={styles.sideHeading}><h2>Who to follow</h2><Users size={17} /></div>
+      <div className={styles.sideHeading}><h2>Developers to follow</h2><Users size={17} /></div>
       <div className={styles.suggestions}>
         {suggestions.map((person) => <DeveloperRow key={person.uid} person={person} social={social} requireAuth={requireAuth} compact />)}
         {!suggestions.length && <p className={styles.sideEmpty}>Find more developers in your network.</p>}
@@ -332,29 +232,35 @@ function Discover({ social, requireAuth }: { social: SocialState; requireAuth: (
       <Link className={styles.panelLink} href="/network">Explore network <ArrowRight size={15} /></Link>
     </section>
 
-    <footer className={styles.railFooter}>
-      <Link href="/card">Developer cards</Link><Link href="/settings">Settings</Link>
-      <small>© 2026 CodeFolio</small>
-    </footer>
+    <WorkspaceLinks />
   </aside>;
 }
 
 function Projects({ social, openComposer }: { social: SocialState; openComposer: OpenComposer }) {
   const [search, setSearch] = useState("");
+  const [technology, setTechnology] = useState("");
   const getPage = useFeedQuery(!social.preview, "launches");
   const feed = usePostPage(getPage, "projects");
-  const projects = mergePosts(social.posts, feed.posts).filter((post) => post.type === "launch" && isProjectMatch(post, search));
+  const launches = mergePosts(social.posts, feed.posts).filter((post) => post.type === "launch");
+  const technologies = [...new Set(launches.flatMap((post) => post.project?.stack || []))].sort();
+  const projects = launches.filter((post) => isProjectMatch(post, search) && (!technology || post.project?.stack.includes(technology)));
   return <>
     <Heading title="Projects" description="Discover what the community has shipped." action={
       <button className={styles.primary} onClick={() => openComposer("launch")}><Plus size={18} /> Showcase a project</button>
     } />
-    <label className={styles.sectionSearch}><Search size={18} /><input type="search" aria-label="Filter by project or technology" placeholder="Filter by project or technology" value={search} onChange={(event) => setSearch(event.target.value)} /></label>
+    <div className={styles.projectTools}>
+      <label className={styles.sectionSearch}><Search size={18} /><input type="search" aria-label="Filter by project or technology" placeholder="Search projects or technologies" value={search} onChange={(event) => setSearch(event.target.value)} /></label>
+      {technologies.length > 0 && <select className={styles.skillFilter} aria-label="Filter projects by technology" value={technology} onChange={(event) => setTechnology(event.target.value)}>
+        <option value="">All technologies</option>
+        {technologies.map((item) => <option key={item} value={item}>{item}</option>)}
+      </select>}
+    </div>
     {projects.length > 0 && <div className={styles.projectGrid}>
       {projects.map((post) => <ProjectCard key={post.id} post={post} />)}
     </div>}
     {feed.pending && <Loading />}
     {feed.error && <Empty title="Couldn’t load projects" action={<button className={styles.secondary} onClick={feed.retry}>Retry</button>} />}
-    {!feed.pending && !feed.error && projects.length === 0 && <Empty title={search ? "No matching projects" : "No projects yet"} />}
+    {!feed.pending && !feed.error && projects.length === 0 && <Empty title={search || technology ? "No matching projects" : "No projects yet"} />}
     {feed.cursor && !feed.error && <More pending={feed.more} onClick={feed.loadMore} />}
   </>;
 }
@@ -382,31 +288,14 @@ function PostDetail({ slug, project, social, requireAuth }: { slug: string; proj
   </div>;
 }
 
-function Network({ social, requireAuth }: { social: SocialState; requireAuth: () => void }) {
-  const [filter, setFilter] = useState<"discover" | "following">("discover");
-  const [search, setSearch] = useState("");
-  const people = social.people.filter((person) => person.uid !== social.user?.uid &&
-    (filter === "discover" || social.following.includes(person.uid)) &&
-    `${person.name} ${person.username} ${person.bio || ""}`.toLowerCase().includes(search.trim().toLowerCase()));
-  return <>
-    <Heading title="Developer network" description="Connect with the people building the things you use." />
-    <label className={styles.sectionSearch}><Search size={18} /><input type="search" aria-label="Find a developer" placeholder="Find a developer" value={search} onChange={(event) => setSearch(event.target.value)} /></label>
-    <div className={styles.tabs} aria-label="Network filter">
-      <button aria-pressed={filter === "discover"} onClick={() => setFilter("discover")}>Discover</button>
-      <button aria-pressed={filter === "following"} onClick={() => setFilter("following")}>Following</button>
-    </div>
-    {people.length > 0 ? <div className={styles.networkGrid}>
-      {people.map((person) => <DeveloperRow key={person.uid} person={person} social={social} requireAuth={requireAuth} />)}
-    </div> : <Empty title={filter === "following" && !search ? "You haven’t followed anyone yet" : "No developers found"} />}
-  </>;
-}
-
 function SearchResults({ search, social }: { search: string; social: SocialState }) {
   const getPage = useFeedQuery(!social.preview, "launches");
   const feed = usePostPage(getPage, "search");
   const query = search.trim().toLowerCase();
   const handle = query.replace(/^@/, "");
-  const people = query ? social.people.filter((person) => `${person.name} ${person.username}`.toLowerCase().includes(handle)) : [];
+  const people = query ? social.people.filter((person) =>
+    [person.name, person.username, person.headline, ...(person.skills || [])].join(" ").toLowerCase().includes(handle)
+  ) : [];
   const posts = query ? mergePosts(social.posts, feed.posts).filter((post) => post.type === "launch" && isProjectMatch(post, query)) : [];
   return <>
     <Heading title="Search" description={query ? `Results for “${search}”` : "Find developers and projects."} />

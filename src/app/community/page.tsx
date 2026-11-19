@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Navbar } from '@/components/layout/Navbar';
+import styles from '@/components/social/social.module.css';
 import { 
   Users, 
   Code2, 
@@ -52,25 +52,14 @@ export default function CommunityPage() {
     : groups.filter(g => g.category === activeCategory || g.name.toLowerCase().includes(activeCategory.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
-      <Navbar />
-
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        <div className="border-b border-white/10 pb-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3.5 py-1 text-xs font-semibold text-indigo-300 mb-3">
-            <Users className="h-3.5 w-3.5" />
-            <span>Developer Ecosystem</span>
-          </div>
-          <h1 className="text-3xl font-extrabold text-white sm:text-4xl">
-            Codefolio Communities & Guilds
-          </h1>
-          <p className="mt-2 text-xs text-slate-400 max-w-xl">
-            Connect with domain experts, participate in technical discussions, and join specialized engineering guilds.
-          </p>
-        </div>
+    <main className={styles.content}>
+      <header className={styles.pageHeading}>
+        <div><h1>Communities</h1><p>Discover developer communities by topic.</p></div>
+        <span className={styles.previewBadge}>Sample content</span>
+      </header>
 
         {/* Category Selection Filter Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className={styles.toolTabs} aria-label="Community categories">
           {categories.map((cat) => (
             <button
               key={cat}
@@ -93,7 +82,7 @@ export default function CommunityPage() {
             return (
               <div
                 key={group.name}
-                className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-xl hover:border-indigo-500/40 transition-all flex flex-col justify-between"
+                className="cf-tool-panel p-6  hover:border-indigo-500/40 transition-all flex flex-col justify-between"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -110,17 +99,13 @@ export default function CommunityPage() {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-                  <button className="flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300">
-                    <span>Join Guild</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
+                  <Link href={`/search?q=${encodeURIComponent(group.category)}`} className={styles.secondary}>Explore topic <ArrowRight size={15} /></Link>
                 </div>
               </div>
             );
           })}
         </div>
-      </main>
-    </div>
+    </main>
   );
 }
 

@@ -7,7 +7,7 @@ import {
   createPost, getBookmarks, getFollowingUsers, getLikedPostIds, setBookmark, toggleFollow, toggleLike,
 } from "@/services/devfeedService";
 import type { CreatePostInput, DevFeedComment, DevFeedPost } from "@/types/devfeed";
-import type { CodefolioUser, UserProfileDoc } from "@/types/user";
+import type { CodefolioUser, PublicProfileDetails, UserProfileDoc } from "@/types/user";
 import { previewPeople, previewPosts, previewUser, type Developer } from "./preview";
 
 const storageKey = "codefolio-social-preview-v1";
@@ -50,6 +50,8 @@ interface PreviewState {
   following: string[];
   comments: Record<string, DevFeedComment[]>;
   about?: string;
+  headline?: string;
+  skills?: string[];
 }
 
 const initialPreview: PreviewState = {
@@ -63,6 +65,9 @@ export function developerFromDoc(data: UserProfileDoc, id: string): Developer {
     name: data.displayName || data.username,
     avatar: data.avatarUrl,
     bio: data.about ?? data.bio,
+    headline: data.headline,
+    skills: Array.isArray(data.skills) ? data.skills.filter((skill) => typeof skill === "string") : [],
+    privacy: data.privacy,
     company: data.company,
     location: data.location,
     website: data.blog,
@@ -87,6 +92,10 @@ export function useSocial() {
   const [liveLiked, setLiveLiked] = useState<string[]>([]);
   const [liveFollowing, setLiveFollowing] = useState<string[]>([]);
   const [developers, setDevelopers] = useState<Developer[]>([]);
+  const [directoryLoaded, setDirectoryLoaded] = useState(preview);
+  const [ownProfile, setOwnProfile] = useState<Developer | null>(null);
+  const [directoryError, setDirectoryError] = useState(false);
+  const [directoryVersion, setDirectoryVersion] = useState(0);
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
@@ -106,15 +115,23 @@ export function useSocial() {
       if (active) {
         setDevelopers(snapshot.docs.flatMap((record) => {
           const data = record.data() as UserProfileDoc;
-          return typeof data.username === "string" && data.privacy !== "private"
+          return typeof data.username === "string" && (!data.privacy || data.privacy === "public")
             ? [developerFromDoc(data, record.id)] : [];
         }));
       }
-    }).catch(() => {});
+    }).catch(() => { if (active) setDirectoryError(true); })
+      .finally(() => { if (active) setDirectoryLoaded(true); });
     return () => { active = false; };
-  }, []);
+  }, [directoryVersion]);
 
   const uid = authUser?.uid;
+  const username = authUser?.username;
+  useEffect(() => {
+    if (!username) return;
+    let active = true;
+    findDeveloper(username).then((entry) => { if (active && entry) setOwnProfile(entry); }).catch(() => {});
+    return () => { active = false; };
+  }, [username]);
   useEffect(() => {
     if (!uid) return;
     let active = true;
@@ -146,6 +163,17 @@ export function useSocial() {
   const user = preview ? previewUser : authUser;
   const posts = preview ? [...local.posts, ...previewPosts] : recent;
   const people = preview ? previewPeople : developers;
+  const listedProfile = people.find((person) => person.uid === user?.uid);
+  const activeProfile = ownProfile?.username === user?.username ? ownProfile : null;
+  const currentProfile = !user ? null : preview && listedProfile ? {
+    ...listedProfile,
+    bio: local.about ?? listedProfile.bio,
+    headline: local.headline ?? listedProfile.headline,
+    skills: local.skills ?? listedProfile.skills,
+  } : activeProfile || listedProfile || {
+    uid: user.uid, username: user.username, name: user.displayName || user.username, avatar: user.photoURL,
+    github: `https://github.com/${user.username}`,
+  };
   const following = preview ? local.following : liveFollowing;
   const liked = preview ? local.liked : liveLiked;
   const savedPosts = preview ? local.saved.flatMap((id) => posts.filter((post) => post.id === id)) : liveSaved;
@@ -221,19 +249,26 @@ export function useSocial() {
     }));
   }
 
-  async function saveAbout(about: string) {
-    if (!user) return;
+  async function saveProfile(details: PublicProfileDetails) {
+    if (!user || !currentProfile) return;
     if (preview) {
-      updatePreview((state) => ({ ...state, about }));
+      updatePreview((state) => ({ ...state, ...details }));
     } else if (db) {
-      await setDoc(doc(db, "users", user.uid), { about }, { merge: true });
+      await setDoc(doc(db, "users", user.uid), details, { merge: true });
+      setOwnProfile({ ...currentProfile, bio: details.about, headline: details.headline, skills: details.skills });
     }
     setNotice("Profile updated");
   }
 
+  function retryDirectory() {
+    setDirectoryLoaded(false);
+    setDirectoryError(false);
+    setDirectoryVersion((version) => version + 1);
+  }
+
   return {
-    preview, user, posts, savedPosts, liked, following, people, notice, setNotice, follow, like, bookmark,
-    publish, commentLocally, comments: local.comments, localAbout: local.about, saveAbout,
+    preview, user, currentProfile, posts, savedPosts, liked, following, people, notice, setNotice, follow, like, bookmark,
+    publish, commentLocally, comments: local.comments, saveProfile, directoryLoaded, directoryError, retryDirectory,
   };
 }
 
