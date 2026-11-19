@@ -1,58 +1,91 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // User profile document rules: users/{userId}
-    match /users/{userId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Analytics document rules: analytics/{userId}
-    match /analytics/{userId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Repositories subcollection rules: repositories/{userId}/items/{itemId}
-    match /repositories/{userId}/items/{itemId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
+    function signedIn() {
+      return request.auth != null;
     }
 
-    // ── DevFeed collections ──────────────────────────────────────────────────
+    function followChanged(userId) {
+      let followId = request.auth.uid + '_' + userId;
+      let link = /databases/$(database)/documents/follows/$(followId);
+      let before = resource.data.get('devFeedFollowersCount', 0);
+      let after = request.resource.data.devFeedFollowersCount;
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['devFeedFollowersCount'])
+             && ((!exists(link) && existsAfter(link) && after == before + 1)
+                 || (exists(link) && !existsAfter(link) && after == before - 1));
+    }
+
+    function likeChanged(postId) {
+      let likeId = postId + '_' + request.auth.uid;
+      let link = /databases/$(database)/documents/likes/$(likeId);
+      let before = resource.data.get('likesCount', 0);
+      let after = request.resource.data.likesCount;
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likesCount'])
+             && ((!exists(link) && existsAfter(link) && after == before + 1)
+                 || (exists(link) && !existsAfter(link) && after == before - 1));
+    }
+
+    function commentAdded(postId) {
+      let commentId = request.resource.data.get('lastCommentId', '_none');
+      let comment = /databases/$(database)/documents/comments/$(commentId);
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentsCount', 'lastCommentId'])
+             && commentId != '_none'
+             && request.resource.data.commentsCount == resource.data.get('commentsCount', 0) + 1
+             && !exists(comment) && existsAfter(comment)
+             && getAfter(comment).data.authorId == request.auth.uid
+             && getAfter(comment).data.postId == postId;
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      allow create, delete: if signedIn() && request.auth.uid == userId;
+      allow update: if signedIn() && (request.auth.uid == userId || followChanged(userId));
+
+      match /bookmarks/{postId} {
+        allow read, write: if signedIn() && request.auth.uid == userId;
+      }
+    }
+
+    match /analytics/{userId} {
+      allow read: if true;
+      allow write: if signedIn() && request.auth.uid == userId;
+    }
+
+    match /repositories/{userId}/items/{itemId} {
+      allow read: if true;
+      allow write: if signedIn() && request.auth.uid == userId;
+    }
 
     match /posts/{postId} {
       allow read: if true;
-      allow create: if request.auth != null
-                    && request.resource.data.authorId == request.auth.uid;
-      allow update: if request.auth != null
-                    && request.auth.uid == resource.data.authorId
-                    && request.resource.data.diff(resource.data)
-                         .affectedKeys()
-                         .hasOnly(['likesCount', 'commentsCount', 'content']);
-      allow delete: if request.auth != null
-                    && request.auth.uid == resource.data.authorId;
+      allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if signedIn() &&
+        ((request.auth.uid == resource.data.authorId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['content']))
+         || likeChanged(postId)
+         || commentAdded(postId));
+      allow delete: if signedIn() && request.auth.uid == resource.data.authorId;
     }
 
     match /likes/{likeId} {
       allow read: if true;
-      allow create, delete: if request.auth != null
-                            && request.auth.uid == request.resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId
+                    && likeId == request.resource.data.postId + '_' + request.auth.uid;
+      allow delete: if signedIn() && request.auth.uid == resource.data.userId;
     }
 
     match /comments/{commentId} {
       allow read: if true;
-      allow create: if request.auth != null
-                    && request.resource.data.authorId == request.auth.uid;
-      allow delete: if request.auth != null
-                    && request.auth.uid == resource.data.authorId;
+      allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+      allow delete: if signedIn() && request.auth.uid == resource.data.authorId;
     }
 
     match /follows/{followId} {
       allow read: if true;
-      allow create, delete: if request.auth != null
-                            && request.auth.uid == request.resource.data.followerId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.followerId
+                    && request.resource.data.followingId != request.auth.uid
+                    && followId == request.auth.uid + '_' + request.resource.data.followingId;
+      allow delete: if signedIn() && request.auth.uid == resource.data.followerId;
     }
   }
 }

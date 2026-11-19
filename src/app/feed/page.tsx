@@ -1,14 +1,8 @@
-'use client';
+import type { Metadata } from "next";
+import { SocialPage } from "@/components/social/SocialPage";
 
-import React from 'react';
-import { Navbar } from '@/components/layout/Navbar';
-import { FeedLayout } from '@/components/devfeed/FeedLayout';
+export const metadata: Metadata = { title: "Developer Feed · CodeFolio" };
 
 export default function FeedPage() {
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
-      <Navbar />
-      <FeedLayout />
-    </div>
-  );
+  return <SocialPage page="feed" />;
 }
