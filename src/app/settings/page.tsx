@@ -2,19 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Download, Monitor, Moon, RefreshCw, Sun, UserRound } from "lucide-react";
+import { ArrowUpRight, Download, Moon, RefreshCw, Sun, UserRound } from "lucide-react";
 import { GithubIcon } from "@/components/ui/GithubIcon";
-import { useTheme, type ThemeMode } from "@/components/ui/ThemeContext";
+import { themeLabels, useTheme, type ThemeMode } from "@/components/ui/ThemeContext";
 import { syncUserAndReposInFirestore } from "@/lib/firebase";
 import { Avatar } from "@/components/social/SocialUI";
 import { useWorkspace } from "@/components/social/Workspace";
 import styles from "@/components/social/social.module.css";
 
 const appearance = [
-  { mode: "light", label: "Light", icon: Sun },
-  { mode: "dark", label: "Dark", icon: Moon },
-  { mode: "system", label: "System", icon: Monitor },
-] satisfies { mode: ThemeMode; label: string; icon: typeof Sun }[];
+  { mode: "dark", icon: Moon },
+  { mode: "light", icon: Sun },
+] satisfies { mode: ThemeMode; icon: typeof Sun }[];
 
 export default function SettingsPage() {
   const { social, requireAuth } = useWorkspace();
@@ -71,8 +70,8 @@ export default function SettingsPage() {
     </section>
     <section className={styles.toolPanel}>
       <div className={styles.settingsHeading}><Sun size={20} /><div><h2>Appearance</h2><p>Choose a theme for this device.</p></div></div>
-      <div className={styles.themeChoices} aria-label="Color mode">
-        {appearance.map(({ mode: option, label, icon: Icon }) => <button type="button" key={option} aria-pressed={mode === option} onClick={() => setMode(option)}><Icon size={19} /> {label}</button>)}
+      <div className={styles.themeChoices} role="group" aria-label="Theme">
+        {appearance.map(({ mode: option, icon: Icon }) => <button type="button" key={option} aria-pressed={mode === option} onClick={() => setMode(option)}><Icon size={19} aria-hidden="true" /> {themeLabels[option]}</button>)}
       </div>
     </section>
     <section className={styles.toolPanel}>

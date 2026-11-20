@@ -2,17 +2,15 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTheme, type AccentColor, type ChartSettings, type LayoutDensity, type ThemeProfile } from "./ThemeContext";
+import { themeLabels, useTheme, type ChartSettings, type LayoutDensity, type ThemeMode } from "./ThemeContext";
 import { X } from "lucide-react";
 
 export const ThemeModal = () => {
   const {
     modalOpen,
     closeModal,
-    profile,
-    setProfile,
-    accent,
-    setAccent,
+    mode,
+    setMode,
     layout,
     setLayout,
     interface: interfaceSettings,
@@ -32,20 +30,6 @@ export const ThemeModal = () => {
 
   if (!modalOpen) return null;
 
-  const themeProfiles = [
-    "codefolio-royal-black",
-    "github-dark",
-    "github-dark-dimmed",
-    "github-dark-hc",
-    "codefolio-midnight",
-    "codefolio-neon-blue",
-    "codefolio-graphite",
-    "codefolio-emerald",
-    "codefolio-purple-matrix",
-  ] as const;
-
-  const accentColors = ["theme", "blue", "green", "purple", "orange", "red", "cyan"] as const;
-
   const layoutOptions = ["default", "compact", "wide"] as const;
 
   return (
@@ -59,37 +43,16 @@ export const ThemeModal = () => {
           </button>
         </div>
 
-        {/* Profile Selection */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-text-secondary mb-1">Theme Profile</label>
+        <label className="mb-4 block">
+          <span className="mb-1 block text-sm font-medium text-text-secondary">Theme</span>
           <select
-            value={profile}
-            onChange={(e) => setProfile(e.target.value as ThemeProfile)}
-            className="w-full rounded border border-border bg-background py-1.5 px-2 text-text-primary focus:outline-none"
+            value={mode}
+            onChange={(e) => setMode(e.target.value as ThemeMode)}
+            className="w-full rounded border border-border bg-background py-1.5 px-2 text-text-primary focus-visible:outline focus-visible:outline-accent"
           >
-            {themeProfiles.map((p) => (
-              <option key={p} value={p}>
-                {p === "codefolio-royal-black" ? "Royal Black" : p}
-              </option>
-            ))}
+            {Object.entries(themeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
-        </div>
-
-        {/* Accent Color */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-text-secondary mb-1">Accent Color</label>
-          <select
-            value={accent}
-            onChange={(e) => setAccent(e.target.value as AccentColor)}
-            className="w-full rounded border border-border bg-background py-1.5 px-2 text-text-primary focus:outline-none"
-          >
-            {accentColors.map((c) => (
-              <option key={c} value={c}>
-                {c === "theme" ? "Theme default" : c}
-              </option>
-            ))}
-          </select>
-        </div>
+        </label>
 
         {/* Layout Density */}
         <div className="mb-4">

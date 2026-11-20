@@ -10,6 +10,7 @@ import {
 import { useAuthModal } from "@/components/auth/AuthModalContext";
 import { CodefolioLogo } from "@/components/ui/CodefolioLogo";
 import { GithubIcon } from "@/components/ui/GithubIcon";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { logOutUser } from "@/lib/firebase";
 import type { PostType } from "@/types/devfeed";
 import { Avatar } from "./SocialUI";
@@ -131,6 +132,7 @@ function WorkspaceHeader({ pathname }: { pathname: string }) {
           </Link>)}
         </nav>
         <div className={styles.topActions}>
+          <ThemeToggle className={styles.headerIcon} />
           <Link href="/notifications" className={styles.headerIcon} aria-label="Notifications" aria-current={active("/notifications") ? "page" : undefined}><Bell size={19} /></Link>
           <button className={styles.primary + " " + styles.headerPublish} type="button" onClick={() => openComposer()} aria-label="New post"><Plus size={17} /><span>New post</span></button>
           {social.user ? <div className={styles.accountMenu} ref={menuRef}>

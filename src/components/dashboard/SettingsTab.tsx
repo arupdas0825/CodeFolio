@@ -13,7 +13,7 @@ interface SettingsTabProps {
 
 export default function SettingsTab({ data, onTokenUpdate }: SettingsTabProps) {
   const { profile } = data;
-  const { profile: currentThemeProfile, setProfile: setThemeProfile, openModal } = useTheme();
+  const { openModal } = useTheme();
   
   const [tokenInput, setTokenInput] = useState("");
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
