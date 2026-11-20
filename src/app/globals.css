@@ -1,38 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: #090D14;
-  --surface: #0F172A;
-  --surface-secondary: #1E293B;
-  --surface-glass: rgba(15, 23, 42, 0.75);
-  --border: rgba(255, 255, 255, 0.1);
-  --border-highlight: rgba(99, 102, 241, 0.3);
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
-  --accent-primary: #6366F1;
-  --accent-secondary: #8B5CF6;
-  --accent-cyan: #06B6D4;
-  --accent-emerald: #10B981;
-  --diff-add: #10B981;
-  --diff-remove: #EF4444;
-}
-
-/* ☀️ PURE WHITE LIGHT THEME - CSS VARIABLE OVERRIDES */
-html.light {
-  --background: #FFFFFF;
-  --surface: #F8FAFC;
-  --surface-secondary: #F1F5F9;
-  --surface-glass: rgba(255, 255, 255, 0.92);
-  --border: rgba(0, 0, 0, 0.08);
-  --border-highlight: rgba(79, 70, 229, 0.25);
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --accent-primary: #4F46E5;
-  --accent-secondary: #7C3AED;
-  --accent-cyan: #0284C7;
-  --accent-emerald: #059669;
+  --brand-background: #f6f1e8;
+  --brand-paper: #fff;
+  --brand-ink: #28231e;
+  --brand-body: #443a32;
+  --brand-muted: #65594e;
+  --brand-line: #e4dbcf;
+  --brand-soft: #f4eee5;
+  --brand-accent: #664532;
+  --brand-accent-hover: #503322;
+  --brand-tint: #ede0d0;
+  --background: var(--brand-background);
+  --surface: var(--brand-paper);
+  --surface-secondary: var(--brand-soft);
+  --surface-glass: rgb(255 255 255 / 92%);
+  --border: var(--brand-line);
+  --border-highlight: #cbb49d;
+  --foreground: var(--brand-ink);
+  --text-primary: var(--brand-ink);
+  --text-secondary: var(--brand-muted);
+  --text-muted: #746559;
+  --accent: var(--brand-accent);
+  --accent-primary: var(--brand-accent);
+  --accent-secondary: #876551;
+  --accent-cyan: #28768a;
+  --accent-emerald: #187d5d;
+  --diff-add: #187d5d;
+  --diff-remove: #b42446;
 }
 
 @theme {
@@ -54,21 +49,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.05) 0px, transparent 70%);
-  background-attachment: fixed;
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-html.light body {
-  background-color: #FFFFFF;
-  color: #0F172A;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.04) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(2, 132, 199, 0.03) 0px, transparent 70%);
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -81,22 +62,22 @@ html.light body {
 html.light .bg-slate-950,
 html.light .min-h-screen.bg-slate-950,
 html.light [class*="bg-slate-950"] {
-  background-color: #FFFFFF !important;
+  background-color: var(--brand-paper) !important;
 }
 
 html.light .bg-slate-900,
 html.light [class*="bg-slate-900"] {
-  background-color: #F8FAFC !important;
+  background-color: var(--brand-paper) !important;
 }
 
 html.light .bg-slate-800,
 html.light [class*="bg-slate-800"] {
-  background-color: #F1F5F9 !important;
+  background-color: var(--brand-soft) !important;
 }
 
 html.light .bg-slate-700,
 html.light [class*="bg-slate-700"] {
-  background-color: #E2E8F0 !important;
+  background-color: var(--brand-tint) !important;
 }
 
 /* Opacity variants — override to light surfaces with reduced opacity */
@@ -105,37 +86,37 @@ html.light [class*="bg-slate-950\/"] {
 }
 
 html.light [class*="bg-slate-900\/"] {
-  background-color: rgba(248, 250, 252, 0.95) !important;
+  background-color: var(--brand-paper) !important;
 }
 
 html.light [class*="bg-slate-800\/"] {
-  background-color: rgba(241, 245, 249, 0.9) !important;
+  background-color: var(--brand-soft) !important;
 }
 
 /* --- TEXT COLORS --- */
 html.light .text-slate-100,
 html.light .text-slate-200 {
-  color: #0F172A !important;
+  color: var(--brand-ink) !important;
 }
 
 html.light .text-slate-300 {
-  color: #1E293B !important;
+  color: var(--brand-body) !important;
 }
 
 html.light .text-slate-400 {
-  color: #475569 !important;
+  color: var(--brand-muted) !important;
 }
 
 html.light .text-slate-500 {
-  color: #64748B !important;
+  color: var(--brand-muted) !important;
 }
 
 html.light .text-slate-600 {
-  color: #64748B !important;
+  color: var(--brand-muted) !important;
 }
 
 html.light .text-white {
-  color: #0F172A !important;
+  color: var(--brand-ink) !important;
 }
 
 /* --- BORDER COLORS --- */
@@ -182,13 +163,13 @@ html.light .text-cyan-400 {
 
 /* Search bar in navbar */
 html.light input[class*="bg-slate-900"] {
-  background-color: #F1F5F9 !important;
+  background-color: var(--brand-soft) !important;
   border-color: rgba(0, 0, 0, 0.12) !important;
-  color: #0F172A !important;
+  color: var(--brand-ink) !important;
 }
 
 html.light input::placeholder {
-  color: #94A3B8 !important;
+  color: var(--brand-muted) !important;
 }
 
 /* --- SEARCH DROPDOWN --- */
@@ -219,7 +200,7 @@ html.light .glass-card-hover:hover {
 html.light .glass-input {
   background: rgba(248, 250, 252, 0.98) !important;
   border-color: rgba(0, 0, 0, 0.12) !important;
-  color: #0F172A !important;
+  color: var(--brand-ink) !important;
 }
 
 html.light .glass-input:focus {
@@ -229,7 +210,7 @@ html.light .glass-input:focus {
 
 /* --- DEVELOPER CARD (DeveloperCard.tsx) --- */
 html.light .glass-card .text-slate-400 {
-  color: #475569 !important;
+  color: var(--brand-muted) !important;
 }
 
 /* --- POST CARDS --- */
@@ -272,18 +253,18 @@ html.light [class*="bg-black\/50"] {
 
 /* --- MOBILE SEARCH MODAL --- */
 html.light [class*="bg-slate-950"][class*="min-h-screen"] {
-  background-color: #FFFFFF !important;
+  background-color: var(--brand-paper) !important;
 }
 
 /* --- HOVER STATES --- */
 html.light [class*="hover:bg-slate-900"]:hover,
 html.light [class*="hover:bg-slate-900\/"] {
-  background-color: #F1F5F9 !important;
+  background-color: var(--brand-soft) !important;
 }
 
 html.light [class*="hover:bg-slate-800"]:hover,
 html.light [class*="hover:bg-slate-800\/"] {
-  background-color: #E2E8F0 !important;
+  background-color: var(--brand-tint) !important;
 }
 
 /* --- SPECIAL BADGE / TAG BACKGROUNDS --- */
@@ -304,7 +285,7 @@ html.light [class*="bg-emerald-950"] {
 }
 
 html.light [class*="bg-slate-950"][class*="px-"] {
-  background-color: rgba(241, 245, 249, 0.9) !important;
+  background-color: var(--brand-soft) !important;
 }
 
 /* --- GRADIENT ACCENTS: keep vibrant even in light mode --- */

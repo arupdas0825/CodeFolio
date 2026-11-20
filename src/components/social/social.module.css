@@ -1,16 +1,16 @@
 .app {
-  --cf-bg: #f4f6f1;
-  --cf-paper: #fff;
-  --cf-ink: #192720;
-  --cf-body: #34443b;
-  --cf-muted: #58685e;
-  --cf-line: #dce3da;
-  --cf-soft: #f0f3ed;
-  --cf-accent: #285945;
-  --cf-accent-hover: #174232;
-  --cf-tint: #e6efe6;
+  --cf-bg: var(--brand-background);
+  --cf-paper: var(--brand-paper);
+  --cf-ink: var(--brand-ink);
+  --cf-body: var(--brand-body);
+  --cf-muted: var(--brand-muted);
+  --cf-line: var(--brand-line);
+  --cf-soft: var(--brand-soft);
+  --cf-accent: var(--brand-accent);
+  --cf-accent-hover: var(--brand-accent-hover);
+  --cf-tint: var(--brand-tint);
   --cf-button-text: #fff;
-  --cf-shadow: 0 1px 2px #263c2807;
+  --cf-shadow: 0 1px 2px #3a29200c;
   --cf-header: 68px;
   --cf-radius: 15px;
   background: var(--cf-bg);
@@ -22,18 +22,18 @@
 }
 
 :global(html.dark) .app {
-  --cf-bg: #151d19;
-  --cf-paper: #202b25;
-  --cf-ink: #f0f5ef;
-  --cf-body: #d8e4d9;
-  --cf-muted: #aabaa9;
-  --cf-line: #37463c;
-  --cf-soft: #29362e;
-  --cf-accent: #b1d6b9;
-  --cf-accent-hover: #c5e5cd;
-  --cf-tint: #2b4434;
-  --cf-button-text: #17291f;
-  --cf-shadow: 0 1px 2px #10161125;
+  --cf-bg: #211c18;
+  --cf-paper: #2d2520;
+  --cf-ink: #faf1e5;
+  --cf-body: #eadbcb;
+  --cf-muted: #c6b6a4;
+  --cf-line: #4c3e34;
+  --cf-soft: #382e27;
+  --cf-accent: #e0ba98;
+  --cf-accent-hover: #f0cfb1;
+  --cf-tint: #4c382b;
+  --cf-button-text: #2f2117;
+  --cf-shadow: 0 1px 2px #17110d25;
   color-scheme: dark;
 }
 
@@ -72,16 +72,7 @@
   line-height: 1;
 }
 
-.brandIcon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 37px;
-  height: 37px;
-  border-radius: 10px;
-  background: var(--cf-accent);
-  color: var(--cf-button-text);
-}
+.brandIcon { width: 37px; height: 37px; }
 
 .brandName > span { color: var(--cf-accent); }
 
@@ -99,7 +90,7 @@
   white-space: nowrap;
   line-height: 1.45;
 }
-.primary { background: var(--cf-accent); color: var(--cf-button-text); box-shadow: 0 1px 2px #213b2526; }
+.primary { background: var(--cf-accent); color: var(--cf-button-text); box-shadow: 0 1px 2px #3a292026; }
 .primary:hover:enabled { background: var(--cf-accent-hover); }
 .secondary { background: var(--cf-paper); border-color: var(--cf-line); color: var(--cf-body); }
 .secondary:hover { background: var(--cf-soft); border-color: var(--cf-muted); }
@@ -839,12 +830,12 @@
   --cf-muted: var(--text-secondary);
   --cf-soft: var(--surface-secondary);
   --cf-line: var(--border);
-  --cf-accent: #285945;
-  --cf-accent-hover: #174232;
+  --cf-accent: var(--brand-accent);
+  --cf-accent-hover: var(--brand-accent-hover);
   --cf-button-text: #fff;
   width: min(390px, calc(100% - 26px));
 }
-:global(html.dark) .authDialog { --cf-accent: #b1d6b9; --cf-accent-hover: #c5e5cd; --cf-button-text: #17291f; }
+:global(html.dark) .authDialog { --cf-accent: #e0ba98; --cf-accent-hover: #f0cfb1; --cf-button-text: #2f2117; }
 .authDialogBody { display: grid; gap: 12px; padding: 20px; }
 .authDialogHeader { display: flex; align-items: center; justify-content: space-between; }
 .authDialogBody h2 { font-family: var(--font-display), sans-serif; font-size: 27px; line-height: 1.1; font-weight: 700; letter-spacing: -.03em; }
