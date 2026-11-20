@@ -1,10 +1,11 @@
 // src/components/ui/ThemeContext.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState, useSyncExternalStore, ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ThemeProfile =
+  | "codefolio-royal-black"
   | "github-dark"
   | "github-dark-dimmed"
   | "github-dark-hc"
@@ -13,7 +14,7 @@ export type ThemeProfile =
   | "codefolio-graphite"
   | "codefolio-emerald"
   | "codefolio-purple-matrix";
-export type AccentColor = "blue" | "green" | "purple" | "orange" | "red" | "cyan";
+export type AccentColor = "theme" | "blue" | "green" | "purple" | "orange" | "red" | "cyan";
 export type LayoutDensity = "default" | "compact" | "wide";
 export type InterfaceSettings = {
   animations: boolean;
@@ -64,8 +65,10 @@ const defaultChart: ChartSettings = {
 };
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
+const defaultProfile: ThemeProfile = "codefolio-royal-black";
 
 const themeProfiles: Record<ThemeProfile, Record<string, string>> = {
+  "codefolio-royal-black": {},
   "github-dark": {
     "--background": "#0d1117",
     "--surface": "#161b22",
@@ -78,7 +81,7 @@ const themeProfiles: Record<ThemeProfile, Record<string, string>> = {
     "--surface": "#161b22",
     "--surface-secondary": "#21262d",
     "--border": "#30363d",
-    "--accent": "#6e7681",
+    "--accent": "#a1aab7",
   },
   "github-dark-hc": {
     "--background": "#0d1117",
@@ -92,7 +95,7 @@ const themeProfiles: Record<ThemeProfile, Record<string, string>> = {
     "--surface": "#14171c",
     "--surface-secondary": "#1a1d23",
     "--border": "#2d323c",
-    "--accent": "#1e40af",
+    "--accent": "#9db1ff",
   },
   "codefolio-neon-blue": {
     "--background": "#020617",
@@ -106,7 +109,7 @@ const themeProfiles: Record<ThemeProfile, Record<string, string>> = {
     "--surface": "#1c2127",
     "--surface-secondary": "#262c33",
     "--border": "#404752",
-    "--accent": "#6366f1",
+    "--accent": "#a2a5fa",
   },
   "codefolio-emerald": {
     "--background": "#041c15",
@@ -124,38 +127,58 @@ const themeProfiles: Record<ThemeProfile, Record<string, string>> = {
   },
 };
 
-const accentColors: Record<AccentColor, string> = {
+const accentColors: Record<Exclude<AccentColor, "theme">, string> = {
   blue: "#58a6ff",
   green: "#3fb950",
   purple: "#a371f7",
   orange: "#d29922",
-  red: "#f85149",
-  cyan: "#1f6feb",
+  red: "#ff8c85",
+  cyan: "#80caeb",
 };
 
-// Use a new preference for the beige launch so saved dark defaults from older versions do not override it.
 const themeModeKey = "codefolio_theme_mode_v2";
+const themeOptionsKey = "codefolio_theme_options_v2";
+const systemPreference = "(prefers-color-scheme: dark)";
+const profileVariables = ["--background", "--surface", "--surface-secondary", "--border", "--accent"];
+interface ThemeOptions {
+  profile: ThemeProfile;
+  accent: AccentColor;
+  layout: LayoutDensity;
+  interfaceSettings: InterfaceSettings;
+  chartSettings: ChartSettings;
+}
+
+const defaultOptions: ThemeOptions = {
+  profile: defaultProfile,
+  accent: "theme",
+  layout: "default",
+  interfaceSettings: defaultInterface,
+  chartSettings: defaultChart,
+};
 let temporaryMode: ThemeMode | undefined;
+let temporaryOptions: string | undefined;
 
 function readThemeMode(): ThemeMode {
   if (temporaryMode) return temporaryMode;
   try {
     const mode = window.localStorage.getItem(themeModeKey);
-    return mode === "dark" || mode === "system" ? mode : "light";
+    return mode === "light" || mode === "system" ? mode : "dark";
   } catch {
-    return "light";
+    return "dark";
   }
 }
 
 function initialThemeMode(): ThemeMode {
-  return "light";
+  return "dark";
 }
 
-function listenForThemeMode(listener: () => void) {
+function listenForThemeSettings(listener: () => void) {
   window.addEventListener(themeModeKey, listener);
+  window.addEventListener(themeOptionsKey, listener);
   window.addEventListener("storage", listener);
   return () => {
     window.removeEventListener(themeModeKey, listener);
+    window.removeEventListener(themeOptionsKey, listener);
     window.removeEventListener("storage", listener);
   };
 }
@@ -170,83 +193,82 @@ function setMode(mode: ThemeMode) {
   window.dispatchEvent(new Event(themeModeKey));
 }
 
+function readThemeOptions() {
+  if (temporaryOptions) return temporaryOptions;
+  try {
+    const storage = window.localStorage;
+    const stored = storage.getItem(themeOptionsKey);
+    if (stored) return stored;
+    const profile = storage.getItem("codefolio_theme_profile");
+    const accent = storage.getItem("codefolio_accent_color");
+    return JSON.stringify({
+      profile: profile === "github-dark" ? null : profile,
+      accent: accent === "blue" ? null : accent,
+      layout: storage.getItem("codefolio_layout_density"),
+      interfaceSettings: JSON.parse(storage.getItem("codefolio_interface_settings") || "null"),
+      chartSettings: JSON.parse(storage.getItem("codefolio_chart_settings") || "null"),
+    });
+  } catch {
+    return "{}";
+  }
+}
+
+function parseThemeOptions(snapshot: string): ThemeOptions {
+  try {
+    const saved = JSON.parse(snapshot) as Partial<ThemeOptions>;
+    return {
+      profile: saved.profile && Object.hasOwn(themeProfiles, saved.profile) ? saved.profile : defaultOptions.profile,
+      accent: saved.accent && (saved.accent === "theme" || Object.hasOwn(accentColors, saved.accent)) ? saved.accent : defaultOptions.accent,
+      layout: saved.layout === "compact" || saved.layout === "wide" ? saved.layout : defaultOptions.layout,
+      interfaceSettings: { ...defaultInterface, ...saved.interfaceSettings },
+      chartSettings: { ...defaultChart, ...saved.chartSettings },
+    };
+  } catch {
+    return defaultOptions;
+  }
+}
+
+function saveThemeOptions(options: Partial<ThemeOptions>) {
+  const snapshot = JSON.stringify({ ...parseThemeOptions(readThemeOptions()), ...options });
+  try {
+    window.localStorage.setItem(themeOptionsKey, snapshot);
+    temporaryOptions = undefined;
+  } catch {
+    temporaryOptions = snapshot;
+  }
+  window.dispatchEvent(new Event(themeOptionsKey));
+}
+
+function readSystemMode() {
+  return window.matchMedia(systemPreference).matches;
+}
+
+function listenForSystemMode(listener: () => void) {
+  const media = window.matchMedia(systemPreference);
+  media.addEventListener("change", listener);
+  return () => media.removeEventListener("change", listener);
+}
+
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const mode = useSyncExternalStore(listenForThemeMode, readThemeMode, initialThemeMode);
-  const [profile, setProfile] = useState<ThemeProfile>("github-dark");
-  const [accent, setAccent] = useState<AccentColor>("blue");
-  const [layout, setLayout] = useState<LayoutDensity>("default");
-  const [interfaceSettings, setInterfaceSettings] =
-    useState<InterfaceSettings>(defaultInterface);
-  const [chartSettings, setChartSettings] = useState<ChartSettings>(defaultChart);
+  const mode = useSyncExternalStore(listenForThemeSettings, readThemeMode, initialThemeMode);
+  const options = useSyncExternalStore(listenForThemeSettings, readThemeOptions, () => "{}");
+  const { profile, accent, layout, interfaceSettings, chartSettings } = useMemo(() => parseThemeOptions(options), [options]);
+  const systemDark = useSyncExternalStore(listenForSystemMode, readSystemMode, () => true);
+  const effectiveMode = mode === "system" ? (systemDark ? "dark" : "light") : mode;
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Load persisted settings on mount
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const storedProfile = localStorage.getItem("codefolio_theme_profile") as ThemeProfile;
-    const storedAccent = localStorage.getItem("codefolio_accent_color") as AccentColor;
-    const storedLayout = localStorage.getItem("codefolio_layout_density") as LayoutDensity;
-    const storedInterface = localStorage.getItem("codefolio_interface_settings");
-    const storedChart = localStorage.getItem("codefolio_chart_settings");
-    if (storedProfile) setProfile(storedProfile);
-    if (storedAccent) setAccent(storedAccent);
-    if (storedLayout) setLayout(storedLayout);
-    if (storedInterface) setInterfaceSettings(JSON.parse(storedInterface));
-    if (storedChart) setChartSettings(JSON.parse(storedChart));
-  }, []);
-
-  // Apply theme variables whenever relevant state changes
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const effectiveMode =
-      mode === "system"
-        ? window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light"
-        : mode;
-
-    if (effectiveMode === "light") {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light");
-      for (const variable of ["--background", "--surface", "--surface-secondary", "--border", "--foreground", "--text-primary", "--text-secondary"]) {
-        document.documentElement.style.removeProperty(variable);
-      }
-    } else {
-      document.documentElement.classList.remove("light");
-      document.documentElement.classList.add("dark");
-      const vars = themeProfiles[profile];
-      Object.entries(vars).forEach(([key, value]) => {
-        document.documentElement.style.setProperty(key, value);
-      });
-      document.documentElement.style.setProperty("--foreground", "#F0F6FC");
-      document.documentElement.style.setProperty("--text-primary", "#F0F6FC");
-      document.documentElement.style.setProperty("--text-secondary", "#8B949E");
+    const root = document.documentElement;
+    root.classList.toggle("light", effectiveMode === "light");
+    root.classList.toggle("dark", effectiveMode === "dark");
+    for (const variable of profileVariables) root.style.removeProperty(variable);
+    if (effectiveMode === "dark") {
+      for (const [key, value] of Object.entries(themeProfiles[profile])) root.style.setProperty(key, value);
+      if (accent !== "theme") root.style.setProperty("--accent", accentColors[accent]);
     }
-    // Apply accent override
-    if (effectiveMode === "dark") document.documentElement.style.setProperty("--accent", accentColors[accent]);
-    else document.documentElement.style.removeProperty("--accent");
-
-    // Persist
-    localStorage.setItem("codefolio_theme_profile", profile);
-    localStorage.setItem("codefolio_accent_color", accent);
-    localStorage.setItem("codefolio_layout_density", layout);
-    localStorage.setItem(
-      "codefolio_interface_settings",
-      JSON.stringify(interfaceSettings)
-    );
-    localStorage.setItem("codefolio_chart_settings", JSON.stringify(chartSettings));
-  }, [mode, profile, accent, layout, interfaceSettings, chartSettings]);
-
-  const toggleThemeMode = () => {
-    setMode(readThemeMode() === "light" ? "dark" : "light");
-  };
-
-  const setInterface = (partial: Partial<InterfaceSettings>) => {
-    setInterfaceSettings((prev) => ({ ...prev, ...partial }));
-  };
-  const setChart = (partial: Partial<ChartSettings>) => {
-    setChartSettings((prev) => ({ ...prev, ...partial }));
-  };
+    const themeColor = getComputedStyle(root).getPropertyValue("--background").trim();
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor);
+  }, [effectiveMode, profile, accent]);
 
   const value: ThemeContextProps = {
     mode,
@@ -257,12 +279,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     chart: chartSettings,
     modalOpen,
     setMode,
-    toggleThemeMode,
-    setProfile,
-    setAccent,
-    setLayout,
-    setInterface,
-    setChart,
+    toggleThemeMode: () => setMode(effectiveMode === "light" ? "dark" : "light"),
+    setProfile: (profile) => saveThemeOptions({ profile }),
+    setAccent: (accent) => saveThemeOptions({ accent }),
+    setLayout: (layout) => saveThemeOptions({ layout }),
+    setInterface: (settings) => saveThemeOptions({ interfaceSettings: { ...interfaceSettings, ...settings } }),
+    setChart: (settings) => saveThemeOptions({ chartSettings: { ...chartSettings, ...settings } }),
     openModal: () => setModalOpen(true),
     closeModal: () => setModalOpen(false),
   };

@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTheme } from "./ThemeContext";
+import { useTheme, type AccentColor, type ChartSettings, type LayoutDensity, type ThemeProfile } from "./ThemeContext";
 import { X } from "lucide-react";
 
 export const ThemeModal = () => {
@@ -33,6 +33,7 @@ export const ThemeModal = () => {
   if (!modalOpen) return null;
 
   const themeProfiles = [
+    "codefolio-royal-black",
     "github-dark",
     "github-dark-dimmed",
     "github-dark-hc",
@@ -43,7 +44,7 @@ export const ThemeModal = () => {
     "codefolio-purple-matrix",
   ] as const;
 
-  const accentColors = ["blue", "green", "purple", "orange", "red", "cyan"] as const;
+  const accentColors = ["theme", "blue", "green", "purple", "orange", "red", "cyan"] as const;
 
   const layoutOptions = ["default", "compact", "wide"] as const;
 
@@ -63,12 +64,12 @@ export const ThemeModal = () => {
           <label className="block text-sm font-medium text-text-secondary mb-1">Theme Profile</label>
           <select
             value={profile}
-            onChange={(e) => setProfile(e.target.value as any)}
+            onChange={(e) => setProfile(e.target.value as ThemeProfile)}
             className="w-full rounded border border-border bg-background py-1.5 px-2 text-text-primary focus:outline-none"
           >
             {themeProfiles.map((p) => (
               <option key={p} value={p}>
-                {p}
+                {p === "codefolio-royal-black" ? "Royal Black" : p}
               </option>
             ))}
           </select>
@@ -79,12 +80,12 @@ export const ThemeModal = () => {
           <label className="block text-sm font-medium text-text-secondary mb-1">Accent Color</label>
           <select
             value={accent}
-            onChange={(e) => setAccent(e.target.value as any)}
+            onChange={(e) => setAccent(e.target.value as AccentColor)}
             className="w-full rounded border border-border bg-background py-1.5 px-2 text-text-primary focus:outline-none"
           >
             {accentColors.map((c) => (
               <option key={c} value={c}>
-                {c}
+                {c === "theme" ? "Theme default" : c}
               </option>
             ))}
           </select>
@@ -95,7 +96,7 @@ export const ThemeModal = () => {
           <label className="block text-sm font-medium text-text-secondary mb-1">Layout Density</label>
           <select
             value={layout}
-            onChange={(e) => setLayout(e.target.value as any)}
+            onChange={(e) => setLayout(e.target.value as LayoutDensity)}
             className="w-full rounded border border-border bg-background py-1.5 px-2 text-text-primary focus:outline-none"
           >
             {layoutOptions.map((l) => (
@@ -148,7 +149,7 @@ export const ThemeModal = () => {
             <span>Heatmap Style</span>
             <select
               value={chartSettings.heatmapStyle}
-              onChange={(e) => setChart({ heatmapStyle: e.target.value as any })}
+              onChange={(e) => setChart({ heatmapStyle: e.target.value as ChartSettings["heatmapStyle"] })}
               className="rounded border border-border bg-background py-0.5 px-1 text-text-primary focus:outline-none"
             >
               <option value="github">GitHub</option>

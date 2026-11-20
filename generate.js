@@ -3,9 +3,8 @@ const path = require("node:path");
 const sharp = require("sharp");
 
 const publicDir = path.join(__dirname, "public");
-const logo = path.join(publicDir, "codefolio-logo.png");
-const beige = "#f6f1e8";
-const espresso = "#35281f";
+const logo = path.join(publicDir, "codefolio-logo.jpeg");
+const background = "#0d0d10";
 
 const sizes = {
   "favicon-16x16.png": 16,
@@ -59,14 +58,20 @@ async function generateIcons() {
   ));
   await Promise.all(Object.entries(sizes).map(([filename, size]) => write(filename, images.get(size))));
 
-  const ico = iconFile([16, 32, 48, 64].map((size) => ({ size, contents: images.get(size) })));
+  // ICO readers require RGBA PNG frames, even when the source JPEG is opaque.
+  const frames = await Promise.all([16, 32, 48, 64].map(async (size) => ({
+    size,
+    contents: await sharp(images.get(size)).ensureAlpha().png().toBuffer(),
+  })));
+  const ico = iconFile(frames);
   // Next serves the app favicon by convention, and existing clients may use the public path.
   await Promise.all([
     write("favicon.ico", ico),
     fs.writeFile(path.join(__dirname, "src", "app", "favicon.ico"), ico),
-    sharp(logo).resize(180, 180).flatten({ background: espresso }).png().toFile(path.join(publicDir, "apple-touch-icon.png")),
-    canvas(512, 512, espresso).composite([{ input: await png(392), gravity: "center" }]).png().toFile(path.join(publicDir, "maskable-icon-512x512.png")),
-    canvas(1200, 630, beige).composite([{ input: await png(300), gravity: "center" }]).png().toFile(path.join(publicDir, "og-image.png")),
+    sharp(logo).resize(180, 180).png().toFile(path.join(publicDir, "apple-touch-icon.png")),
+    canvas(512, 512, background).composite([{ input: await png(340), gravity: "center" }]).png().toFile(path.join(publicDir, "maskable-icon-512x512.png")),
+    canvas(1200, 630, background).composite([{ input: await png(300), gravity: "center" }]).png().toFile(path.join(publicDir, "og-image.png")),
+    write("codefolio-logo.png", await png(512)),
     write("favicon.svg", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><image width="128" height="128" href="data:image/png;base64,${images.get(128).toString("base64")}"/></svg>\n`),
   ]);
 }

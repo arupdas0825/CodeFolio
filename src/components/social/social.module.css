@@ -1,16 +1,17 @@
 .app {
-  --cf-bg: var(--brand-background);
-  --cf-paper: var(--brand-paper);
+  --cf-bg: var(--background);
+  --cf-paper: var(--surface);
   --cf-ink: var(--brand-ink);
   --cf-body: var(--brand-body);
   --cf-muted: var(--brand-muted);
-  --cf-line: var(--brand-line);
-  --cf-soft: var(--brand-soft);
-  --cf-accent: var(--brand-accent);
-  --cf-accent-hover: var(--brand-accent-hover);
+  --cf-line: var(--border);
+  --cf-soft: var(--surface-secondary);
+  --cf-accent: var(--accent);
+  --cf-accent-hover: var(--accent-hover);
   --cf-tint: var(--brand-tint);
-  --cf-button-text: #fff;
-  --cf-shadow: 0 1px 2px #3a29200c;
+  --cf-button-text: var(--brand-button-text);
+  --cf-shadow: var(--brand-shadow);
+  --cf-cover-shade: transparent;
   --cf-header: 68px;
   --cf-radius: 15px;
   background: var(--cf-bg);
@@ -18,23 +19,10 @@
   min-height: 100dvh;
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: 14px;
-  color-scheme: light;
 }
 
 :global(html.dark) .app {
-  --cf-bg: #211c18;
-  --cf-paper: #2d2520;
-  --cf-ink: #faf1e5;
-  --cf-body: #eadbcb;
-  --cf-muted: #c6b6a4;
-  --cf-line: #4c3e34;
-  --cf-soft: #382e27;
-  --cf-accent: #e0ba98;
-  --cf-accent-hover: #f0cfb1;
-  --cf-tint: #4c382b;
-  --cf-button-text: #2f2117;
-  --cf-shadow: 0 1px 2px #17110d25;
-  color-scheme: dark;
+  --cf-cover-shade: rgb(13 13 16 / 46%);
 }
 
 .app :is(a, button, input, textarea, select):focus-visible {
@@ -90,7 +78,7 @@
   white-space: nowrap;
   line-height: 1.45;
 }
-.primary { background: var(--cf-accent); color: var(--cf-button-text); box-shadow: 0 1px 2px #3a292026; }
+.primary { background: var(--cf-accent); color: var(--cf-button-text); box-shadow: var(--cf-shadow); }
 .primary:hover:enabled { background: var(--cf-accent-hover); }
 .secondary { background: var(--cf-paper); border-color: var(--cf-line); color: var(--cf-body); }
 .secondary:hover { background: var(--cf-soft); border-color: var(--cf-muted); }
@@ -384,7 +372,7 @@
   font-weight: 560;
 }
 .postActions button:hover { color: var(--cf-accent-hover); background: var(--cf-soft); }
-.postActions button:first-child[aria-pressed="true"] { color: #b72954; }
+.postActions button:first-child[aria-pressed="true"] { color: var(--brand-danger); }
 .postActions .saveAction { margin-left: auto; }
 .postActions .saveAction[aria-pressed="true"] { color: var(--cf-accent-hover); }
 .comments { border-top: 1px solid var(--cf-line); padding: 13px 0 16px; display: grid; gap: 11px; }
@@ -428,7 +416,7 @@
 .workspaceLinks a:hover { color: var(--cf-accent-hover); }
 .miniCover {
   height: 67px;
-  background: #dbe6d6 url("/social/cover.webp") center 55% / cover;
+  background: linear-gradient(115deg, var(--cf-cover-shade), transparent), var(--cf-soft) url("/social/cover.webp") center 55% / cover;
   border-bottom: 1px solid var(--cf-line);
 }
 .miniProfile { padding: 0 15px 14px; }
@@ -488,7 +476,7 @@
 .profileHero { overflow: hidden; }
 .profileCover {
   height: 203px;
-  background: #d9e6d7 url("/social/cover.webp") center 54% / cover no-repeat;
+  background: linear-gradient(115deg, var(--cf-cover-shade), transparent), var(--cf-soft) url("/social/cover.webp") center 54% / cover no-repeat;
 }
 .profileIdentity { position: relative; padding: 0 26px 20px; }
 .profileTopLine { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
@@ -604,7 +592,7 @@
 .composerContent textarea, .editPanel textarea { resize: vertical; }
 .formPair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .composerExtras { display: flex; flex-wrap: wrap; gap: 6px; }
-.formError { color: #a30f38; font-size: 13px; }
+.formError { color: var(--brand-danger); font-size: 13px; }
 
 .networkLayout { display: grid; grid-template-columns: 240px minmax(0, 1fr); align-items: start; gap: 23px; }
 .networkMain { min-width: 0; }
@@ -651,11 +639,16 @@
   height: 60px;
   --card-a: #c9ddd0;
   --card-b: #eef4e9;
-  background: repeating-radial-gradient(ellipse at 92% 100%, transparent 0 10px, #ffffff4a 11px 12px, transparent 13px 25px), linear-gradient(124deg, var(--card-a), var(--card-b));
+  --card-line: #ffffff4a;
+  background: repeating-radial-gradient(ellipse at 92% 100%, transparent 0 10px, var(--card-line) 11px 12px, transparent 13px 25px), linear-gradient(124deg, var(--card-a), var(--card-b));
 }
 .directoryCover[data-tone="1"] { --card-a: #d8d5ec; --card-b: #efedf8; }
 .directoryCover[data-tone="2"] { --card-a: #edd5bf; --card-b: #faf0e5; }
 .directoryCover[data-tone="3"] { --card-a: #c8dce8; --card-b: #edfafc; }
+:global(html.dark) .directoryCover { --card-a: #1b322e; --card-b: #30483e; --card-line: #ffffff14; }
+:global(html.dark) .directoryCover[data-tone="1"] { --card-a: #251e32; --card-b: #40324f; }
+:global(html.dark) .directoryCover[data-tone="2"] { --card-a: #2c2219; --card-b: #4a3c25; }
+:global(html.dark) .directoryCover[data-tone="3"] { --card-a: #1d2836; --card-b: #2b4058; }
 .directoryCardBody { display: flex; flex: 1; min-width: 0; flex-direction: column; padding: 0 13px 13px; }
 .directoryIdentity { display: flex; justify-content: space-between; align-items: flex-end; margin: -26px 0 5px; }
 .directoryIdentity > a:first-child { border: 3px solid var(--cf-paper); border-radius: 50%; position: relative; }
@@ -830,17 +823,16 @@
   --cf-muted: var(--text-secondary);
   --cf-soft: var(--surface-secondary);
   --cf-line: var(--border);
-  --cf-accent: var(--brand-accent);
-  --cf-accent-hover: var(--brand-accent-hover);
-  --cf-button-text: #fff;
+  --cf-accent: var(--accent);
+  --cf-accent-hover: var(--accent-hover);
+  --cf-button-text: var(--brand-button-text);
   width: min(390px, calc(100% - 26px));
 }
-:global(html.dark) .authDialog { --cf-accent: #e0ba98; --cf-accent-hover: #f0cfb1; --cf-button-text: #2f2117; }
 .authDialogBody { display: grid; gap: 12px; padding: 20px; }
 .authDialogHeader { display: flex; align-items: center; justify-content: space-between; }
 .authDialogBody h2 { font-family: var(--font-display), sans-serif; font-size: 27px; line-height: 1.1; font-weight: 700; letter-spacing: -.03em; }
 .authDialogBody p { font-size: 14px; color: var(--cf-muted); }
-.authDialogBody .formError { color: #b54b67; }
+.authDialogBody .formError { color: var(--brand-danger); }
 .authDialogBody .primary { margin-top: 3px; }
 @media (max-width: 680px) { .cardStudio { grid-template-columns: minmax(0, 1fr); } }
 .installPanel {
