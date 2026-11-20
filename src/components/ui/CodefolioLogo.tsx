@@ -9,7 +9,7 @@ export interface CodefolioLogoProps {
 
 export function CodefolioLogo({ className = "", size = 36, animated = false, alt = "" }: CodefolioLogoProps) {
   return <Image
-    src="/codefolio-logo.png?v=3"
+    src="/codefolio-logo.jpeg"
     alt={alt}
     width={size}
     height={size}

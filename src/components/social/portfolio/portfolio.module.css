@@ -27,7 +27,7 @@
 .notice p { color: var(--cf-body); font-size: 13px; line-height: 1.5; }
 .notice button { margin-top: 9px; }
 .select { min-width: 115px; max-width: min(240px, 100%); padding: 8px 9px; border: 1px solid var(--cf-line); border-radius: 8px; background: var(--cf-paper); color: var(--cf-ink); font-size: 13px; }
-.editorError { width: 100%; color: #b13854; font-size: 13px; }
+.editorError { width: 100%; color: var(--brand-danger); font-size: 13px; }
 
 .heroStats { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; padding-top: 11px; border-top: 1px solid var(--cf-line); }
 .heroStats > div { display: flex; align-items: baseline; gap: 5px; }
@@ -44,10 +44,10 @@
   gap: 13px;
   padding: 17px;
   border-radius: 12px;
-  border: 1px solid #483a32;
+  border: 1px solid #514333;
   background:
-    radial-gradient(ellipse at 95% 0, #49384b 0, transparent 58%),
-    linear-gradient(125deg, #201a17, #302421);
+    radial-gradient(ellipse at 100% 0, #443620 0, transparent 60%),
+    linear-gradient(125deg, #131318, #211d1a);
   color: #fff7ed;
   width: min(100%, 580px);
   justify-self: center;
@@ -84,6 +84,10 @@
 .heatmap [data-level="2"] { background: #82b99b; }
 .heatmap [data-level="3"] { background: #458564; }
 .heatmap [data-level="4"] { background: #245841; }
+:global(html.dark) .heatmap [data-level="1"] { background: #244934; }
+:global(html.dark) .heatmap [data-level="2"] { background: #357951; }
+:global(html.dark) .heatmap [data-level="3"] { background: #59ae7d; }
+:global(html.dark) .heatmap [data-level="4"] { background: #8dddac; }
 .heatmap figcaption { display: flex; align-items: center; justify-content: flex-end; gap: 3px; color: var(--cf-muted); font-size: 10px; }
 
 .repositoryGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }

@@ -46,15 +46,15 @@ export const metadata: Metadata = {
   keywords: ["developer identity", "developer network", "GitHub profile card", "developer score", "open source portfolio", "developer ecosystem"],
   icons: {
     icon: [
-      { url: "/favicon.ico?v=3" },
-      { url: "/favicon-16x16.png?v=3", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png?v=3", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.ico?v=4" },
+      { url: "/favicon-16x16.png?v=4", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png?v=4", sizes: "32x32", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png?v=3", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png?v=4", sizes: "180x180", type: "image/png" },
     ],
   },
-  manifest: "/manifest.json?v=3",
+  manifest: "/manifest.json?v=4",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     description: "Discover projects, follow developers, and share milestones with the CodeFolio community.",
     images: [
       {
-        url: "/og-image.png?v=3",
+        url: "/og-image.png?v=4",
         width: 1200,
         height: 630,
         alt: "CodeFolio logo",
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f6f1e8",
+  themeColor: "#0d0d10",
   width: "device-width",
   initialScale: 1,
 };
@@ -89,7 +89,7 @@ export default function RootLayout({
     <ThemeProvider>
       <html
         lang="en"
-        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${brandFont.variable} ${dinCond.variable} ${dinBold.variable} ${dinMedium.variable} light h-full antialiased`}
+        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${brandFont.variable} ${dinCond.variable} ${dinBold.variable} ${dinMedium.variable} dark h-full antialiased`}
         suppressHydrationWarning
       >
         <head>

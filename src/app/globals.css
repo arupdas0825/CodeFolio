@@ -1,6 +1,43 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
+  color-scheme: dark;
+  --brand-background: #0d0d10;
+  --brand-paper: #16161b;
+  --brand-ink: #f5f2ed;
+  --brand-body: #dad6d0;
+  --brand-muted: #aaa6af;
+  --brand-line: #333139;
+  --brand-soft: #1e1e25;
+  --brand-accent: #dfbc79;
+  --brand-tint: #30271a;
+  --brand-button-text: #1c160c;
+  --brand-danger: #ff9eb6;
+  --brand-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+  --background: var(--brand-background);
+  --surface: var(--brand-paper);
+  --surface-secondary: var(--brand-soft);
+  --surface-glass: color-mix(in srgb, var(--surface) 92%, transparent);
+  --border: var(--brand-line);
+  --border-highlight: #58515c;
+  --foreground: var(--brand-ink);
+  --text-primary: var(--brand-ink);
+  --text-secondary: var(--brand-muted);
+  --text-muted: #a09aa6;
+  --accent: var(--brand-accent);
+  --accent-hover: color-mix(in srgb, var(--accent) 72%, white);
+  --accent-primary: var(--accent);
+  --accent-secondary: #ba9c65;
+  --accent-cyan: #78c4d8;
+  --accent-emerald: #79d3a8;
+  --diff-add: #79d3a8;
+  --diff-remove: var(--brand-danger);
+}
+
+html.light {
+  color-scheme: light;
   --brand-background: #f6f1e8;
   --brand-paper: #fff;
   --brand-ink: #28231e;
@@ -9,37 +46,44 @@
   --brand-line: #e4dbcf;
   --brand-soft: #f4eee5;
   --brand-accent: #664532;
-  --brand-accent-hover: #503322;
   --brand-tint: #ede0d0;
-  --background: var(--brand-background);
-  --surface: var(--brand-paper);
-  --surface-secondary: var(--brand-soft);
-  --surface-glass: rgb(255 255 255 / 92%);
-  --border: var(--brand-line);
+  --brand-button-text: #fff;
+  --brand-danger: #a30f38;
+  --brand-shadow: 0 1px 2px #3a29200c;
   --border-highlight: #cbb49d;
-  --foreground: var(--brand-ink);
-  --text-primary: var(--brand-ink);
-  --text-secondary: var(--brand-muted);
   --text-muted: #746559;
-  --accent: var(--brand-accent);
-  --accent-primary: var(--brand-accent);
+  --accent-hover: #503322;
   --accent-secondary: #876551;
   --accent-cyan: #28768a;
   --accent-emerald: #187d5d;
   --diff-add: #187d5d;
-  --diff-remove: #b42446;
 }
 
-@theme {
+html.dark {
+  --color-slate-950: var(--background);
+  --color-slate-900: var(--surface);
+  --color-slate-800: var(--surface-secondary);
+  --color-slate-700: var(--border);
+  --color-slate-400: var(--text-secondary);
+  --color-slate-500: var(--text-muted);
+}
+
+@theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-secondary: var(--surface-secondary);
   --color-border: var(--border);
+  --color-foreground: var(--foreground);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --color-accent: var(--accent);
   --color-accent-primary: var(--accent-primary);
   --color-accent-secondary: var(--accent-secondary);
   --color-accent-cyan: var(--accent-cyan);
+}
+
+:is(html.dark, html.light) .bg-accent.text-white {
+  color: var(--brand-button-text) !important;
 }
 
 body {
@@ -314,14 +358,14 @@ html.light ::-webkit-scrollbar-thumb:hover {
    GLASSMORPHISM UTILITIES
    ════════════════════════════════════════════════════════════ */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.7);
+  background: var(--surface-glass);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-card {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+  background: linear-gradient(135deg, var(--surface-secondary), var(--surface-glass));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -339,7 +383,7 @@ html.light ::-webkit-scrollbar-thumb:hover {
 }
 
 .glass-input {
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--surface-secondary);
   border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(8px);
   color: var(--text-primary);
@@ -348,8 +392,8 @@ html.light ::-webkit-scrollbar-thumb:hover {
 
 .glass-input:focus {
   outline: none;
-  border-color: #6366F1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* Gradient text */
@@ -383,17 +427,17 @@ html.light ::-webkit-scrollbar-thumb:hover {
 }
 
 ::-webkit-scrollbar-track {
-  background: #090D14;
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: var(--border);
   border-radius: 4px;
-  border: 2px solid #090D14;
+  border: 2px solid var(--background);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--border-highlight);
 }
 
 /* Keyframe Animations */
@@ -513,10 +557,10 @@ a[href*="spline.design"],
    ════════════════════════════════════════════════════════════ */
 
 :root {
-  --brand-gradient-from: #3b82f6; /* Vivid Blue */
-  --brand-gradient-via: #6366f1; /* Deep Indigo */
-  --brand-gradient-to: #a855f7;  /* Bright Purple */
-  --brand-glow-color: rgba(99, 102, 241, 0.45);
+  --brand-gradient-from: #f6e8cb;
+  --brand-gradient-via: var(--accent);
+  --brand-gradient-to: #d3a75c;
+  --brand-glow-color: color-mix(in srgb, var(--accent) 32%, transparent);
   --brand-shimmer-color: rgba(255, 255, 255, 0.4);
 }
 
