@@ -9,6 +9,11 @@ export interface Developer {
   bio?: string | null;
   headline?: string | null;
   skills?: string[];
+  careerInterests?: string;
+  portfolioUrl?: string;
+  socialLinks?: string[];
+  pinnedRepos?: string[];
+  featuredProjectIds?: string[];
   privacy?: "public" | "unlisted" | "private";
   location?: string | null;
   company?: string | null;

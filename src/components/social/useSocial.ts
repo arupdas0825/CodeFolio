@@ -52,6 +52,11 @@ interface PreviewState {
   about?: string;
   headline?: string;
   skills?: string[];
+  careerInterests?: string;
+  portfolioUrl?: string;
+  socialLinks?: string[];
+  pinnedRepos?: string[];
+  featuredProjectIds?: string[];
 }
 
 const initialPreview: PreviewState = {
@@ -71,6 +76,11 @@ export function developerFromDoc(data: UserProfileDoc, id: string): Developer {
     company: data.company,
     location: data.location,
     website: data.blog,
+    portfolioUrl: data.portfolioUrl,
+    careerInterests: data.careerInterests,
+    socialLinks: data.socialLinks,
+    pinnedRepos: data.pinnedRepos,
+    featuredProjectIds: data.featuredProjectIds,
     github: `https://github.com/${data.username}`,
   };
 }
@@ -170,6 +180,11 @@ export function useSocial() {
     bio: local.about ?? listedProfile.bio,
     headline: local.headline ?? listedProfile.headline,
     skills: local.skills ?? listedProfile.skills,
+    careerInterests: local.careerInterests ?? listedProfile.careerInterests,
+    portfolioUrl: local.portfolioUrl,
+    socialLinks: local.socialLinks ?? listedProfile.socialLinks,
+    pinnedRepos: local.pinnedRepos,
+    featuredProjectIds: local.featuredProjectIds,
   } : activeProfile || listedProfile || {
     uid: user.uid, username: user.username, name: user.displayName || user.username, avatar: user.photoURL,
     github: `https://github.com/${user.username}`,
@@ -255,9 +270,28 @@ export function useSocial() {
       updatePreview((state) => ({ ...state, ...details }));
     } else if (db) {
       await setDoc(doc(db, "users", user.uid), details, { merge: true });
-      setOwnProfile({ ...currentProfile, bio: details.about, headline: details.headline, skills: details.skills });
+      setOwnProfile((current) => ({
+        ...(current?.uid === user.uid ? current : currentProfile),
+        bio: details.about,
+        headline: details.headline,
+        skills: details.skills,
+        careerInterests: details.careerInterests,
+        portfolioUrl: details.portfolioUrl,
+        socialLinks: details.socialLinks,
+      }));
     }
     setNotice("Profile updated");
+  }
+
+  async function saveShowcase(feature: { pinnedRepos?: string[]; featuredProjectIds?: string[] }) {
+    if (!user || !currentProfile) return;
+    if (preview) {
+      updatePreview((state) => ({ ...state, ...feature }));
+    } else if (db) {
+      await setDoc(doc(db, "users", user.uid), feature, { merge: true });
+      setOwnProfile((current) => ({ ...(current?.uid === user.uid ? current : currentProfile), ...feature }));
+    }
+    setNotice("Showcase updated");
   }
 
   function retryDirectory() {
@@ -268,7 +302,7 @@ export function useSocial() {
 
   return {
     preview, user, currentProfile, posts, savedPosts, liked, following, people, notice, setNotice, follow, like, bookmark,
-    publish, commentLocally, comments: local.comments, saveProfile, directoryLoaded, directoryError, retryDirectory,
+    publish, commentLocally, comments: local.comments, saveProfile, saveShowcase, directoryLoaded, directoryError, retryDirectory,
   };
 }
 
