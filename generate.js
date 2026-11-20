@@ -58,7 +58,12 @@ async function generateIcons() {
   ));
   await Promise.all(Object.entries(sizes).map(([filename, size]) => write(filename, images.get(size))));
 
-  const ico = iconFile([16, 32, 48, 64].map((size) => ({ size, contents: images.get(size) })));
+  // ICO readers require RGBA PNG frames, even when the source JPEG is opaque.
+  const frames = await Promise.all([16, 32, 48, 64].map(async (size) => ({
+    size,
+    contents: await sharp(images.get(size)).ensureAlpha().png().toBuffer(),
+  })));
+  const ico = iconFile(frames);
   // Next serves the app favicon by convention, and existing clients may use the public path.
   await Promise.all([
     write("favicon.ico", ico),
