@@ -195,21 +195,7 @@ export async function syncUserAndReposInFirestore(
   const userDocRef = doc(db, "users", uid);
   const userDocSnap = await getDoc(userDocRef);
   const now = new Date().toISOString();
-  let createdAt = now;
-  let privacy: "public" | "unlisted" | "private" = "public";
-  let pinnedRepos: string[] = [];
-  if (userDocSnap.exists()) {
-    const existing = userDocSnap.data();
-    if (existing.createdAt) {
-      createdAt = existing.createdAt;
-    }
-    if (existing.privacy) {
-      privacy = existing.privacy;
-    }
-    if (existing.pinnedRepos) {
-      pinnedRepos = existing.pinnedRepos;
-    }
-  }
+  const createdAt = userDocSnap.data()?.createdAt || now;
 
   const profilePayload: UserProfileDoc = {
     uid,
@@ -227,8 +213,6 @@ export async function syncUserAndReposInFirestore(
     publicRepos: profile.public_repos,
     createdAt,
     lastLogin: now,
-    privacy,
-    pinnedRepos
   };
 
   await setDoc(userDocRef, profilePayload, { merge: true });

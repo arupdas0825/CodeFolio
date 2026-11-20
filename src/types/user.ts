@@ -11,6 +11,9 @@ export interface PublicProfileDetails {
   about: string;
   headline: string;
   skills: string[];
+  careerInterests?: string;
+  portfolioUrl?: string;
+  socialLinks?: string[];
 }
 
 export interface UserProfileDoc {
@@ -24,6 +27,9 @@ export interface UserProfileDoc {
   about?: string;
   headline?: string;
   skills?: string[];
+  careerInterests?: string;
+  portfolioUrl?: string;
+  socialLinks?: string[];
   company: string | null;
   location: string | null;
   blog: string | null;
@@ -34,6 +40,7 @@ export interface UserProfileDoc {
   lastLogin: string;
   privacy?: "public" | "unlisted" | "private";
   pinnedRepos?: string[];
+  featuredProjectIds?: string[];
   // DevFeed native social counters (separate from GitHub-sourced followers/following)
   devFeedFollowersCount?: number;
   devFeedFollowingCount?: number;

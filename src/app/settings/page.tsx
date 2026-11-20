@@ -47,7 +47,9 @@ export default function SettingsPage() {
       about: profile.bio,
       technologies: profile.skills,
       location: profile.location,
-      website: profile.website,
+      website: profile.portfolioUrl || profile.website,
+      careerInterests: profile.careerInterests,
+      socialLinks: profile.socialLinks,
     }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(file);
     const link = document.createElement("a");
