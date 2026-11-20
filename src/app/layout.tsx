@@ -46,36 +46,36 @@ export const metadata: Metadata = {
   keywords: ["developer identity", "developer network", "GitHub profile card", "developer score", "open source portfolio", "developer ecosystem"],
   icons: {
     icon: [
-      { url: "/favicon.ico?v=1" },
-      { url: "/favicon-16x16.png?v=1", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png?v=1", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.ico?v=3" },
+      { url: "/favicon-16x16.png?v=3", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png?v=3", sizes: "32x32", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png?v=1", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png?v=3", sizes: "180x180", type: "image/png" },
     ],
   },
-  manifest: "/manifest.json",
+  manifest: "/manifest.json?v=3",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Codefolio",
+    statusBarStyle: "default",
+    title: "CodeFolio",
   },
   openGraph: {
     title: "CodeFolio — Developer Network and Project Showcase",
     description: "Discover projects, follow developers, and share milestones with the CodeFolio community.",
     images: [
       {
-        url: "/codefolio-logo.png?v=1",
+        url: "/og-image.png?v=3",
         width: 1200,
-        height: 1200,
-        alt: "Codefolio Logo",
+        height: 630,
+        alt: "CodeFolio logo",
       },
     ],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f5f6f0" }, { media: "(prefers-color-scheme: dark)", color: "#171f1b" }],
+  themeColor: "#f6f1e8",
   width: "device-width",
   initialScale: 1,
 };
@@ -89,7 +89,7 @@ export default function RootLayout({
     <ThemeProvider>
       <html
         lang="en"
-        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${brandFont.variable} ${dinCond.variable} ${dinBold.variable} ${dinMedium.variable} h-full antialiased`}
+        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${brandFont.variable} ${dinCond.variable} ${dinBold.variable} ${dinMedium.variable} light h-full antialiased`}
         suppressHydrationWarning
       >
         <head>

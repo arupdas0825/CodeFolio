@@ -4,10 +4,11 @@ import { createContext, useContext, useEffect, useRef, useState, type FormEvent,
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  ArrowUpRight, Bell, Bookmark, ChevronDown, GitBranch, House, LayoutGrid, LogOut,
+  ArrowUpRight, Bell, Bookmark, ChevronDown, House, LayoutGrid, LogOut,
   MessageCircle, Plus, Search, Settings, UserRound, Users, X,
 } from "lucide-react";
 import { useAuthModal } from "@/components/auth/AuthModalContext";
+import { CodefolioLogo } from "@/components/ui/CodefolioLogo";
 import { GithubIcon } from "@/components/ui/GithubIcon";
 import { logOutUser } from "@/lib/firebase";
 import type { PostType } from "@/types/devfeed";
@@ -116,7 +117,7 @@ function WorkspaceHeader({ pathname }: { pathname: string }) {
     <header className={styles.topbar}>
       <div className={styles.topbarInner}>
         <Link className={styles.brand} href="/feed" aria-label="CodeFolio feed">
-          <span className={styles.brandIcon}><GitBranch size={21} strokeWidth={2.25} /></span>
+          <CodefolioLogo className={styles.brandIcon} size={37} />
           <span className={styles.brandName}>Code<span>Folio</span></span>
         </Link>
         <form className={styles.globalSearch} role="search" onSubmit={search}>

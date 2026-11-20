@@ -1,7 +1,7 @@
 // src/components/ui/ThemeContext.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore, ReactNode } from "react";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ThemeProfile =
@@ -133,8 +133,45 @@ const accentColors: Record<AccentColor, string> = {
   cyan: "#1f6feb",
 };
 
+// Use a new preference for the beige launch so saved dark defaults from older versions do not override it.
+const themeModeKey = "codefolio_theme_mode_v2";
+let temporaryMode: ThemeMode | undefined;
+
+function readThemeMode(): ThemeMode {
+  if (temporaryMode) return temporaryMode;
+  try {
+    const mode = window.localStorage.getItem(themeModeKey);
+    return mode === "dark" || mode === "system" ? mode : "light";
+  } catch {
+    return "light";
+  }
+}
+
+function initialThemeMode(): ThemeMode {
+  return "light";
+}
+
+function listenForThemeMode(listener: () => void) {
+  window.addEventListener(themeModeKey, listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    window.removeEventListener(themeModeKey, listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
+function setMode(mode: ThemeMode) {
+  try {
+    window.localStorage.setItem(themeModeKey, mode);
+    temporaryMode = undefined;
+  } catch {
+    temporaryMode = mode;
+  }
+  window.dispatchEvent(new Event(themeModeKey));
+}
+
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setMode] = useState<ThemeMode>("light");
+  const mode = useSyncExternalStore(listenForThemeMode, readThemeMode, initialThemeMode);
   const [profile, setProfile] = useState<ThemeProfile>("github-dark");
   const [accent, setAccent] = useState<AccentColor>("blue");
   const [layout, setLayout] = useState<LayoutDensity>("default");
@@ -146,13 +183,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   // Load persisted settings on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const storedMode = localStorage.getItem("codefolio_theme_mode") as ThemeMode;
     const storedProfile = localStorage.getItem("codefolio_theme_profile") as ThemeProfile;
     const storedAccent = localStorage.getItem("codefolio_accent_color") as AccentColor;
     const storedLayout = localStorage.getItem("codefolio_layout_density") as LayoutDensity;
     const storedInterface = localStorage.getItem("codefolio_interface_settings");
     const storedChart = localStorage.getItem("codefolio_chart_settings");
-    if (storedMode) setMode(storedMode);
     if (storedProfile) setProfile(storedProfile);
     if (storedAccent) setAccent(storedAccent);
     if (storedLayout) setLayout(storedLayout);
@@ -173,13 +208,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     if (effectiveMode === "light") {
       document.documentElement.classList.remove("dark");
       document.documentElement.classList.add("light");
-      document.documentElement.style.setProperty("--background", "#f4f6f1");
-      document.documentElement.style.setProperty("--surface", "#ffffff");
-      document.documentElement.style.setProperty("--surface-secondary", "#f0f3ed");
-      document.documentElement.style.setProperty("--border", "rgba(0, 0, 0, 0.08)");
-      document.documentElement.style.setProperty("--foreground", "#192720");
-      document.documentElement.style.setProperty("--text-primary", "#192720");
-      document.documentElement.style.setProperty("--text-secondary", "#58685e");
+      for (const variable of ["--background", "--surface", "--surface-secondary", "--border", "--foreground", "--text-primary", "--text-secondary"]) {
+        document.documentElement.style.removeProperty(variable);
+      }
     } else {
       document.documentElement.classList.remove("light");
       document.documentElement.classList.add("dark");
@@ -192,10 +223,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       document.documentElement.style.setProperty("--text-secondary", "#8B949E");
     }
     // Apply accent override
-    document.documentElement.style.setProperty("--accent", accentColors[accent]);
+    if (effectiveMode === "dark") document.documentElement.style.setProperty("--accent", accentColors[accent]);
+    else document.documentElement.style.removeProperty("--accent");
 
     // Persist
-    localStorage.setItem("codefolio_theme_mode", mode);
     localStorage.setItem("codefolio_theme_profile", profile);
     localStorage.setItem("codefolio_accent_color", accent);
     localStorage.setItem("codefolio_layout_density", layout);
@@ -207,7 +238,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }, [mode, profile, accent, layout, interfaceSettings, chartSettings]);
 
   const toggleThemeMode = () => {
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
+    setMode(readThemeMode() === "light" ? "dark" : "light");
   };
 
   const setInterface = (partial: Partial<InterfaceSettings>) => {

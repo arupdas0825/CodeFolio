@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { GitBranch, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import { CodefolioLogo } from "@/components/ui/CodefolioLogo";
 import { GithubIcon } from "@/components/ui/GithubIcon";
 import { signInWithGitHub, type CodefolioUser } from "@/lib/firebase";
 import styles from "@/components/social/social.module.css";
@@ -54,7 +55,7 @@ function SignInDialog({ onClose, onSuccess, actionTitle, title, message }: Omit<
     onClick={(event) => { if (event.target === event.currentTarget && !loading) onClose(); }}>
     <div className={styles.authDialogBody}>
       <div className={styles.authDialogHeader}>
-        <span className={styles.brandIcon}><GitBranch size={22} /></span>
+        <CodefolioLogo className={styles.brandIcon} size={37} />
         <button className={styles.iconButton} type="button" onClick={onClose} disabled={loading} aria-label="Close sign-in"><X size={18} /></button>
       </div>
       <h2 id="auth-dialog-title">{title || actionTitle || "Join CodeFolio"}</h2>

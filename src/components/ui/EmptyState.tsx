@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { CodefolioLogo } from "./CodefolioLogo";
 
 interface EmptyStateProps {
   title: string;
@@ -27,11 +28,7 @@ export default function EmptyState({
         {icon ? (
           icon
         ) : (
-          <img
-            src="/codefolio-logo.png"
-            alt="Codefolio Brand Logo"
-            className="h-10 w-10 object-contain animate-logo-breathe"
-          />
+          <CodefolioLogo size={40} />
         )}
       </div>
 

@@ -63,7 +63,7 @@ export const MobileHamburgerMenu: React.FC<MobileHamburgerMenuProps> = ({
             <div>
               <div className="flex items-center justify-between p-4 border-b border-slate-800/80">
                 <div className="flex items-center gap-2.5">
-                  <CodefolioLogo className="w-7 h-7 text-cyan-400" />
+                  <CodefolioLogo size={28} />
                   <span className="codefolio-wordmark codefolio-wordmark--mobile">
                     Codefolio Menu
                   </span>
